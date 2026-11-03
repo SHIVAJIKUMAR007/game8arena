@@ -1,0 +1,24 @@
+/* Merge Rush board. Uses the shared --g-* theme tokens. */
+.mg-root { width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 4px 12px; }
+.mg-goal { color: var(--g-ink); font-size: .85rem; margin: 0; flex: none; }
+.mg-board { position: relative; flex: none; width: max(180px, min(100cqw - 24px, 100cqh - 112px, 440px)); aspect-ratio: 1; background: var(--g-ink); border-radius: 12px; container-type: inline-size; touch-action: none; user-select: none; -webkit-user-select: none; }
+.mg-cell { position: absolute; display: none; }
+.mg-board::before { content: ''; position: absolute; inset: 0; border-radius: 12px; background:
+  repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--n) - 3px), var(--g-bg) calc(100% / var(--n) - 3px) calc(100% / var(--n))),
+  repeating-linear-gradient(0deg, transparent 0 calc(100% / var(--n) - 3px), var(--g-bg) calc(100% / var(--n) - 3px) calc(100% / var(--n))); opacity: .12; pointer-events: none; }
+
+.mg-tile { position: absolute; padding: 2px; transition: left .12s ease-out, top .12s ease-out; }
+.mg-tile span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 8px; font-weight: 800; font-size: calc(100cqw / var(--n) * var(--f, .45)); color: #1b1b1b; background: hsl(var(--h) 70% 62%); border: 2px solid rgba(0,0,0,.25); }
+.mg-tile.pop span { animation: mg-pop .16s ease-out; }
+.mg-tile.gone { z-index: 0; }
+.mg-tile.gone span { opacity: .6; }
+
+.mg-pad { flex: none; display: flex; gap: 8px; }
+.mg-pad button { width: 52px; height: 36px; font-size: 1.15rem; border-radius: 10px; border: 1.5px solid var(--g-ink); background: transparent; color: var(--g-ink); cursor: pointer; font-family: inherit; }
+.mg-pad button.hint { background: var(--g-accent); border-color: var(--g-accent); color: var(--g-on-accent); animation: mg-blink 1s ease-in-out infinite; }
+
+@keyframes mg-pop { 50% { transform: scale(1.18) } }
+@keyframes mg-blink { 50% { opacity: .45 } }
+:root[data-reduced-motion='1'] .mg-tile { transition: none; }
+:root[data-reduced-motion='1'] .mg-tile.pop span,
+:root[data-reduced-motion='1'] .mg-pad button.hint { animation: none; }

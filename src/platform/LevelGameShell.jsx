@@ -15,6 +15,9 @@
 //   session.bindActions({hint, undo})  hint()/undo() must return true when they did something
 //   session.setInfo({label, value})    small status text in the HUD (e.g. "Arrows: 12")
 //   session.announce(text)    screen-reader announcement
+//
+// Optional config.endless(level, mode) -> true makes that level endless: the Board never calls win(); the
+// run ends when lives run out, and the score is saved as the personal high score.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getProgress, totalStars, updateProgress, useProgress } from './progress'
 import { completeDaily, dailyState, dailySeed } from './daily'
@@ -36,7 +39,7 @@ const MAX_BANKED_LIVES = 2
 export default function LevelGameShell({ gameId, title, config, Board, initialMode }) {
   const {
     maxLives = 3, hints: hintCap = 3, undos: undoCap = 3,
-    tutorial = [], achievements = [], daily = false, dailyLevel = 15,
+    tutorial = [], achievements = [], daily = false, dailyLevel = 15, endless,
   } = config
 
   const progress = useProgress(gameId)
@@ -97,7 +100,24 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
       track('level_win', { game: gameId, level: r.level, mode: r.mode, stars, score: total })
     }
 
+    const finishRun = () => {
+      const before = getProgress(gameId)
+      updateProgress(gameId, p => ({
+        ...p,
+        level: Math.max(p.level, r.level),
+        highScore: Math.max(p.highScore, r.score),
+        stats: { ...p.stats, bestCombo: Math.max(p.stats.bestCombo, r.bestCombo) },
+      }))
+      setOutcome({ total: r.score, newBest: r.score > before.highScore, endless: true })
+      setResult('ended')
+      playSound('lose')
+      vibrate(200)
+      setAnnouncement(`Run over. Score ${r.score}.`)
+      track('run_end', { game: gameId, level: r.level, score: r.score })
+    }
+
     const finishLose = () => {
+      if (r.endless) return finishRun()
       setResult('lost')
       playSound('lose')
       vibrate(200)
@@ -142,6 +162,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
         playSound('combo', r.combo)
         updateProgress(gameId, p => ({
           ...p,
+          highScore: r.endless ? Math.max(p.highScore, r.score) : p.highScore, // endless: always keep the best
           stats: { ...p.stats, launches: p.stats.launches + 1, bestCombo: Math.max(p.stats.bestCombo, r.combo) },
         }))
         checkAchievements(gameId, achievements, { level: r.level, mode: r.mode, combo: r.combo })
@@ -158,7 +179,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
 
   const startLevel = useCallback((lvl, m = 'campaign') => {
     session._clear()
-    Object.assign(run.current, { lives: maxLives, locked: false, combo: 0, bestCombo: 0, score: 0, level: lvl, mode: m, actions: {} })
+    Object.assign(run.current, { lives: maxLives, locked: false, combo: 0, bestCombo: 0, score: 0, level: lvl, mode: m, actions: {}, endless: Boolean(endless?.(lvl, m)) })
     setMode(m); setLevel(lvl)
     setLives(maxLives); setHints(hintCap); setUndos(undoCap)
     setScore(0); setCombo(0); setResult(null); setOutcome(null); setInfo(null)
@@ -166,7 +187,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
     setScreen('play')
     track('level_start', { game: gameId, level: lvl, mode: m })
     if (m === 'campaign' && lvl === 1 && tutorial.length && !getProgress(gameId).tutorialSeen) setModal('tutorial')
-  }, [session, maxLives, hintCap, undoCap, gameId, tutorial.length])
+  }, [session, maxLives, hintCap, undoCap, gameId, tutorial.length, endless])
 
   useEffect(() => { track('game_open', { game: gameId }) }, [gameId])
   useEffect(() => {
@@ -293,7 +314,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
             <span key={i} className={i < lives ? 'on' : 'off'}>💧</span>
           ))}
         </span>
-        <span className="lg-title">{mode === 'daily' ? 'Daily challenge' : `Level ${level}`}</span>
+        <span className="lg-title">{mode === 'daily' ? 'Daily challenge' : endless?.(level, mode) ? `Level ${level} · Endless` : `Level ${level}`}</span>
         <span className="lg-score">
           ★ {score}
           {combo >= 2 && <b className="lg-combo"> 🔥×{combo}</b>}
@@ -324,6 +345,25 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
             {mode === 'campaign' && <button className="lg-btn big" autoFocus onClick={() => startLevel(level + 1)}>Next level →</button>}
             <button className="lg-btn" onClick={share}>Share</button>
             <button className="lg-btn ghost" onClick={() => setScreen('levels')}>Level map</button>
+            <button className="lg-btn ghost" onClick={() => setScreen('menu')}>Menu</button>
+          </div>
+        </div>
+      )}
+
+      {result === 'ended' && outcome && (
+        <div className="lg-overlay">
+          <h2>Run over 🏁</h2>
+          <p>Score <b>{outcome.total}</b> {outcome.newBest && <span className="lg-badge">New high score!</span>}</p>
+          <p>High score <b>{progress.highScore}</b></p>
+          <div className="lg-overlay-buttons">
+            {progress.extraLives > 0 && (
+              <button className="lg-btn" onClick={onBankedLife}>Use extra life 💧 ({progress.extraLives})</button>
+            )}
+            {canShowRewardedAd() && (
+              <button className="lg-btn" disabled={adBusy} onClick={watchAd}>📺 Watch an ad for +1 life</button>
+            )}
+            <button className="lg-btn big" autoFocus onClick={() => startLevel(level, mode)}>Play again</button>
+            <button className="lg-btn" onClick={() => shareResult({ title, text: `I scored ${outcome.total} in ${title} endless mode`, url: window.location.origin + window.location.pathname })}>Share</button>
             <button className="lg-btn ghost" onClick={() => setScreen('menu')}>Menu</button>
           </div>
         </div>

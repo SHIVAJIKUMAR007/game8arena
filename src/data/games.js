@@ -5,5 +5,6 @@
 // (menu, lives, hints, undo, stars, daily, achievements, saving…) — you only write the Board.
 // Register a new game by importing it here.
 import arrow from '../games/arrow'
+import merge from '../games/merge'
 
-export const games = [arrow]
+export const games = [arrow, merge]
