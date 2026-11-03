@@ -122,6 +122,7 @@ export default function ArrowGame() {
 
   // Long press: show the arrow's flight path until the pointer is released.
   const [preview, setPreview] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   const pressTimer = useRef(null)
   const longPressed = useRef(false)
 
@@ -173,7 +174,12 @@ export default function ArrowGame() {
           ))}
         </span>
         <span className="ag-title">Level {level}</span>
-        <span>Arrows: {arrows.length}</span>
+        <span className="ag-right">
+          Arrows: {arrows.length}
+          <button className={`ag-toggle ${showAll ? 'active' : ''}`} onClick={() => setShowAll(v => !v)}>
+            {showAll ? 'Hide paths' : 'Show paths'}
+          </button>
+        </span>
       </div>
 
       <div className="ag-board-wrap">
@@ -198,7 +204,10 @@ export default function ArrowGame() {
               </g>
             )
           )}
-          {previewArrow && <PathPreview arrow={previewArrow} cols={cols} rows={rows} />}
+          {showAll && arrows.filter(a => a.status !== 'flying').map(a => (
+            <PathPreview key={`p${a.id}`} arrow={a} cols={cols} rows={rows} />
+          ))}
+          {!showAll && previewArrow && <PathPreview arrow={previewArrow} cols={cols} rows={rows} />}
         </svg>
       </div>
 

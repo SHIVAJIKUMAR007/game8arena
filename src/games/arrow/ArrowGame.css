@@ -23,3 +23,6 @@
 .ag-overlay button { background: #7a5a3a; color: #fff; border: 0; border-radius: 999px; padding: 10px 26px; font-size: 1rem; font-weight: 700; cursor: pointer; }
 .ag-preview { stroke: #2f80ff; stroke-opacity: .45; stroke-width: .1; stroke-dasharray: .25 .2; stroke-linecap: round; pointer-events: none; }
 .ag-board { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.ag-right { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+.ag-toggle { background: transparent; color: #7a5a3a; border: 1.5px solid #7a5a3a; border-radius: 999px; padding: 3px 12px; font-size: .8rem; font-weight: 700; cursor: pointer; }
+.ag-toggle.active { background: #2f80ff; border-color: #2f80ff; color: #fff; }
