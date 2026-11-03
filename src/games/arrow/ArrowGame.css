@@ -27,8 +27,18 @@
 .ag-hit-area { fill: none; stroke: transparent; stroke-width: .8; stroke-linecap: round; stroke-linejoin: round; pointer-events: stroke; }
 .ag-preview { stroke: var(--g-accent); stroke-opacity: .5; stroke-width: .1; stroke-dasharray: .25 .2; stroke-linecap: round; pointer-events: none; }
 
+/* Special arrows — one block per kind, keyed by the className in specials.js */
+.sp-rainbow .ag-line { stroke: url(#ag-rainbow); stroke-width: .2; }
+.sp-rainbow .ag-head { fill: url(#ag-rainbow); stroke: url(#ag-rainbow); }
+.sp-rainbow { animation: ag-hue 3s linear infinite; }
+.sp-rainbow:hover, .sp-rainbow.flying { color: inherit; }
+.sp-rainbow.blocked .ag-line { stroke: var(--g-bad); }
+.sp-rainbow.blocked .ag-head { fill: var(--g-bad); stroke: var(--g-bad); }
+@keyframes ag-hue { to { filter: hue-rotate(360deg) } }
+
 @keyframes ag-shake { 0%,100% { translate: 0 } 20% { translate: -.1px } 40% { translate: .1px } 60% { translate: -.07px } 80% { translate: .07px } }
 @keyframes ag-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
 
+:root[data-reduced-motion='1'] .sp-rainbow,
 :root[data-reduced-motion='1'] .ag-arrow.blocked,
 :root[data-reduced-motion='1'] .ag-arrow.hint { animation: none; }

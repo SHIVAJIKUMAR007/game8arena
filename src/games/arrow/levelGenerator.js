@@ -12,6 +12,7 @@
 // Same seed + level + mode => identical level, on every device.
 import { createRng } from '../../platform/rng'
 import { arrowCountFor, avgLengthFor } from './difficulty'
+import { assignSpecials } from './specials'
 
 export const DIRS = {
   up: { dx: 0, dy: -1 },
@@ -216,7 +217,7 @@ export function generateLevel({ level, seed, mode = 'campaign' }) {
     )
     arrows = arrows.filter(a => !drop.has(a.id))
   }
-  return { cols, rows, shapeName, target, arrows }
+  return { cols, rows, shapeName, target, arrows: assignSpecials(arrows, { level, mode, seed }) }
 }
 
 // Tuned so the average generated snake length lands near avgLengthFor(level).

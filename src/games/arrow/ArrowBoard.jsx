@@ -1,5 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DIRS, generateLevel, findBlocker, pathPoints } from './levelGenerator'
+import { specialOf } from './specials'
+import { createRng } from '../../platform/rng'
 import { playSound } from '../../platform/sound'
 import { prefersReducedMotion } from '../../platform/settings'
 import './ArrowGame.css'
@@ -87,7 +89,7 @@ function Flying({ arrow, size, onDone }) {
   }, [ext])
 
   return (
-    <g className="ag-arrow flying">
+    <g className={`ag-arrow flying ${specialOf(arrow)?.className ?? ''}`}>
       <Shape points={slicePath(pts, s, s + bodyLen)} dir={arrow.dir} />
     </g>
   )
@@ -97,13 +99,14 @@ function Flying({ arrow, size, onDone }) {
 const ArrowItem = memo(function ArrowItem({ arrow, hint, onActivate, onPressStart, onPressEnd }) {
   const pts = useMemo(() => pathPoints(arrow), [arrow.cells, arrow.dir]) // eslint-disable-line react-hooks/exhaustive-deps
   const head = arrow.cells[arrow.cells.length - 1]
-  const cls = ['ag-arrow', arrow.status === 'blocked' && 'blocked', arrow.hit && 'hit', hint && 'hint'].filter(Boolean).join(' ')
+  const sp = specialOf(arrow)
+  const cls = ['ag-arrow', sp?.className, arrow.status === 'blocked' && 'blocked', arrow.hit && 'hit', hint && 'hint'].filter(Boolean).join(' ')
   return (
     <g
       className={cls}
       role="button"
       tabIndex={0}
-      aria-label={`Arrow pointing ${arrow.dir}, ${arrow.cells.length} cells long, head at row ${head.y + 1}, column ${head.x + 1}`}
+      aria-label={`Arrow pointing ${arrow.dir}, ${arrow.cells.length} cells long, head at row ${head.y + 1}, column ${head.x + 1}${sp ? `, ${sp.label}` : ''}`}
       onClick={() => onActivate(arrow, false)}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onActivate(arrow, true) }
@@ -127,6 +130,7 @@ export default function ArrowBoard({ level, mode, seed, session }) {
   const [hintId, setHintId] = useState(null)
   const [zoom, setZoom] = useState(1)
 
+  const specialRng = useRef(createRng(`${seed}:fx`))
   const dataRef = useRef(data)
   dataRef.current = data
   const timers = useRef([])
@@ -160,6 +164,14 @@ export default function ArrowBoard({ level, mode, seed, session }) {
 
   const clearHint = () => { clearTimeout(hintTimer.current); setHintId(null) }
 
+  // Send one arrow flying (used by taps and by special-arrow effects). Undo can bring it back.
+  const launch = useCallback(a => {
+    undoStack.current.push({ type: 'launch', id: a.id, arrow: { ...a, status: 'idle', hit: false } })
+    session.noteMove(true)
+    playSound('launch')
+    patch(a.id, { status: 'flying' }) // <Flying> removes it from the DOM once it has left the board
+  }, [patch, session])
+
   const activate = useCallback((arrow, fromKeyboard) => {
     if (!fromKeyboard && longPressed.current) { longPressed.current = false; return } // it was a long press
     if (session.locked) return
@@ -183,11 +195,23 @@ export default function ArrowBoard({ level, mode, seed, session }) {
       return
     }
 
-    undoStack.current.push({ type: 'launch', id: cur.id, arrow: { ...cur, status: 'idle', hit: false } })
-    session.noteMove(true)
-    playSound('launch')
-    patch(cur.id, { status: 'flying' }) // <Flying> removes it from the DOM once it has left the board
-  }, [patch, session])
+    launch(cur)
+
+    // Special arrows trigger their own effect once they leave successfully.
+    const sp = specialOf(cur)
+    if (sp?.onLaunch) {
+      const rest = list.filter(a => a.id !== cur.id)
+      const effects = sp.onLaunch({ arrow: cur, arrows: rest, cols: c, rows: r, level, rng: specialRng.current })
+      effects.forEach(fx => {
+        if (fx.type !== 'launch') return
+        fx.ids.forEach((id, i) => later(() => {
+          const target = dataRef.current.arrows.find(a => a.id === id)
+          if (target && target.status === 'idle') launch(target)
+        }, 250 + i * 160))
+        if (fx.message) { session.announce(fx.message); later(() => playSound('combo', 5), 200) }
+      })
+    }
+  }, [patch, session, level, launch])
 
   // Long press shows that arrow's flight path until release.
   const pressStart = useCallback(arrow => {
@@ -271,6 +295,13 @@ export default function ArrowBoard({ level, mode, seed, session }) {
           role="group"
           aria-label={`Arrow board, ${arrows.length} arrows left. Press Enter on an arrow to launch it.`}
         >
+          <defs>
+            <linearGradient id="ag-rainbow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={cols} y2={rows}>
+              {['#ff3b3b', '#ff9f1c', '#ffe14d', '#3ddc5f', '#2eb8ff', '#7a5cff', '#ff4fd8'].map((c, i, a) => (
+                <stop key={c} offset={i / (a.length - 1)} stopColor={c} />
+              ))}
+            </linearGradient>
+          </defs>
           <rect x={-0.2} y={-0.2} width={cols + 0.4} height={rows + 0.4} rx={0.5} className="ag-tile" />
           {arrows.map(a =>
             a.status === 'flying' ? (

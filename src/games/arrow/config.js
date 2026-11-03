@@ -11,6 +11,7 @@ export const config = {
     { icon: '💥', title: 'Don’t hit another arrow', body: 'If anything is in the way, you lose a 💧. You get 3 per level — run out and you retry the level.' },
     { icon: '🔍', title: 'Long-press to see the path', body: 'Hold an arrow to see its flight line. “Show paths” shows every line at once.' },
     { icon: '💡', title: 'Stuck? Use a hint or undo', body: 'Hints highlight an arrow that is safe to launch. Clear a level without losing a life for 3 ★ and a banked extra life.' },
+    { icon: '🌈', title: 'Special arrows (level 21+)', body: 'A rainbow arrow is a normal arrow — launch it safely and it sends several other free arrows flying out with it.' },
     { icon: '⌨️', title: 'Keyboard friendly', body: 'Use Tab to move between arrows and Enter or Space to launch. Pinch or use + / − to zoom big boards.' },
   ],
 
