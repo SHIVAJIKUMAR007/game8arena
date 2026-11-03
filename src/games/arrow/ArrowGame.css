@@ -1,28 +1,34 @@
-.ag-root { position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column; color: #a0703c; background: #f3e9d9; }
-.ag-hud { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 8px 14px; font-size: .9rem; }
-.ag-hud > span:last-child { text-align: right; }
-.ag-title { font-weight: 800; font-size: 1.1rem; }
-.ag-lives { font-size: 1.2rem; letter-spacing: 4px; }
-.ag-lives .off { filter: grayscale(1); opacity: .3; }
+/* Arrow board. Colours come from the shared theme tokens (--g-*) so all themes work. */
+.ag-root { width: 100%; height: 100%; display: flex; flex-direction: column; }
+.ag-tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 12px 6px; }
+.ag-toggle, .ag-zoom button { background: transparent; color: var(--g-ink); border: 1.5px solid var(--g-ink); border-radius: 999px; padding: 3px 12px; font-size: .8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.ag-toggle.active { background: var(--g-accent); border-color: var(--g-accent); color: var(--g-on-accent); }
+.ag-zoom { display: inline-flex; gap: 4px; }
+.ag-zoom button { min-width: 32px; }
+.ag-zoom button:disabled { opacity: .35; cursor: default; }
 
-.ag-board-wrap { position: relative; flex: 1; min-height: 0; }
-.ag-board { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ag-tile { fill: #f3e9d9; }
+.ag-board-wrap { position: relative; flex: 1; min-height: 0; overflow: auto; }
+.ag-board { display: block; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.ag-tile { fill: var(--g-bg); }
 
-.ag-arrow { color: #7a5a3a; cursor: pointer; }
-.ag-arrow:hover { color: #2f80ff; }
-.ag-arrow.flying { color: #2f80ff; pointer-events: none; }
-.ag-arrow.hit { color: #f59e0b; }
-.ag-arrow.blocked { color: #ef4444; animation: ag-shake .4s; }
+.ag-arrow { color: var(--g-ink); cursor: pointer; outline: none; }
+.ag-arrow:hover { color: var(--g-accent); }
+.ag-arrow:focus-visible .ag-line, .ag-arrow:focus-visible .ag-head { stroke: var(--g-accent); }
+.ag-arrow:focus-visible { color: var(--g-accent); }
+.ag-arrow.flying { color: var(--g-accent); pointer-events: none; }
+.ag-arrow.hit { color: var(--g-warn); }
+.ag-arrow.blocked { color: var(--g-bad); animation: ag-shake .4s; }
+.ag-arrow.blocked .ag-line { stroke-dasharray: .22 .16; } /* not colour-only: blocked is also dashed + shakes */
+.ag-arrow.hint { color: var(--g-accent); animation: ag-pulse 1s ease-in-out infinite; }
+.ag-arrow.hint .ag-line { stroke-width: .2; }
+
 .ag-line { fill: none; stroke: currentColor; stroke-width: .13; stroke-linecap: round; stroke-linejoin: round; }
 .ag-head { fill: currentColor; stroke: currentColor; stroke-width: .05; stroke-linejoin: round; }
 .ag-hit-area { fill: none; stroke: transparent; stroke-width: .8; stroke-linecap: round; stroke-linejoin: round; pointer-events: stroke; }
-@keyframes ag-shake { 0%,100% { translate: 0 } 20% { translate: -.1px } 40% { translate: .1px } 60% { translate: -.07px } 80% { translate: .07px } }
+.ag-preview { stroke: var(--g-accent); stroke-opacity: .5; stroke-width: .1; stroke-dasharray: .25 .2; stroke-linecap: round; pointer-events: none; }
 
-.ag-overlay { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; background: rgba(243, 233, 217, .92); color: #7a5a3a; }
-.ag-overlay button { background: #7a5a3a; color: #fff; border: 0; border-radius: 999px; padding: 10px 26px; font-size: 1rem; font-weight: 700; cursor: pointer; }
-.ag-preview { stroke: #2f80ff; stroke-opacity: .45; stroke-width: .1; stroke-dasharray: .25 .2; stroke-linecap: round; pointer-events: none; }
-.ag-board { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.ag-right { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-.ag-toggle { background: transparent; color: #7a5a3a; border: 1.5px solid #7a5a3a; border-radius: 999px; padding: 3px 12px; font-size: .8rem; font-weight: 700; cursor: pointer; }
-.ag-toggle.active { background: #2f80ff; border-color: #2f80ff; color: #fff; }
+@keyframes ag-shake { 0%,100% { translate: 0 } 20% { translate: -.1px } 40% { translate: .1px } 60% { translate: -.07px } 80% { translate: .07px } }
+@keyframes ag-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+
+:root[data-reduced-motion='1'] .ag-arrow.blocked,
+:root[data-reduced-motion='1'] .ag-arrow.hint { animation: none; }

@@ -48,3 +48,24 @@ main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 24px 16
 .footer { text-align: center; padding: 18px; color: var(--muted); font-size: .85rem; border-top: 1px solid #2a2a4a; }
 
 @media (max-width: 760px) { .game-layout { grid-template-columns: 1fr; } .header { padding: 12px 16px; } }
+
+/* ───── Added: accessibility, daily banner, progress, mobile ───── */
+.skip { position: absolute; left: -999px; top: 0; background: var(--neon); color: #fff; padding: 8px 14px; z-index: 300; }
+.skip:focus { left: 8px; top: 8px; }
+.nav-btn { background: none; border: 0; color: var(--text); font-size: 1.1rem; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.footer a { color: var(--cyan); }
+.card-progress { color: var(--cyan) !important; font-size: .8rem !important; min-height: 0 !important; margin-top: 4px; }
+.daily { background: var(--panel); border: 1px solid var(--neon); border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; }
+.daily h2 { font-size: 1rem; margin-bottom: 8px; }
+.daily-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 8px 0; color: var(--cyan); }
+.prose { max-width: 640px; margin: 0 auto; line-height: 1.6; }
+.prose h2 { margin-bottom: 12px; } .prose h3 { margin: 18px 0 4px; color: var(--cyan); } .prose p { color: var(--muted); }
+.loading { color: var(--muted); }
+.screen { position: relative; overflow: hidden; }
+
+@media (max-width: 760px) {
+  main { padding: 12px 8px; }
+  .screen { aspect-ratio: auto; height: 78vh; min-height: 460px; }
+  .side { display: none; }
+}

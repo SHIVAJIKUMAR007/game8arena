@@ -2,8 +2,20 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import ErrorBoundary from './platform/ui/ErrorBoundary'
+import './platform/settings' // applies saved theme / motion preference before first paint
+import './platform/platform.css'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode><BrowserRouter><App /></BrowserRouter></StrictMode>
+  <StrictMode>
+    <ErrorBoundary>
+      <BrowserRouter><App /></BrowserRouter>
+    </ErrorBoundary>
+  </StrictMode>
 )
+
+// Offline support / installable app (production only, so dev hot-reload isn't cached).
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}))
+}
