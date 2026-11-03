@@ -4,6 +4,7 @@ import './ArrowGame.css'
 
 const MAX_LIVES = 3
 const SHAKE_MS = 400
+const LONG_PRESS_MS = 350
 
 const toStr = pts => pts.map(p => p.join(',')).join(' ')
 
@@ -42,6 +43,16 @@ function Shape({ points, dir }) {
       <polygon className="ag-head" points={toStr(head)} />
     </>
   )
+}
+
+// Faint straight line from the arrow tip to the edge of the board.
+function PathPreview({ arrow, cols, rows }) {
+  const head = arrow.cells[arrow.cells.length - 1]
+  const { dx, dy } = DIRS[arrow.dir]
+  const x1 = head.x + 0.5 + dx * 0.45, y1 = head.y + 0.5 + dy * 0.45
+  const x2 = dx > 0 ? cols + 0.2 : dx < 0 ? -0.2 : x1
+  const y2 = dy > 0 ? rows + 0.2 : dy < 0 ? -0.2 : y1
+  return <line className="ag-preview" x1={x1} y1={y1} x2={x2} y2={y2} />
 }
 
 // The arrow slides along its own path, then straight off the board.
@@ -109,7 +120,27 @@ export default function ArrowGame() {
       return { ...d, arrows }
     })
 
+  // Long press: show the arrow's flight path until the pointer is released.
+  const [preview, setPreview] = useState(null)
+  const pressTimer = useRef(null)
+  const longPressed = useRef(false)
+
+  const pressStart = arrow => {
+    longPressed.current = false
+    clearTimeout(pressTimer.current)
+    pressTimer.current = setTimeout(() => {
+      longPressed.current = true
+      setPreview(arrow.id)
+    }, LONG_PRESS_MS)
+  }
+  const pressEnd = () => {
+    clearTimeout(pressTimer.current)
+    setPreview(null)
+  }
+  useEffect(() => () => clearTimeout(pressTimer.current), [])
+
   const handleClick = arrow => {
+    if (longPressed.current) { longPressed.current = false; return } // it was a long press, not a tap
     if (phase !== 'playing' || arrow.status !== 'idle') return
 
     const blocker = findBlocker(arrow, data.arrows, data.cols, data.rows)
@@ -131,6 +162,7 @@ export default function ArrowGame() {
   const { cols, rows, arrows, shapeName } = data
   const size = Math.max(cols, rows)
   const pad = 0.5
+  const previewArrow = preview != null ? arrows.find(a => a.id === preview && a.status === 'idle') : null
 
   return (
     <div className="ag-root">
@@ -155,12 +187,18 @@ export default function ArrowGame() {
                 key={a.id}
                 className={`ag-arrow ${a.status === 'blocked' ? 'blocked' : ''} ${a.hit ? 'hit' : ''}`}
                 onClick={() => handleClick(a)}
+                onPointerDown={() => pressStart(a)}
+                onPointerUp={pressEnd}
+                onPointerLeave={pressEnd}
+                onPointerCancel={pressEnd}
+                onContextMenu={e => e.preventDefault()}
               >
                 <polyline className="ag-hit-area" points={toStr(pathPoints(a))} />
                 <Shape points={pathPoints(a)} dir={a.dir} />
               </g>
             )
           )}
+          {previewArrow && <PathPreview arrow={previewArrow} cols={cols} rows={rows} />}
         </svg>
       </div>
 
