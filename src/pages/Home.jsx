@@ -21,8 +21,8 @@ export default function Home() {
         <p>Classic arcade fun, right in your browser.</p>
       </section>
 
-      <DailyBanner />
-
+      <div className="home-layout">
+      <div className="home-main">
       <section className="toolbar">
         <div className="chips">
           {categories.map(c => (
@@ -36,6 +36,12 @@ export default function Home() {
         {shown.map(g => <GameCard key={g.id} game={g} />)}
         {shown.length === 0 && <p className="empty">No games found.</p>}
       </section>
+      </div>
+
+      <aside className="home-side">
+        <DailyBanner />
+      </aside>
+      </div>
     </>
   )
 }

@@ -56,9 +56,21 @@ main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 24px 16
 :focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .footer a { color: var(--cyan); }
 .card-progress { color: var(--cyan) !important; font-size: .8rem !important; min-height: 0 !important; margin-top: 4px; }
-.daily { background: var(--panel); border: 1px solid var(--neon); border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; }
-.daily h2 { font-size: 1rem; margin-bottom: 8px; }
-.daily-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 8px 0; color: var(--cyan); }
+/* Home: games on the left, daily challenge in a sidebar on the right (stacks on top on small screens). */
+.home-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; align-items: start; }
+.home-side { position: sticky; top: 16px; }
+.daily { background: var(--panel); border: 1px solid var(--neon); border-radius: 14px; padding: 14px 16px; }
+.daily h2 { font-size: 1rem; }
+.daily-sub { color: var(--muted); font-size: .8rem; margin: 4px 0 6px; }
+.daily-row { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; color: var(--cyan); border-top: 1px solid #2a2a4a; }
+.daily-row:hover .daily-game b { text-decoration: underline; }
+.daily-status { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .85rem; color: var(--muted); }
+.daily-streak { color: var(--text); }
+@media (max-width: 900px) {
+  .home-layout { grid-template-columns: 1fr; }
+  .home-side { position: static; order: -1; }
+  .daily-row { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+}
 .prose { max-width: 640px; margin: 0 auto; line-height: 1.6; }
 .prose h2 { margin-bottom: 12px; } .prose h3 { margin: 18px 0 4px; color: var(--cyan); } .prose p { color: var(--muted); }
 .loading { color: var(--muted); }

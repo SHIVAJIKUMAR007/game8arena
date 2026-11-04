@@ -8,8 +8,8 @@ function DailyRow({ game }) {
   const { done, streak } = dailyState(p)
   return (
     <Link to={`/play/${game.id}?mode=daily`} className="daily-row">
-      <span>{game.emoji} <b>{game.title}</b> — today’s puzzle</span>
-      <span>{done ? '✓ Done' : 'Play now'} {streak > 0 && `· 🔥 ${streak}-day streak`}</span>
+      <span className="daily-game">{game.emoji} <b>{game.title}</b></span>
+      <span className="daily-status">{done ? '✓ Done' : 'Play now →'} {streak > 0 && <span className="daily-streak">🔥 {streak}-day streak</span>}</span>
     </Link>
   )
 }
@@ -20,6 +20,7 @@ export default function DailyBanner() {
   return (
     <section className="daily" aria-label="Daily challenges">
       <h2>📅 Daily challenge</h2>
+      <p className="daily-sub">A new puzzle for every game, every day.</p>
       {dailyGames.map(g => <DailyRow key={g.id} game={g} />)}
     </section>
   )

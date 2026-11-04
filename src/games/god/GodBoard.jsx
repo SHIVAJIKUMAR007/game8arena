@@ -165,6 +165,7 @@ function Realms({ puzzle, session }) {
 
   return (
     <div className="gd-root">
+      <div className="gd-wrap">
       <div className="gd-quest">
         <span><b className="gd-asker">{wanted.asker}:</b> <i className="gd-plea">“{wanted.plea}”</i></span>
         <span className="gd-need">Find the God of <b style={{ '--c': wanted.color }}>{wanted.icon} {wanted.name}</b> — hiding under the <b style={{ '--c': wanted.color }} className="gd-swatch" /> realm.</span>
@@ -195,11 +196,10 @@ function Realms({ puzzle, session }) {
         })}
       </div>
 
-      <p className={`gd-msg ${msg?.tone || ''}`} aria-hidden="true">
-        {msg?.text || 'Tap once to discard a cell (✕). Double-tap to search it.'}
-      </p>
+      <p className={`gd-msg ${msg ? msg.tone : 'idle'}`} aria-hidden="true">{msg?.text || ' '}</p>
       </div>
 
+      <div className="gd-info">
       <ul className="gd-legend" aria-label="Realms">
         {gods.map((g, k) => (
           <li key={g.id} className={k === target ? 'wanted' : ''} style={{ '--c': g.color }}>
@@ -207,6 +207,9 @@ function Realms({ puzzle, session }) {
           </li>
         ))}
       </ul>
+      <p className="gd-controls">Tap once to discard a cell (✕) · Double-tap to search it</p>
+      </div>
+      </div>
     </div>
   )
 }
