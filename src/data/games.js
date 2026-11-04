@@ -6,5 +6,6 @@
 // Register a new game by importing it here.
 import arrow from '../games/arrow'
 import merge from '../games/merge'
+import god from '../games/god'
 
-export const games = [arrow, merge]
+export const games = [arrow, merge, god]

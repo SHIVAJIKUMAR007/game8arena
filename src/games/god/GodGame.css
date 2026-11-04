@@ -1,0 +1,45 @@
+/* Find God board: a white card holding separate rounded tiles, with the status line in a pill below.
+   Uses the shared --g-* theme tokens; realm colours come from logic.js (--c). */
+.gd-root { width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 4px 8px; }
+.gd-loading { color: var(--g-muted); }
+
+.gd-quest { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; max-width: 640px; font-size: .88rem; line-height: 1.3; }
+.gd-asker { font-weight: 800; }
+.gd-plea { color: var(--g-muted); }
+.gd-need b { white-space: nowrap; }
+.gd-swatch { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -.2em; border-radius: 5px; background: var(--c); }
+
+/* The card */
+.gd-card { flex: none; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: clamp(10px, 2.5cqw, 20px); background: var(--g-panel); border-radius: 26px; box-shadow: 0 10px 30px rgba(60, 40, 20, .10), 0 1px 0 rgba(60, 40, 20, .05); }
+
+/* Board: as big as the space allows (quest text, card padding, message and legend take ~200px). */
+.gd-board { --gap: clamp(3px, calc(9cqw / var(--n)), 8px); display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); grid-template-rows: repeat(var(--n), minmax(0, 1fr)); gap: var(--gap); width: max(200px, min(100cqw - 48px, 100cqh - 200px, 680px)); aspect-ratio: 1; container-type: inline-size; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.gd-cell { position: relative; display: grid; place-items: center; min-width: 0; min-height: 0; overflow: hidden; padding: 0; margin: 0; border: 0; border-radius: clamp(5px, calc(18cqw / var(--n)), 12px); font: inherit; font-weight: 800; font-size: calc(100cqw / var(--n) * .45); line-height: 1; color: #3b2a26; background: var(--c); cursor: pointer; transition: transform .08s ease-out, filter .12s; -webkit-tap-highlight-color: transparent; }
+.gd-cell:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.gd-cell:active { transform: scale(.94); }
+.gd-cell:focus-visible { outline: 3px solid var(--g-accent); outline-offset: 2px; z-index: 1; }
+/* White cross with a soft dark rim so it also shows on the light tiles. */
+.gd-cell.mark { color: #fff; font-size: calc(100cqw / var(--n) * .36); text-shadow: 0 0 2px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .3); }
+.gd-cell.empty { filter: saturate(.25) brightness(.8); color: rgba(255, 255, 255, .85); cursor: default; transform: none; }
+.gd-cell.god { font-size: calc(100cqw / var(--n) * .58); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .85); animation: gd-pop .35s ease-out; }
+.gd-cell.glow-hint { animation: gd-pulse 1s ease-in-out infinite; z-index: 1; }
+.gd-cell.glow-miss { animation: gd-shake .35s ease-in-out; }
+.gd-cell.glow-win { animation: gd-shine 1s ease-in-out infinite; z-index: 1; }
+
+/* Status pill under the board */
+.gd-msg { margin: 0; width: 100%; max-width: 680px; box-sizing: border-box; min-height: 2.4em; display: grid; place-items: center; padding: 8px 16px; border: 1.5px solid color-mix(in srgb, var(--g-ink) 14%, transparent); border-radius: 999px; text-align: center; font-size: .85rem; font-weight: 600; color: var(--g-ink); }
+.gd-msg.bad { color: var(--g-bad); border-color: color-mix(in srgb, var(--g-bad) 45%, transparent); }
+.gd-msg.good { font-weight: 800; border-color: var(--g-warn); background: color-mix(in srgb, var(--g-warn) 14%, transparent); }
+
+.gd-legend { flex: none; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; max-width: 680px; font-size: .75rem; }
+.gd-legend li { display: flex; align-items: center; gap: 5px; opacity: .7; }
+.gd-legend li.wanted { opacity: 1; font-weight: 800; }
+.gd-dot { width: 12px; height: 12px; border-radius: 4px; background: var(--c); }
+
+@keyframes gd-pop { 0% { transform: scale(.5) } 70% { transform: scale(1.12) } }
+@keyframes gd-pulse { 50% { box-shadow: 0 0 0 3px var(--g-accent); filter: brightness(1.15) } }
+@keyframes gd-shake { 25% { transform: translateX(-3px) } 75% { transform: translateX(3px) } }
+@keyframes gd-shine { 50% { box-shadow: 0 0 0 4px #ffe066, 0 0 18px #ffe066; filter: brightness(1.15) } }
+:root[data-reduced-motion='1'] .gd-cell { animation: none !important; transition: none; }
+:root[data-reduced-motion='1'] .gd-cell.glow-hint,
+:root[data-reduced-motion='1'] .gd-cell.glow-win { box-shadow: 0 0 0 3px var(--g-accent); }
