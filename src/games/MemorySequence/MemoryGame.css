@@ -1,0 +1,61 @@
+/* Memory Sequence: a grid of glowing pads on a dark console. Text uses the shared --g-* tokens;
+   pad colours are fixed artwork, each paired with a symbol so colour is never the only cue. */
+.ms-root {
+  width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px;
+}
+.ms-status { margin: 0; flex: none; color: var(--g-ink); font-weight: 700; font-size: .95rem; min-height: 1.3em; text-align: center; }
+.ms-status.input { color: var(--g-accent); }
+
+.ms-steps { flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 360px; min-height: 10px; }
+.ms-steps span { width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--g-ink) 22%, transparent); transition: background .15s; }
+.ms-steps span.on { background: var(--g-accent); }
+
+.ms-pads {
+  flex: none; display: grid; gap: 4%;
+  grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr);
+  width: max(200px, min(100cqw - 24px, (100cqh - 90px) * var(--cols) / var(--rows), 440px));
+  aspect-ratio: var(--cols) / var(--rows);
+  padding: 4%; box-sizing: border-box; border-radius: 28px;
+  background: radial-gradient(circle at 50% 35%, #2a2f45, #141724);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35), inset 0 0 0 3px rgba(255, 255, 255, .06);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+}
+
+.ms-pad {
+  --dim: color-mix(in srgb, var(--c) 45%, #141724);
+  position: relative; display: grid; place-items: center; min-width: 0; min-height: 0;
+  border: 0; border-radius: 22%; cursor: pointer; font-family: inherit;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--dim) 80%, #fff), var(--dim) 70%);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .3), 0 3px 0 rgba(0, 0, 0, .35);
+  transition: background .08s, box-shadow .08s, transform .08s, filter .08s;
+}
+.ms-pads:not(.ready) .ms-pad { cursor: default; }
+.ms-pad.lit {
+  background: radial-gradient(circle at 40% 35%, #fff, var(--c) 55%);
+  box-shadow: 0 0 28px 6px color-mix(in srgb, var(--c) 70%, transparent), inset 0 -3px 0 rgba(0, 0, 0, .2);
+  transform: scale(1.04);
+}
+.ms-pad.hint { outline: 4px dashed #fff; outline-offset: -10px; animation: ms-blink .4s ease-in-out 3; }
+.ms-pad.wrong { animation: ms-shake .4s; filter: grayscale(.8) brightness(.7); }
+
+.ms-symbol { font-size: calc(min(100cqw, 100cqh) / 11); line-height: 1; color: rgba(255, 255, 255, .55); text-shadow: 0 1px 2px rgba(0, 0, 0, .35); }
+.ms-pads.n9 .ms-symbol { font-size: calc(min(100cqw, 100cqh) / 14); }
+.ms-pad.lit .ms-symbol { color: rgba(255, 255, 255, .95); }
+.ms-key { position: absolute; right: 12%; bottom: 10%; font-size: .7rem; font-weight: 700; color: rgba(255, 255, 255, .45); }
+
+.ms-pad[data-pad='coral']  { --c: #ff5a4e; }
+.ms-pad[data-pad='sky']    { --c: #3aa8ff; }
+.ms-pad[data-pad='lime']   { --c: #52d64a; }
+.ms-pad[data-pad='amber']  { --c: #ffc21a; }
+.ms-pad[data-pad='violet'] { --c: #9b6bff; }
+.ms-pad[data-pad='teal']   { --c: #1fd1c1; }
+.ms-pad[data-pad='pink']   { --c: #ff6fb5; }
+.ms-pad[data-pad='gold']   { --c: #ff9a2e; }
+.ms-pad[data-pad='slate']  { --c: #b8c4d6; }
+
+@keyframes ms-blink { 50% { outline-color: transparent; } }
+@keyframes ms-shake { 25% { translate: -5px 0; } 75% { translate: 5px 0; } }
+:root[data-reduced-motion='1'] .ms-pad { transition: none; }
+:root[data-reduced-motion='1'] .ms-pad.lit { transform: none; }
+:root[data-reduced-motion='1'] .ms-pad.hint, :root[data-reduced-motion='1'] .ms-pad.wrong { animation: none; }

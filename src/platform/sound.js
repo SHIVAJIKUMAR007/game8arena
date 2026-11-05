@@ -33,6 +33,7 @@ const SOUNDS = {
   hint: (c, v) => { tone(c, v, 660, 0.12); tone(c, v, 880, 0.14, { delay: 0.1 }) },
   undo: (c, v) => tone(c, v, 600, 0.15, { type: 'triangle', slideTo: 300 }),
   combo: (c, v, n = 1) => tone(c, v, 440 * Math.pow(1.06, Math.min(n, 14)), 0.09, { type: 'triangle', gain: 0.18, delay: 0.12 }),
+  note: (c, v, freq = 440) => { tone(c, v, freq, 0.32, { type: 'triangle', gain: 0.32 }); tone(c, v, freq * 2, 0.18, { gain: 0.05 }) },
   win: (c, v) => [523, 659, 784, 1047].forEach((f, i) => tone(c, v, f, 0.2, { delay: i * 0.11 })),
   lose: (c, v) => [392, 330, 262].forEach((f, i) => tone(c, v, f, 0.28, { type: 'triangle', delay: i * 0.16 })),
 }
