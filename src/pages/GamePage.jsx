@@ -34,7 +34,7 @@ export default function GamePage() {
             <div className="coming">
               <div className="big">{game.emoji}</div>
               <h2>{game.title}</h2>
-              <p>Game canvas goes here — coming soon.</p>
+              <p>Coming soon!</p>
             </div>
           )}
         </div>
@@ -42,8 +42,7 @@ export default function GamePage() {
           <h2>{game.title}</h2>
           <span className="tag">{game.category}</span>
           <p>{game.description}</p>
-          <h4>Controls</h4>
-          <p>{game.controls ?? 'Arrow keys / WASD to move, Space to action.'}</p>
+          {game.controls && <><h4>Controls</h4><p>{game.controls}</p></>}
           <h4>Your progress</h4>
           <p>Best level <b>{progress.best}</b> · ★ <b>{totalStars(progress)}</b></p>
           <h4>High score</h4>

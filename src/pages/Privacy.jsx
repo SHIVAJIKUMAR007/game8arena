@@ -24,7 +24,7 @@ export default function Privacy() {
         <input type="checkbox" checked={consent.analytics === true} onChange={e => setAnalyticsConsent(e.target.checked)} />
       </label>
       <h3>Advertising</h3>
-      <p>No ads are shown today. If rewarded ads are added later, this page will explain what the ad provider collects.</p>
+      <p>ArcadeHub doesn’t show ads.</p>
     </article>
   )
 }
