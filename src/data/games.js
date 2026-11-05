@@ -4,8 +4,9 @@
 // For level-based games, build the game on top of src/platform/LevelGameShell.jsx
 // (menu, lives, hints, undo, stars, daily, achievements, saving…) — you only write the Board.
 // Register a new game by importing it here.
-import arrow from '../games/arrow'
-import merge from '../games/merge'
-import god from '../games/god'
+import arrow from "../games/arrow";
+import merge from "../games/merge";
+import findGod from "../games/findGod";
+import boxEscape from "../games/boxEscape";
 
-export const games = [arrow, merge, god]
+export const games = [arrow, merge, findGod, boxEscape];

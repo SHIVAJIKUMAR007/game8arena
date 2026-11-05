@@ -1,0 +1,77 @@
+/* Box Escape board: brick walls, cream floor tiles, wooden crates. Uses the shared --g-* theme tokens
+   for text and accents; the warehouse itself keeps warm fixed colours, toned down in dark themes. */
+.bx-root {
+  --bx-brick: #c2773c; --bx-mortar: #8a4f22; --bx-floor: #f6e7bf; --bx-floor-line: #e2cc97;
+  --bx-wood: #d9a24a; --bx-wood-dark: #8f5a1c; --bx-home: #4caf50; --bx-target: #e0412f;
+  width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px;
+}
+:root[data-game-theme='dark'] .bx-root { --bx-floor: #d8c697; --bx-floor-line: #b89f68; --bx-brick: #9c5a2a; --bx-mortar: #5e3414; }
+:root[data-game-theme='colorblind'] .bx-root { --bx-home: var(--g-accent); --bx-target: var(--g-warn); }
+.bx-loading { color: var(--g-muted); }
+.bx-goal { color: var(--g-ink); font-size: .85rem; margin: 0; flex: none; }
+.bx-msg { color: var(--g-bad); font-weight: 600; font-size: .8rem; margin: 0; min-height: 1.2em; text-align: center; flex: none; max-width: 440px; }
+
+.bx-board {
+  position: relative; flex: none; display: grid;
+  grid-template-columns: repeat(var(--w), 1fr); grid-template-rows: repeat(var(--h), 1fr);
+  /* Fit the space while keeping square cells; cap the cell size on big screens. */
+  width: min(100cqw - 24px, (100cqh - 120px) * var(--w) / var(--h), var(--w) * 60px);
+  aspect-ratio: var(--w) / var(--h);
+  touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer;
+}
+.bx-row { display: contents; }
+
+.bx-wall {
+  background-color: var(--bx-brick);
+  background-image:
+    linear-gradient(var(--bx-mortar) 2px, transparent 2px),
+    linear-gradient(90deg, var(--bx-mortar) 2px, transparent 2px);
+  background-size: 50% 33.4%, 50% 66.8%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15);
+}
+.bx-void { background: transparent; }
+.bx-floor { position: relative; background: var(--bx-floor); box-shadow: inset 0 0 0 1px var(--bx-floor-line); }
+.bx-floor.target::after {
+  content: ''; position: absolute; inset: 22%; border-radius: 50%;
+  border: 3px dashed var(--bx-target); background: radial-gradient(circle, var(--bx-target) 0 22%, transparent 24%);
+}
+.bx-floor.stand { background: color-mix(in srgb, var(--g-accent) 30%, var(--bx-floor)); }
+.bx-floor.bad { animation: bx-bad .7s ease-out; }
+
+.bx-crate, .bx-player { position: absolute; transition: left .1s ease-out, top .1s ease-out; pointer-events: none; }
+.bx-crate span {
+  position: absolute; inset: 6%; border-radius: 10%;
+  background:
+    linear-gradient(45deg, transparent 45%, var(--bx-wood-dark) 45% 55%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, var(--bx-wood-dark) 45% 55%, transparent 55%),
+    var(--bx-wood);
+  border: 3px solid var(--bx-wood-dark);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--bx-wood) 60%, #fff), 0 2px 3px rgba(0, 0, 0, .3);
+}
+.bx-crate.home span { --dk: color-mix(in srgb, var(--bx-home) 60%, #000); border-color: var(--dk); background-color: var(--bx-home);
+  background-image:
+    linear-gradient(45deg, transparent 45%, var(--dk) 45% 55%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, var(--dk) 45% 55%, transparent 55%); }
+.bx-crate.hint span { outline: 4px solid var(--g-accent); outline-offset: 1px; animation: bx-blink 1s ease-in-out infinite; }
+.bx-crate.hint::after { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; color: var(--g-accent);
+  font-size: 200%; text-shadow: 0 0 3px #fff; }
+.bx-crate.hint.up::after { content: '↑'; } .bx-crate.hint.down::after { content: '↓'; }
+.bx-crate.hint.left::after { content: '←'; } .bx-crate.hint.right::after { content: '→'; }
+
+/* The player: a round worker whose cap turns to face the last move. */
+.bx-player { z-index: 2; }
+.bx-player span { position: absolute; inset: 16%; border-radius: 50%;
+  background: var(--g-accent); border: 3px solid color-mix(in srgb, var(--g-accent) 60%, #000); box-shadow: 0 2px 3px rgba(0, 0, 0, .35); }
+.bx-player span::after { content: ''; position: absolute; left: 50%; top: -14%; width: 44%; height: 34%; translate: -50% 0;
+  border-radius: 50% 50% 20% 20%; background: var(--g-warn); border: 2px solid rgba(0, 0, 0, .35); }
+.bx-player.right span { rotate: 90deg; } .bx-player.down span { rotate: 180deg; } .bx-player.left span { rotate: -90deg; }
+
+.bx-pad { flex: none; display: flex; gap: 8px; }
+.bx-pad button { width: 52px; height: 36px; font-size: 1.15rem; border-radius: 10px; border: 1.5px solid var(--g-ink); background: transparent; color: var(--g-ink); cursor: pointer; font-family: inherit; }
+.bx-msg.info { color: var(--g-muted); }
+
+@keyframes bx-bad { 0%, 60% { background: color-mix(in srgb, var(--g-bad) 70%, var(--bx-floor)); } }
+@keyframes bx-blink { 50% { outline-color: transparent; } }
+:root[data-reduced-motion='1'] .bx-crate, :root[data-reduced-motion='1'] .bx-player { transition: none; }
+:root[data-reduced-motion='1'] .bx-crate.hint span, :root[data-reduced-motion='1'] .bx-floor.bad { animation: none; }
