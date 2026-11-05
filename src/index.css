@@ -66,6 +66,9 @@ main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 24px 16
 .daily-row:hover .daily-game b { text-decoration: underline; }
 .daily-status { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .85rem; color: var(--muted); }
 .daily-streak { color: var(--text); }
+.daily-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .85rem; color: var(--muted); margin: 0 0 4px; }
+.daily-complete { color: var(--cyan); font-weight: 700; }
+.daily-row.done .daily-status { color: var(--cyan); }
 @media (max-width: 900px) {
   .home-layout { grid-template-columns: 1fr; }
   .home-side { position: static; order: -1; }

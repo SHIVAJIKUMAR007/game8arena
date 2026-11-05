@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { games } from '../data/games'
 import ErrorBoundary from '../platform/ui/ErrorBoundary'
 import { totalStars, useProgress } from '../platform/progress'
+import { pickDaily } from '../platform/daily'
 
 export default function GamePage() {
   const { id } = useParams()
@@ -26,7 +27,7 @@ export default function GamePage() {
           {Game ? (
             <ErrorBoundary key={game.id}>
               <Suspense fallback={<div className="loading">Loading {game.title}…</div>}>
-                <Game initialMode={params.get('mode')} />
+                <Game initialMode={params.get('mode')} dailyPicks={pickDaily(games.filter(g => g.daily).map(g => g.id))} />
               </Suspense>
             </ErrorBoundary>
           ) : (

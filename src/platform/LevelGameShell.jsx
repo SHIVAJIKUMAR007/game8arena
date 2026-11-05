@@ -36,11 +36,16 @@ import './platform.css'
 
 const MAX_BANKED_LIVES = 2
 
-export default function LevelGameShell({ gameId, title, config, Board, initialMode }) {
+// `dailyPicks`: today's daily games (ids). The daily challenge is only offered when this game is one of them;
+// without the prop (e.g. in tests) the game always offers it.
+export default function LevelGameShell({ gameId, title, config, Board, initialMode, dailyPicks }) {
   const {
     maxLives = 3, hints: hintCap = 3, undos: undoCap = 3,
-    tutorial = [], achievements = [], daily = false, dailyLevel = 15, endless,
+    tutorial = [], achievements = [], daily: dailyEnabled = false, dailyLevel = 15, endless,
   } = config
+  const daily = dailyEnabled && (!dailyPicks || dailyPicks.includes(gameId))
+  const picksRef = useRef(dailyPicks || [gameId])
+  useEffect(() => { picksRef.current = dailyPicks || [gameId] }, [dailyPicks, gameId])
 
   const progress = useProgress(gameId)
   const [screen, setScreen] = useState('menu') // menu | levels | play
@@ -76,7 +81,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
       const before = getProgress(gameId)
       const newBest = total > before.highScore
 
-      if (r.mode === 'daily') completeDaily(gameId, { stars, score: total })
+      if (r.mode === 'daily') completeDaily(gameId, { stars, score: total }, picksRef.current)
       updateProgress(gameId, p => ({
         ...p,
         stars: r.mode === 'daily' ? p.stars : { ...p.stars, [r.level]: Math.max(p.stars[r.level] || 0, stars) },
@@ -102,13 +107,18 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
 
     const finishRun = () => {
       const before = getProgress(gameId)
+      // An endless daily counts as done once the run is played out, whatever the score.
+      if (r.mode === 'daily') {
+        completeDaily(gameId, { stars: 0, score: r.score }, picksRef.current)
+        checkAchievements(gameId, achievements, { level: r.level, mode: r.mode })
+      }
       updateProgress(gameId, p => ({
         ...p,
-        level: Math.max(p.level, r.level),
+        level: r.mode === 'daily' ? p.level : Math.max(p.level, r.level),
         highScore: Math.max(p.highScore, r.score),
         stats: { ...p.stats, bestCombo: Math.max(p.stats.bestCombo, r.bestCombo) },
       }))
-      setOutcome({ total: r.score, newBest: r.score > before.highScore, endless: true })
+      setOutcome({ total: r.score, newBest: r.score > before.highScore, endless: true, streak: getProgress(gameId).daily.streak })
       setResult('ended')
       playSound('lose')
       vibrate(200)
@@ -353,6 +363,7 @@ export default function LevelGameShell({ gameId, title, config, Board, initialMo
       {result === 'ended' && outcome && (
         <div className="lg-overlay">
           <h2>Run over 🏁</h2>
+          {mode === 'daily' && <p>📅 Daily challenge complete{outcome.streak > 0 && ` · 🔥 ${outcome.streak}-day streak`}</p>}
           <p>Score <b>{outcome.total}</b> {outcome.newBest && <span className="lg-badge">New high score!</span>}</p>
           <p>High score <b>{progress.highScore}</b></p>
           <div className="lg-overlay-buttons">

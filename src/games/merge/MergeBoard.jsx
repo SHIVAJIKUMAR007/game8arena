@@ -13,8 +13,8 @@ const SWIPE_PX = 24
 // Font scales with tile size and digit count, so 7-digit numbers still fit.
 const tileStyle = v => ({ '--h': (Math.log(v) / Math.log(3) * 47) % 360, '--f': Math.min(0.5, 0.86 / (String(v).length * 0.62)) })
 
-export default function MergeBoard({ level, seed, session }) {
-  const target = targetFor(level)
+export default function MergeBoard({ level, mode, seed, session }) {
+  const target = mode === 'daily' ? null : targetFor(level) // the daily is an endless run
   const size = sizeFor(level)
   const rng = useRef(null)
   if (!rng.current) rng.current = createRng(seed)

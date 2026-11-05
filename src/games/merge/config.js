@@ -6,7 +6,8 @@ export const config = {
   undos: 5,
   daily: true,
   dailyLevel: 4,
-  endless: level => isEndless(level), // level 6+: no target, play for a high score
+  // Level 6+ (and the daily challenge): no target, play for a high score. A daily run counts once it ends.
+  endless: (level, mode) => mode === 'daily' || isEndless(level),
 
   tutorial: [
     { icon: '👆', title: 'Slide the tiles', body: 'Swipe, use the arrow keys / WASD, or tap the pad. Every tile slides as far as it can.' },
