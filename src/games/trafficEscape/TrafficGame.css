@@ -1,0 +1,73 @@
+/* Traffic Escape: a parking lot seen from above. Text and accents use the shared --g-* theme tokens;
+   car paint is a fixed palette (cars are artwork), with the red car always the brightest thing on the board. */
+.tr-root {
+  --tr-lot: #e9edf2; --tr-line: #d3dae3; --tr-wall: #8a96a8; --tr-glass: #2b3546;
+  width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px;
+}
+:root[data-game-theme='dark'] .tr-root { --tr-lot: #262c45; --tr-line: #343b5c; --tr-wall: #6b75a8; --tr-glass: #10131f; }
+.tr-goal { color: var(--g-ink); font-size: .85rem; margin: 0; flex: none; }
+.tr-warn { color: var(--g-bad); font-weight: 700; }
+
+/* Room on the right for the EXIT sign. */
+.tr-frame { flex: none; padding-right: 46px; }
+.tr-lot {
+  position: relative; box-sizing: content-box;
+  width: max(200px, min(100cqw - 80px, 100cqh - 70px, 420px)); aspect-ratio: 1;
+  background-color: var(--tr-lot);
+  background-image:
+    linear-gradient(90deg, var(--tr-line) 1px, transparent 1px),
+    linear-gradient(var(--tr-line) 1px, transparent 1px);
+  background-size: calc(100% / var(--n)) calc(100% / var(--n));
+  border: 6px solid var(--tr-wall); border-radius: 10px;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.tr-exit { position: absolute; right: -6px; width: 6px; background: var(--tr-lot); }
+.tr-exit span {
+  position: absolute; left: 12px; top: 50%; translate: 0 -50%;
+  font-weight: 800; font-size: .8rem; letter-spacing: .04em; color: var(--g-bad);
+  padding: 4px 6px; border-radius: 6px; background: var(--g-panel); border: 1.5px solid var(--g-bad);
+}
+
+/* ----- cars ----- */
+.tr-car { position: absolute; cursor: grab; transition: left .14s ease-out, top .14s ease-out; touch-action: none; outline: none; }
+.tr-car.dragging { transition: none; cursor: grabbing; z-index: 3; }
+.tr-car.out { left: 115% !important; transition: left .4s ease-in; }
+.tr-car span {
+  position: absolute; inset: 7%; border-radius: 12px / 14px;
+  background: var(--c); border: 2px solid color-mix(in srgb, var(--c) 55%, #000);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .25), inset 0 0 0 3px color-mix(in srgb, var(--c) 75%, #fff);
+}
+/* Windscreen (front) and rear window. Horizontal cars face right, vertical cars face down. */
+.tr-car span::before, .tr-car span::after { content: ''; position: absolute; background: var(--tr-glass); border-radius: 4px; opacity: .85; }
+.tr-car.h span::before { left: 62%; width: 12%; top: 16%; bottom: 16%; }
+.tr-car.h span::after  { left: 16%; width: 9%;  top: 20%; bottom: 20%; }
+.tr-car.v span::before { top: 62%; height: 12%; left: 16%; right: 16%; }
+.tr-car.v span::after  { top: 16%; height: 9%;  left: 20%; right: 20%; }
+/* Trucks: a cab with a windscreen at the front and a ribbed cargo bed behind it. */
+.tr-car.truck.h span { background-image: repeating-linear-gradient(90deg, transparent 0 18%, rgba(0,0,0,.14) 18% 20%); background-size: 66% 100%; background-repeat: no-repeat; }
+.tr-car.truck.v span { background-image: repeating-linear-gradient(180deg, transparent 0 18%, rgba(0,0,0,.14) 18% 20%); background-size: 100% 66%; background-repeat: no-repeat; }
+.tr-car.truck.h span::before { left: 80%; width: 8%; }
+.tr-car.truck.h span::after  { left: 68%; width: 2%; top: 8%; bottom: 8%; background: rgba(0,0,0,.35); }
+.tr-car.truck.v span::before { top: 80%; height: 8%; }
+.tr-car.truck.v span::after  { top: 68%; height: 2%; left: 8%; right: 8%; background: rgba(0,0,0,.35); }
+
+.tr-car[data-color='red']    { --c: #e53935; }
+.tr-car[data-color='blue']   { --c: #3b82d6; }
+.tr-car[data-color='green']  { --c: #34a853; }
+.tr-car[data-color='teal']   { --c: #14a39a; }
+.tr-car[data-color='yellow'] { --c: #f2b51d; }
+.tr-car[data-color='purple'] { --c: #8e5bd8; }
+.tr-car[data-color='orange'] { --c: #f07c24; }
+.tr-car[data-color='pink']   { --c: #e46aa8; }
+.tr-car[data-color='slate']  { --c: #7b8794; }
+.tr-car.red span { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 35%, transparent), 0 2px 3px rgba(0, 0, 0, .25), inset 0 0 0 3px color-mix(in srgb, var(--c) 75%, #fff); }
+
+.tr-car:focus-visible span { outline: 3px solid var(--g-accent); outline-offset: 2px; }
+.tr-car.hint span { outline: 3px solid var(--g-accent); outline-offset: 2px; animation: tr-blink 1s ease-in-out infinite; }
+.tr-ghost { position: absolute; pointer-events: none; }
+.tr-ghost::after { content: ''; position: absolute; inset: 7%; border-radius: 12px; border: 3px dashed var(--g-accent); background: color-mix(in srgb, var(--g-accent) 15%, transparent); }
+
+@keyframes tr-blink { 50% { outline-color: transparent; } }
+:root[data-reduced-motion='1'] .tr-car { transition: none; }
+:root[data-reduced-motion='1'] .tr-car.hint span { animation: none; }

@@ -8,5 +8,6 @@ import arrow from "../games/arrow";
 import merge from "../games/merge";
 import findGod from "../games/findGod";
 import boxEscape from "../games/boxEscape";
+import trafficEscape from "../games/trafficEscape";
 
-export const games = [arrow, merge, findGod, boxEscape];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape];
