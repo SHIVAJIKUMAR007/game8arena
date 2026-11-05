@@ -10,5 +10,6 @@ import findGod from "../games/findGod";
 import boxEscape from "../games/boxEscape";
 import trafficEscape from "../games/trafficEscape";
 import memorySequence from "../games/MemorySequence";
+import colorConnect from "../games/ColorConnect";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect];

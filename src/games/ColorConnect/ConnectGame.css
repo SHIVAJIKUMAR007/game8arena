@@ -1,0 +1,40 @@
+/* Color Connect: soft tiles on the theme panel; thick rounded pipes; numbered dots so colour is never
+   the only cue. Pipe colours are fixed artwork; everything else uses the shared --g-* tokens. */
+.cc-root {
+  --c0: #e5484d; --c1: #3e7bfa; --c2: #2fb35a; --c3: #f2c300; --c4: #f5821f;
+  --c5: #17b8c9; --c6: #c74ad6; --c7: #9a6a3c; --c8: #8ccf3c;
+  width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 4px 12px;
+}
+.cc-goal { margin: 0; flex: none; color: var(--g-ink); font-size: .85rem; text-align: center; }
+.cc-warn { color: var(--g-bad); font-weight: 700; }
+.cc-msg { margin: 0; flex: none; min-height: 1.2em; color: var(--g-muted); font-size: .82rem; text-align: center; max-width: 440px; }
+
+.cc-grid {
+  flex: none; width: max(200px, min(100cqw - 24px, 100cqh - 70px, 460px)); aspect-ratio: 1;
+  background: var(--g-panel); border-radius: 14px; padding: 6px; box-sizing: border-box;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--g-ink) 25%, transparent);
+  touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; outline: none;
+}
+.cc-grid:focus-visible { box-shadow: 0 0 0 3px var(--g-accent); }
+
+.cc-cell { fill: color-mix(in srgb, var(--g-ink) 8%, transparent); transition: fill .12s; }
+.cc-cell.own { fill: color-mix(in srgb, var(--cc) 22%, transparent); }
+
+.cc-pipe { fill: none; stroke: var(--cc); stroke-width: .34; stroke-linecap: round; stroke-linejoin: round; }
+.cc-pipe.flash { animation: cc-flash .5s ease-out; }
+
+.cc-dot circle { fill: var(--cc); stroke: color-mix(in srgb, var(--cc) 60%, #000); stroke-width: .04; }
+.cc-dot.joined circle { stroke: #fff; stroke-width: .06; }
+.cc-dot text { font-size: .32px; font-weight: 800; fill: #fff; text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: rgba(0, 0, 0, .35); stroke-width: .04px; }
+
+.cc-cursor { fill: none; stroke: var(--g-accent); stroke-width: .06; opacity: 0; }
+.cc-grid:focus-visible .cc-cursor { opacity: 1; }
+
+.c0 { --cc: var(--c0); } .c1 { --cc: var(--c1); } .c2 { --cc: var(--c2); }
+.c3 { --cc: var(--c3); } .c4 { --cc: var(--c4); } .c5 { --cc: var(--c5); }
+.c6 { --cc: var(--c6); } .c7 { --cc: var(--c7); } .c8 { --cc: var(--c8); }
+
+@keyframes cc-flash { 50% { stroke-width: .5; } }
+:root[data-reduced-motion='1'] .cc-pipe.flash { animation: none; }
+:root[data-reduced-motion='1'] .cc-cell { transition: none; }
