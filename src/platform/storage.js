@@ -61,4 +61,5 @@ export function createPersistentStore(key, initial, merge = (d, s) => ({ ...d, .
   return store
 }
 
-export const useStore = store => useSyncExternalStore(store.subscribe, store.get)
+// Third argument = server snapshot, needed when pages are prerendered to static HTML at build time.
+export const useStore = store => useSyncExternalStore(store.subscribe, store.get, store.get)

@@ -1,5 +1,5 @@
 // Network-first service worker: always tries fresh files, falls back to the cache when offline.
-const CACHE = 'arcadehub-v1'
+const CACHE = 'game8arena-v1'
 
 self.addEventListener('install', () => self.skipWaiting())
 
