@@ -11,5 +11,7 @@ import boxEscape from "../games/boxEscape";
 import trafficEscape from "../games/trafficEscape";
 import memorySequence from "../games/MemorySequence";
 import colorConnect from "../games/ColorConnect";
+import pipeConnect from "../games/pipeConnect";
+import codeBreaker from "../games/codeBreaker";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker];

@@ -1,0 +1,72 @@
+/* Pipe Connect: tiles on the theme panel; copper pipes that turn blue when water reaches them.
+   Pipe, brass and water colours are fixed artwork; everything else uses the shared --g-* tokens. */
+.pc-root {
+  --copper-o: #7a3d16; --copper-i: #d9884a; --brass: #c9a227; --brass-dark: #7d6312;
+  --water-o: #0f5f8c; --water-i: #4cc3f5;
+  width: 100%; height: 100%; min-height: 0; overflow: hidden; container-type: size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 4px 12px;
+}
+.pc-goal { margin: 0; flex: none; color: var(--g-ink); font-size: .85rem; text-align: center; }
+.pc-msg { margin: 0; flex: none; min-height: 1.2em; color: var(--g-muted); font-size: .82rem; text-align: center; max-width: 440px; }
+
+/* Clock: a water tank that drains as time runs out. */
+.pc-timer {
+  flex: none; display: flex; align-items: center; gap: 8px;
+  width: max(200px, min(100cqw - 24px, 100cqh - 110px, 460px));
+}
+.pc-drop { font-size: .9rem; }
+.pc-tank {
+  flex: 1; height: 12px; border-radius: 6px; overflow: hidden;
+  background: color-mix(in srgb, var(--g-ink) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-ink) 25%, transparent);
+}
+.pc-fill { height: 100%; background: linear-gradient(180deg, var(--water-i), var(--water-o)); transition: width .2s linear; }
+.pc-fill.low { background: var(--g-bad); }
+.pc-time { min-width: 3.2em; text-align: right; color: var(--g-ink); font-weight: 700; font-variant-numeric: tabular-nums; font-size: .9rem; }
+.pc-time.low { color: var(--g-bad); }
+
+.pc-grid {
+  flex: none; width: max(200px, min(100cqw - 24px, 100cqh - 110px, 460px)); aspect-ratio: 1;
+  background: var(--g-panel); border-radius: 14px; padding: 6px; box-sizing: border-box;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--g-ink) 25%, transparent);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer; outline: none;
+}
+.pc-grid:focus-visible { box-shadow: 0 0 0 3px var(--g-accent); }
+
+.pc-tile { fill: color-mix(in srgb, var(--g-ink) 9%, transparent); }
+.pc-cell.bolted .pc-tile { fill: color-mix(in srgb, var(--g-ink) 26%, transparent); }
+.pc-cell.source .pc-tile, .pc-cell.drain .pc-tile { fill: color-mix(in srgb, var(--brass) 22%, transparent); }
+.pc-cell.pinned .pc-tile { stroke: var(--g-accent); stroke-width: .04; }
+.pc-bolt { fill: color-mix(in srgb, var(--g-ink) 45%, transparent); }
+
+.pc-rot { transform-box: fill-box; transform-origin: center; transition: transform .16s ease-out; }
+
+.pc-pipe-o, .pc-pipe-i { fill: none; stroke-linecap: butt; transition: stroke .25s; }
+.pc-pipe-o { stroke: var(--copper-o); stroke-width: .32; }
+.pc-pipe-i { stroke: var(--copper-i); stroke-width: .2; }
+.pc-joint-o { fill: var(--copper-o); transition: fill .25s; }
+.pc-joint-i { fill: var(--copper-i); transition: fill .25s; }
+.pc-coupling { fill: var(--copper-o); transition: fill .25s; }
+.pc-cell.wet .pc-pipe-o { stroke: var(--water-o); }
+.pc-cell.wet .pc-pipe-i { stroke: var(--water-i); }
+.pc-cell.wet .pc-joint-o, .pc-cell.wet .pc-coupling { fill: var(--water-o); }
+.pc-cell.wet .pc-joint-i { fill: var(--water-i); }
+
+.pc-faucet circle { fill: var(--brass); stroke: var(--brass-dark); stroke-width: .04; }
+.pc-faucet path { stroke: var(--brass-dark); stroke-width: .07; stroke-linecap: round; }
+.pc-faucet .pc-faucet-cap { fill: var(--water-i); }
+
+.pc-drain circle { fill: var(--brass); stroke: var(--brass-dark); stroke-width: .04; }
+.pc-drain .pc-hole { fill: #2b2b2b; transition: fill .25s; }
+.pc-drain path { stroke: var(--brass); stroke-width: .045; stroke-linecap: round; }
+.pc-cell.drain.wet .pc-hole { fill: var(--water-i); }
+
+.pc-cell.flash .pc-rot { animation: pc-flash .6s ease-out 2; }
+@keyframes pc-flash { 50% { opacity: .35; } }
+
+.pc-cursor { fill: none; stroke: var(--g-accent); stroke-width: .06; opacity: 0; pointer-events: none; }
+.pc-grid:focus-visible .pc-cursor { opacity: 1; }
+
+:root[data-reduced-motion='1'] .pc-rot,
+:root[data-reduced-motion='1'] .pc-fill { transition: none; }
+:root[data-reduced-motion='1'] .pc-cell.flash .pc-rot { animation: none; }
