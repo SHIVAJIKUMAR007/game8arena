@@ -17,5 +17,6 @@ createRoot(document.getElementById('root')).render(
 
 // Offline support / installable app (production only, so dev hot-reload isn't cached).
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}))
+  // updateViaCache 'none': always check for a new sw.js, whatever cache headers the host sends.
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(() => {}))
 }

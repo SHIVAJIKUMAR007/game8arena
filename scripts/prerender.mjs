@@ -4,7 +4,8 @@
 //   /games/arrow    -> dist/games/arrow.html   (served at /games/arrow by Netlify, Vercel, Cloudflare Pages, GitHub Pages…)
 //   unknown routes  -> dist/404.html
 // plus dist/sitemap.xml and dist/robots.txt. The browser then boots the normal React app on top.
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { robotsTxt, sitemapXml } from './seo-files.mjs'
@@ -39,4 +40,17 @@ await writeFile(join(dist, '404.html'), page('/404-not-found'))
 await writeFile(join(dist, 'sitemap.xml'), sitemapXml(all, SITE_URL))
 await writeFile(join(dist, 'robots.txt'), robotsTxt(SITE_URL))
 
-console.log(`✓ prerendered ${all.length} routes + 404.html, sitemap.xml (${all.filter(r => r.sitemap).length} URLs), robots.txt`)
+// Stamp the service worker with a build ID (hash of every output file), so each deploy rolls the browser caches
+// over by itself, on any host and without server cache headers.
+const hash = createHash('sha256')
+for (const f of (await readdir(dist, { recursive: true })).sort()) {
+  const p = join(dist, f)
+  if (f !== 'sw.js' && (await stat(p)).isFile()) hash.update(f).update(await readFile(p))
+}
+const buildId = hash.digest('hex').slice(0, 12)
+const swPath = join(dist, 'sw.js')
+const sw = await readFile(swPath, 'utf8')
+if (!sw.includes('__BUILD_ID__')) throw new Error('sw.js is missing the __BUILD_ID__ placeholder')
+await writeFile(swPath, sw.replace('__BUILD_ID__', buildId))
+
+console.log(`✓ prerendered ${all.length} routes + 404.html, sitemap.xml (${all.filter(r => r.sitemap).length} URLs), robots.txt, sw.js build ${buildId}`)
