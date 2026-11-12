@@ -7,8 +7,8 @@ import GameLanding from "./pages/GameLanding";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
-import ToastHost from "./platform/ui/ToastHost";
 import ConsentBanner from "./platform/ui/ConsentBanner";
+import ToastHost from "./platform/ui/ToastHost";
 
 export default function App() {
   return (
