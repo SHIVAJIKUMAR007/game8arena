@@ -11,6 +11,7 @@ import { config as memory } from '../games/MemorySequence/config'
 import { config as connect } from '../games/ColorConnect/config'
 import { config as pipe } from '../games/pipeConnect/config'
 import { config as code } from '../games/codeBreaker/config'
+import { config as sudoku } from '../games/sudoku/config'
 
 export const gameContent = {
   arrow: {
@@ -235,6 +236,31 @@ export const gameContent = {
       { q: 'What happens if I run out of attempts?', a: 'You lose a life and get three more attempts. Fewer lost lives means more stars.' },
       { q: 'Can colours repeat in the code?', a: 'From level 10 onwards, yes. A colour can appear more than once in the secret code.' },
       { q: 'What does “possible codes” mean?', a: 'It counts how many secret codes still fit every clue you have seen so far. A good guess cuts that number sharply. A guess that an earlier clue already ruled out is marked red.' },
+    ],
+  },
+
+  sudoku: {
+    config: sudoku,
+    metaTitle: 'Sudoku — Free Online Sudoku Puzzle Game with Levels',
+    metaDescription:
+      'Play Sudoku free online: fill the 9×9 grid so every row, column and 3×3 box holds 1 to 9. Every puzzle has one solution, with hints, undo and a daily challenge.',
+    tagline: 'Fill the grid so every row, column and 3×3 box holds 1 to 9 exactly once.',
+    genres: ['Sudoku', 'Number puzzle', 'Logic puzzle'],
+    intro: [
+      'Sudoku is the classic number-placement puzzle. The 9×9 grid is split into nine 3×3 boxes. Fill every empty cell with a digit from 1 to 9 so that each row, each column and each box contains every digit exactly once.',
+      'Every puzzle here is generated to have exactly one solution, so you never have to guess. Early levels give you plenty of starting digits; later levels give you fewer, so you need more logic. A wrong digit costs a life.',
+    ],
+    tips: [
+      'Select a cell and look at its row, column and box: the digits already there are ruled out.',
+      'Tap a placed digit to highlight every matching number on the board and spot where it can still go.',
+      'Look for a digit that fits in only one cell of a row, column or box.',
+      'Use the number pad: a key dims once all nine copies of that digit are on the board.',
+    ],
+    faq: [
+      { q: 'What are the rules of Sudoku?', a: 'Put the digits 1 to 9 in every row, every column and every 3×3 box, each exactly once. The digits already shown cannot be changed.' },
+      { q: 'Does every puzzle have a single solution?', a: 'Yes. Each puzzle is checked so that only one grid fits, which means you can always find the next digit by logic, without guessing.' },
+      { q: 'What happens if I place a wrong digit?', a: 'The digit is rejected and you lose a life. Lose all three and the level restarts. Hints fill in the easiest cell, and undo removes your last digit.' },
+      { q: 'How does the difficulty change?', a: 'Each level starts with fewer given digits than the one before, so the puzzles need more logic as you go.' },
     ],
   },
 }
