@@ -3,6 +3,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { games } from '../data/games'
 import { commonFeatures, gameContent } from '../data/gameContent'
+import { blogPath, postsForGame } from '../data/blogPosts'
 import Seo from '../seo/Seo'
 import { breadcrumbSchema, faqSchema, videoGameSchema } from '../seo/schema'
 import { landingPath, playPath } from '../seo/site'
@@ -17,6 +18,7 @@ export default function GameLanding() {
   const { config } = content
   // The next 4 games after this one (wrapping around), so every game page gets the same number of links.
   const at = games.indexOf(game)
+  const posts = postsForGame(id)
   const related = Array.from({ length: Math.min(4, games.length - 1) }, (_, i) => games[(at + 1 + i) % games.length])
   const crumbs = [
     { name: 'Games', path: '/' },
@@ -108,6 +110,15 @@ export default function GameLanding() {
           ))}
         </div>
       </section>
+
+      {posts.length > 0 && (
+        <section className="landing-section" aria-labelledby="blog-h">
+          <h2 id="blog-h">From the blog</h2>
+          <ul>
+            {posts.map(p => <li key={p.slug}><Link to={blogPath(p.slug)}>{p.title}</Link></li>)}
+          </ul>
+        </section>
+      )}
 
       <div className="landing-cta center">
         <Link to={playPath(id)} className="btn-play">▶ Play {game.title} now</Link>

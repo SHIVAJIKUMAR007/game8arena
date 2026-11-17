@@ -2,7 +2,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { blogPath, blogPostBySlug, blogPosts } from '../data/blogPosts'
 import Seo from '../seo/Seo'
-import { blogPostingSchema, breadcrumbSchema } from '../seo/schema'
+import { blogPostingSchema, breadcrumbSchema, faqSchema } from '../seo/schema'
 import NotFound from './NotFound'
 
 export const formatDate = iso =>
@@ -54,8 +54,10 @@ export default function BlogPost() {
         description={post.metaDescription}
         path={blogPath(post.slug)}
         type="article"
+        article={{ published: post.date, modified: post.updated, section: post.category, tags: post.tags }}
         jsonLd={[
           blogPostingSchema(post),
+          ...(post.faq?.length ? [faqSchema(post.faq)] : []),
           breadcrumbSchema([
             { name: 'Home', path: '/' },
             { name: 'Blog', path: '/blogs' },
@@ -78,6 +80,18 @@ export default function BlogPost() {
       </p>
 
       {post.body.map((b, i) => <Block key={i} block={b} />)}
+
+      {post.faq?.length > 0 && (
+        <section className="blog-faq">
+          <h2>Frequently asked questions</h2>
+          {post.faq.map(({ q, a }) => (
+            <div key={q}>
+              <h3>{q}</h3>
+              <p>{a}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
       {post.sources?.length > 0 && (
         <section className="blog-sources">

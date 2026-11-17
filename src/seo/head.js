@@ -12,8 +12,9 @@ import { DEFAULT_OG_IMAGE, SITE_NAME, absUrl } from './site'
  * @param {boolean} [p.noindex]   keep the page out of search results (links are still followed)
  * @param {string} [p.type]       og:type, default "website"
  * @param {object|object[]} [p.jsonLd] schema.org structured data
+ * @param {{published:string, modified?:string, section?:string, tags?:string[]}} [p.article] article:* Open Graph tags
  */
-export function buildHead({ title, fullTitle, description, path = '/', image = DEFAULT_OG_IMAGE, noindex, type = 'website', jsonLd }) {
+export function buildHead({ title, fullTitle, description, path = '/', image = DEFAULT_OG_IMAGE, noindex, type = 'website', jsonLd, article }) {
   const docTitle = fullTitle ? title : `${title} | ${SITE_NAME}`
   const url = absUrl(path)
   const tags = [
@@ -33,6 +34,12 @@ export function buildHead({ title, fullTitle, description, path = '/', image = D
   if (image) {
     tags.push({ tag: 'meta', attrs: { property: 'og:image', content: absUrl(image) } })
     tags.push({ tag: 'meta', attrs: { name: 'twitter:image', content: absUrl(image) } })
+  }
+  if (article) {
+    tags.push({ tag: 'meta', attrs: { property: 'article:published_time', content: article.published } })
+    tags.push({ tag: 'meta', attrs: { property: 'article:modified_time', content: article.modified || article.published } })
+    if (article.section) tags.push({ tag: 'meta', attrs: { property: 'article:section', content: article.section } })
+    for (const t of article.tags || []) tags.push({ tag: 'meta', attrs: { property: 'article:tag', content: t } })
   }
   const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
   return { title: docTitle, tags, jsonLd: ld }

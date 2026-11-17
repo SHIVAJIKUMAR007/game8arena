@@ -64,7 +64,13 @@ describe('SEO', () => {
 describe('Blog SEO', () => {
   it.each(blogPosts.map(p => [p.slug]))('post "%s" has meta copy that fits Google’s limits', slug => {
     const p = blogPosts.find(x => x.slug === slug)
-    expect(p.metaTitle.length + ' | Game8Arena'.length).toBeLessThanOrEqual(65)
+    expect(buildHead({ title: p.metaTitle, description: p.metaDescription, path: '/' }).title.length).toBeLessThanOrEqual(60)
+    const kw = p.keyword.toLowerCase()
+    expect(p.metaTitle.toLowerCase(), 'keyword in <title>').toContain(kw)
+    expect(p.title.toLowerCase(), 'keyword in H1').toContain(kw)
+    expect(p.body[0].toLowerCase(), 'keyword in first paragraph').toContain(kw)
+    expect(p.metaDescription.toLowerCase(), 'keyword in description').toContain(kw)
+    expect(p.faq?.length, 'add an FAQ').toBeGreaterThanOrEqual(3)
     expect(p.metaDescription.length).toBeGreaterThanOrEqual(70)
     expect(p.metaDescription.length).toBeLessThanOrEqual(160)
     expect(p.slug).toMatch(/^[a-z0-9-]+$/)
@@ -88,7 +94,7 @@ describe('Blog SEO', () => {
 
   it('blog index lists every post', () => {
     at('/blogs')
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Game8Arena Blog')
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Gaming News and Puzzle Game Guides')
     for (const p of blogPosts) expect(screen.getByRole('link', { name: p.title })).toBeTruthy()
   })
 
@@ -98,6 +104,9 @@ describe('Blog SEO', () => {
     expect(screen.getByRole('link', { name: 'Traffic Escape' }).getAttribute('href')).toBe('/games/traffic')
     const ld = [...document.head.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent)['@type'])
     expect(ld).toContain('NewsArticle')
+    expect(ld).toContain('FAQPage')
+    expect(document.head.querySelector('meta[property="article:published_time"]').getAttribute('content')).toBe('2026-11-17')
+    expect(screen.getByRole('heading', { name: 'Is GTA 6 on PC?' })).toBeTruthy()
   })
 
   it('unknown post is a noindex 404', () => {
