@@ -7,7 +7,7 @@ export default function Privacy() {
     <article className="prose">
       <Seo
         title="Privacy"
-        description="Game8Arena has no accounts and keeps your game progress in your browser. Analytics are anonymous and opt-in, and there are no ads."
+        description="Game8Arena has no accounts and keeps your game progress in your browser. Analytics are anonymous and opt-in. Ads are served by Google AdSense."
         path="/privacy"
       />
       <h1>Privacy</h1>
@@ -28,7 +28,27 @@ export default function Privacy() {
         <input type="checkbox" checked={consent.analytics === true} onChange={e => setAnalyticsConsent(e.target.checked)} />
       </label>
       <h2>Advertising</h2>
-      <p>Game8Arena doesn’t show ads.</p>
+      <p>
+        Game8Arena uses Google AdSense to show ads. Google and its advertising partners may use cookies, device
+        identifiers and similar technologies to serve and measure ads, including ads personalised to your interests
+        based on your visits to this and other websites. Google’s use of advertising cookies lets it and its
+        partners serve ads based on your visit to our site and/or other sites on the Internet.
+      </p>
+      <p>
+        You can opt out of personalised advertising at{' '}
+        <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>, or
+        learn more about how Google uses data at{' '}
+        <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
+          policies.google.com/technologies/partner-sites
+        </a>
+        . You can also block or delete cookies in your browser settings. Where required by law (for example in the
+        EEA, UK and Switzerland), ads are only personalised if you give consent through Google’s consent prompt.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy? Email <a href="mailto:official.shivaji007@gmail.com">official.shivaji007@gmail.com</a> or
+        visit our <a href="/contact">Contact page</a>.
+      </p>
     </article>
   )
 }

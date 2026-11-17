@@ -267,7 +267,7 @@ export const gameContent = {
 
 // Shared selling points shown on every landing page.
 export const commonFeatures = [
-  { icon: '🆓', title: 'Free, no sign-up', body: 'Play instantly in your browser. No download, no account, no ads.' },
+  { icon: '🆓', title: 'Free, no sign-up', body: 'Play instantly in your browser. No download, no account needed.' },
   { icon: '📱', title: 'Phone & desktop', body: 'Touch, mouse and keyboard controls. Install it as an app and play offline.' },
   { icon: '📅', title: 'Daily challenge', body: 'Three games, one level each, picked fresh every day for everyone. Keep your streak alive.' },
   { icon: '💾', title: 'Progress saved', body: 'Levels, stars and achievements are saved automatically on your device.' },

@@ -8,7 +8,7 @@ export default function About() {
     <article className="prose">
       <Seo
         title="About"
-        description="Game8Arena makes quick, free puzzle and arcade games you can play in your browser on phone or desktop. No download, no account, no ads."
+        description="Game8Arena makes quick, free puzzle and arcade games you can play in your browser on phone or desktop. No download, no account needed."
         path="/about"
       />
       <h1>About Game8Arena</h1>
@@ -18,7 +18,7 @@ export default function About() {
       </p>
       <h2>What makes Game8Arena different</h2>
       <p>
-        No download, no sign-up and no ads. Games load instantly, work offline once installed, and save your progress on your own device. Every
+        No download and no sign-up. Games load instantly, work offline once installed, and save your progress on your own device. Every
         game supports touch, mouse and keyboard.
       </p>
       <h2>Our games</h2>

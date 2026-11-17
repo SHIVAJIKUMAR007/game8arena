@@ -63,7 +63,7 @@ export default function Home() {
         <h2 id="home-about-h">Free puzzle games you can play in your browser</h2>
         <p>
           Game8Arena is a collection of free online puzzle, logic and memory games. Every game runs right in your browser on phone, tablet or
-          desktop: no download, no account and no ads. Your levels, stars and achievements are saved on your device, and a daily challenge picks
+          desktop: no download and no account. Your levels, stars and achievements are saved on your device, and a daily challenge picks
           three games for everyone to play each day.
         </p>
         <ul className="home-links">

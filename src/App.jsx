@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ConsentBanner from "./platform/ui/ConsentBanner";
 import ToastHost from "./platform/ui/ToastHost";
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

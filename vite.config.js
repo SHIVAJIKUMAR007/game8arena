@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { robotsTxt, sitemapXml } from './scripts/seo-files.mjs'
 
 // In `npm run dev`, serve /sitemap.xml and /robots.txt live from the route list in src/entry-server.jsx.
@@ -25,7 +25,24 @@ function seoFilesDev() {
   }
 }
 
+// Google AdSense: reads VITE_ADSENSE_CLIENT (e.g. ca-pub-1234567890123456) from .env / .env.production / host env vars.
+// Injects the loader script into every page and emits /ads.txt. Does nothing if the variable is unset.
+function adsense(raw) {
+  const valid = /^(ca-)?pub-\d+$/.test(raw || '')
+  const client = valid ? raw.replace(/^(ca-)?/, 'ca-') : ''
+  return {
+    name: 'adsense',
+    transformIndexHtml: () =>
+      valid
+        ? [{ tag: 'script', injectTo: 'head', attrs: { async: true, crossorigin: 'anonymous', src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}` } }]
+        : [],
+    generateBundle() {
+      if (valid) this.emitFile({ type: 'asset', fileName: 'ads.txt', source: `google.com, ${client.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n` })
+    },
+  }
+}
+
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), seoFilesDev()],
-})
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), seoFilesDev(), adsense(loadEnv(mode, process.cwd(), 'VITE_').VITE_ADSENSE_CLIENT)],
+}))
