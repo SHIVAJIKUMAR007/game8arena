@@ -15,6 +15,7 @@ export default function Header() {
         <NavLink to="/" end>
           Games
         </NavLink>
+        <NavLink to="/blogs">Blog</NavLink>
         <NavLink to="/about">About</NavLink>
         <button className="nav-btn" aria-label="Settings" onClick={() => setSettingsOpen(true)}>
           ⚙️

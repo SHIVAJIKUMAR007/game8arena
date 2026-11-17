@@ -10,7 +10,7 @@ export default function Footer() {
         {games.map(g => <Link key={g.id} to={landingPath(g.id)}>{g.title}</Link>)}
       </nav>
       <p>
-        © {new Date().getFullYear()} Game8Arena — insert coin to continue · <Link to="/about">About</Link> · <Link to="/privacy">Privacy</Link>
+        © {new Date().getFullYear()} Game8Arena — insert coin to continue · <Link to="/blogs">Blog</Link> · <Link to="/about">About</Link> · <Link to="/privacy">Privacy</Link>
       </p>
     </footer>
   )

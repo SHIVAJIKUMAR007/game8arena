@@ -36,7 +36,33 @@ export const gameListSchema = games => ({
   itemListElement: games.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.title, url: absUrl(landingPath(g.id)) })),
 })
 
-export const videoGameSchema = (game, content) => ({
+const blogUrl = slug => absUrl(`/blogs/${slug}`)
+
+export const blogPostingSchema = post => ({
+  '@context': 'https://schema.org',
+  '@type': post.category === 'News' ? 'NewsArticle' : 'BlogPosting',
+  headline: post.title,
+  description: post.metaDescription,
+  url: blogUrl(post.slug),
+  mainEntityOfPage: blogUrl(post.slug),
+  datePublished: post.date,
+  dateModified: post.updated || post.date,
+  image: [absUrl('/icon-512.png')],
+  keywords: post.tags.join(', '),
+  inLanguage: 'en',
+  author: { '@type': 'Organization', name: `${SITE_NAME} team`, url: absUrl('/about') },
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/`, logo: { '@type': 'ImageObject', url: absUrl('/icon-512.png') } },
+})
+
+export const blogListSchema = posts => ({
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: `${SITE_NAME} Blog`,
+  url: absUrl('/blogs'),
+  blogPost: posts.map(p => ({ '@type': 'BlogPosting', headline: p.title, url: blogUrl(p.slug), datePublished: p.date })),
+})
+
+export const videoGameSchema =(game, content) => ({
   '@context': 'https://schema.org',
   '@type': 'VideoGame',
   name: game.title,

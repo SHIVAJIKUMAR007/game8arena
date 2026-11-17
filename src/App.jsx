@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import GamePage from "./pages/GamePage";
 import GameLanding from "./pages/GameLanding";
 import About from "./pages/About";
+import Blogs from "./pages/Blogs";
+import BlogPost from "./pages/BlogPost";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import ConsentBanner from "./platform/ui/ConsentBanner";
@@ -22,6 +24,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/games/:id" element={<GameLanding />} />
           <Route path="/play/:id" element={<GamePage />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />

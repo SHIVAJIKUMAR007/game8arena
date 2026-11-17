@@ -5,6 +5,7 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom'
 import App from './App'
 import { games } from './data/games'
+import { blogPath, blogPosts } from './data/blogPosts'
 import { headToHtml } from './seo/head'
 import { HeadContext } from './seo/headContext'
 import { SITE_URL, landingPath, playPath } from './seo/site'
@@ -26,6 +27,8 @@ export function routes() {
   return [
     { path: '/', sitemap: true, priority: '1.0', changefreq: 'daily' },
     ...games.map(g => ({ path: landingPath(g.id), sitemap: true, priority: '0.9', changefreq: 'weekly' })),
+    { path: '/blogs', sitemap: true, priority: '0.7', changefreq: 'weekly' },
+    ...blogPosts.map(p => ({ path: blogPath(p.slug), sitemap: true, priority: '0.6', changefreq: p.category === 'News' ? 'daily' : 'monthly' })),
     { path: '/about', sitemap: true, priority: '0.5', changefreq: 'monthly' },
     { path: '/privacy', sitemap: true, priority: '0.3', changefreq: 'yearly' },
     // Play screens are prerendered so direct links work on any static host, but they're noindex and not in the sitemap.
