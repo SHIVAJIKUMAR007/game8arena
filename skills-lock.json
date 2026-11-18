@@ -7,6 +7,13 @@
       "sourceType": "github",
       "skillPath": "SKILL.md",
       "computedHash": "04cdabbcceaa7b5d4bd4b1ea02339013503d623b270b5b3b2e274837494d7134"
+    },
+    "seo-content": {
+      "source": "AgriciDaniel/claude-seo",
+      "commit": "468ed5b0d9e3249394783710e54abb02837e326b",
+      "sourceType": "github",
+      "skillPath": "skills/seo-content/SKILL.md",
+      "computedHash": "6ea804d62407e269baa12d3f657b92fe9aa245bf464230edceda7ec4c17d2b47"
     }
   }
 }
