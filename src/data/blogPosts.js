@@ -9,15 +9,15 @@
 //   - metaTitle + " | Game8Arena" ≤ 60 chars, metaDescription 70–160 chars
 //   - `keyword` (the main search query) appears in the title, the H1 and the first paragraph
 //   - every post has an FAQ answering the follow-up questions people search for
-// Any game linked from a post's body gets a "From the blog" link back on that game's page.
+// Any game linked from a post\'s body gets a "From the blog" link back on that game\'s page.
 // News posts go stale: update `updated` and the text when facts change, and cite sources.
 
 export const blogPosts = [
   {
     slug: 'how-to-solve-sudoku-for-beginners',
     keyword: 'how to solve sudoku',
-    title: "How to Solve Sudoku: A Complete Beginner's Guide",
-    metaTitle: "How to Solve Sudoku: A Beginner's Guide",
+    title: "How to Solve Sudoku: A Complete Beginner\'s Guide",
+    metaTitle: "How to Solve Sudoku: A Beginner\'s Guide",
     metaDescription:
       'Learn how to solve Sudoku step by step. Understand the rules, rows, columns, boxes and simple strategies to complete your first puzzle.',
     date: '2026-11-18',
@@ -32,7 +32,7 @@ export const blogPosts = [
       '## The three Sudoku rules',
       'Every row has to contain the digits 1 to 9, each exactly once. Every column has to do the same. So does every 3×3 box. A digit can never repeat inside a row, a column or a box, and those three limits decide where each number can go.',
       '## Step 1: Start with nearly full rows',
-      'Find the rows that already have the most numbers. Say a row reads 1, 2, 3, 4, 5, 6, 8, 9 and then a blank. The missing digit is 7. Nothing else in Sudoku is easier than that.',
+      'Find the rows that already have the most numbers. Say a row reads 1, 2, 3, 4, 5, 6, 8, 9 and then a blank. The missing digit is 7, which makes this the easiest move in Sudoku.',
       '## Step 2: Check the columns',
       'Do the same going down. If a column is missing a single digit, write it in. It is worth a quick look at the cell\'s box too, in case you misread something.',
       '## Step 3: Look at the boxes',
@@ -85,7 +85,7 @@ export const blogPosts = [
     tags: ['Brain games for adults', 'Free brain games online', 'Logic games', 'Memory games', 'Puzzle games'],
     excerpt: 'Ten free brain games for adults, from Sudoku to memory and code-breaking puzzles, with a note on what each one asks of your brain.',
     body: [
-      'The best brain games for adults give you something to chew on during a break, and they beat another round of scrolling. Some test your memory, some reward careful deduction, and some are all about planning ahead. Here are ten you can play free in your browser, each with a note on what it asks of you.',
+      'The best brain games for adults give you something to chew on during a break, and they beat another round of scrolling. Some test your memory, and others reward careful deduction and planning. Here are ten you can play free in your browser, each with a note on what it asks of you.',
       '## 1. Sudoku for logical thinking',
       'Fill a 9×9 grid so that each row, column and 3×3 box contains the digits 1 to 9 once. Start on easy grids and move up when you stop needing to guess. [Play Sudoku](/games/sudoku).',
       '## 2. Memory Sequence for recall',
@@ -107,18 +107,11 @@ export const blogPosts = [
       '## 10. Pipe Connect for fitting pieces together',
       'Rotate tiles until water runs through the whole network. You have to look at how each piece lines up with its neighbours. [Play Pipe Connect](/games/pipe).',
       '## How to choose the right brain game',
-      [
-        'Sudoku, Code Breaker and Find God: logical deduction',
-        'Memory Sequence: short-term recall',
-        'Merge Rush and Traffic Escape: planning ahead',
-        'Box Escape and Arrow Escape: working out a safe order of moves',
-        'Color Connect and Pipe Connect: spatial and visual thinking',
-      ],
-      'There is no single best brain game. Pick one you enjoy enough to come back to, and raise the difficulty once it starts to feel easy.',
+      'Pick one you enjoy enough to come back to, and raise the difficulty once it starts to feel easy.',
       '## Can brain games improve your thinking?',
       'Puzzles give you practice at specific tasks such as remembering sequences, spotting patterns and solving problems step by step. Getting better at one game does not automatically sharpen every part of your memory or intelligence, and results vary from person to person. Play them because they are enjoyable and keep you focused for a while.',
       '## Play free brain games on Game8Arena',
-      'Every game above is free on [Game8Arena](/), runs in your browser and needs no account. If you want to get faster, read [7 habits that make you better at puzzle games](/blogs/get-better-at-puzzle-games). For more options, see the [15 best free online puzzle games](/blogs/best-free-online-puzzle-games).',
+      'Every game above is free on [Game8Arena](/), runs in your browser and needs no account. If you want to get faster, read [7 habits that make you better at puzzle games](/blogs/get-better-at-puzzle-games). For more options, see the [10 best free online puzzle games](/blogs/best-free-online-puzzle-games).',
     ],
     faq: [
       { q: 'What are the best brain games for adults?', a: 'Sudoku, memory games, code-breaking puzzles, merge games and spatial puzzles such as Traffic Escape and Pipe Connect are popular choices.' },
@@ -130,17 +123,17 @@ export const blogPosts = [
   {
     slug: 'best-free-online-puzzle-games',
     keyword: 'free online puzzle games',
-    title: '15 Best Free Online Puzzle Games to Play Without Downloading',
-    metaTitle: '15 Best Free Online Puzzle Games, No Download',
+    title: '10 Best Free Online Puzzle Games to Play Without Downloading',
+    metaTitle: '10 Best Free Online Puzzle Games, No Download',
     metaDescription:
       'The best free online puzzle games you can play instantly in your browser: Sudoku, logic puzzles, memory games and more, with no download or account.',
     date: '2026-11-17',
     updated: '2026-11-17',
     category: 'Guides',
     tags: ['Free online puzzle games', 'Puzzle games no download', 'Free browser games', 'Brain games', 'Logic puzzles'],
-    excerpt: 'Fifteen kinds of free online puzzle games you can play in your browser, from Sudoku and memory games to box-pushing and code-breaking puzzles.',
+    excerpt: 'Ten kinds of free online puzzle games you can play in your browser, from Sudoku and memory games to box-pushing and code-breaking puzzles.',
     body: [
-      'Free online puzzle games let you take a break and give your brain a workout without installing an app or creating an account. You open a page, and you are playing within seconds. This list covers 15 kinds of puzzle, from number grids to memory tests, and the first ten link to a free game you can try right now.',
+      'Free online puzzle games let you take a break and give your brain a workout without installing an app or creating an account. You open a page, and you are playing within seconds. This list covers 10 kinds of puzzle, from number grids to memory tests, and each one links to a free game you can try right now.',
       '## 1. Sudoku',
       'Fill a 9×9 grid so that every row, column and 3×3 box contains the digits 1 to 9 exactly once. It is a good first pick if you like working things out step by step. [Play Sudoku](/games/sudoku).',
       '## 2. Arrow Escape',
@@ -161,17 +154,6 @@ export const blogPosts = [
       'Rotate the tiles until water can flow through the whole network. Spatial thinkers tend to enjoy these, and there is no timer to beat. [Play Pipe Connect](/games/pipe).',
       '## 10. Code-breaking games',
       'A hidden code, a limited number of guesses and a clue after each one. Every guess you make should fit all the clues so far, which is where the deduction comes in. [Play Code Breaker](/games/code).',
-      '## 11. Jigsaw puzzles',
-      'Assemble scattered pieces into a complete picture. Jigsaws reward patience and a good eye for colour and shape.',
-      '## 12. Crossword puzzles',
-      'Clues and crossing words test vocabulary and general knowledge. Difficulty runs from relaxed beginner grids to cryptic ones.',
-      '## 13. Word search games',
-      'Find hidden words in a grid of letters. Depending on the game, words run across, down or diagonally.',
-      '## 14. Sliding tile puzzles',
-      'Slide numbered or illustrated tiles around a single empty space until they sit in the right order.',
-      '## 15. Pattern recognition games',
-      'Spot the pattern, predict what comes next or find the link between objects. They suit short sessions because each round is quick.',
-      'Games 11 to 15 are puzzle types you will find on other sites. Game8Arena does not have them yet.',
       '## Why play puzzle games in your browser?',
       [
         'There is nothing to install or update',
@@ -205,9 +187,9 @@ export const blogPosts = [
     body: [
       'The GTA 6 release date is Thursday, November 19, 2026, on PlayStation 5 and Xbox Series X|S. After two delays, Rockstar Games locked in that date a year ago and it has held. Below is everything confirmed as of November 17, 2026, plus the questions Rockstar has not answered yet.',
       '## When does GTA 6 come out?',
-      'Grand Theft Auto VI launches on November 19, 2026. Rockstar announced that date in November 2025, when it moved the game back from May 26, 2026. The original target, announced with the first trailer in December 2023, was simply “2025”.',
+      'Grand Theft Auto VI launches on November 19, 2026. Rockstar announced that date in November 2025, when it moved the game back from May 26, 2026. The original target, announced with the first trailer in December 2023, was simply "2025".',
       [
-        'December 2023: first trailer, release window “2025”',
+        'December 2023: first trailer, release window "2025"',
         'May 2025: delayed to May 26, 2026',
         'November 2025: delayed again to November 19, 2026',
         'November 2026: pre-loads open, launch date unchanged',
@@ -215,11 +197,11 @@ export const blogPosts = [
       '## What time does GTA 6 unlock?',
       'Rockstar has not published a single worldwide unlock time. Reports point to digital copies unlocking at midnight local time in each region. Xbox says streaming through Xbox Cloud Gaming starts at 1 AM ET on November 19.',
       '## Which platforms is GTA 6 on?',
-      'At launch, GTA 6 runs natively on PlayStation 5 and Xbox Series X|S only. There is no native PS4 or Xbox One version. Xbox has said the game will be playable through Xbox Cloud Gaming from day one, including on Xbox One consoles. Check Xbox’s cloud gaming requirements before launch day if you plan to play that way.',
+      'At launch, GTA 6 runs natively on PlayStation 5 and Xbox Series X|S only. There is no native PS4 or Xbox One version. Xbox has said the game will be playable through Xbox Cloud Gaming from day one, including on Xbox One consoles. Check Xbox\'s cloud gaming requirements before launch day if you plan to play that way.',
       '## Is GTA 6 coming to PC?',
       'No PC version has been announced. Rockstar usually brings its big games to PC later: GTA V reached PC about a year and a half after its console launch, and Red Dead Redemption 2 took about a year. A PC port is likely at some point, but with no date, it is too early to upgrade your graphics card for it.',
       '## Where is GTA 6 set?',
-      'The game takes place in the fictional state of Leonida, Rockstar’s take on Florida, with a modern-day Vice City at its centre. The trailers show beaches, swamps, small towns and highways, so the map looks like one big city surrounded by a lot of countryside.',
+      'The game takes place in the fictional state of Leonida, Rockstar\'s take on Florida, with a modern-day Vice City at its centre. The trailers show beaches, swamps, small towns and highways, so the map looks like one big city surrounded by a lot of countryside.',
       '## Who are the main characters?',
       'For the first time in the main series, the story follows two lead characters from the start: Lucia Caminos and Jason Duval, a criminal couple. The trailers frame their story as a Bonnie-and-Clyde style run of heists that goes wrong.',
       '## How big are GTA 6 pre-orders?',
@@ -237,7 +219,7 @@ export const blogPosts = [
         'When GTA Online for GTA 6 starts and how it works',
         'Post-launch story DLC plans',
       ],
-      'We will update this page after launch. Waiting for the download to finish? Our [free online puzzle games](/) run in any browser with no install, and a few rounds of [Traffic Escape](/games/traffic) feel right on theme.',
+      'We will update this page after launch. If you are waiting on a download, our [free online puzzle games](/) run in any browser with no install, including [Traffic Escape](/games/traffic).',
     ],
     faq: [
       { q: 'What is the GTA 6 release date?', a: 'GTA 6 releases on Thursday, November 19, 2026, on PlayStation 5 and Xbox Series X|S.' },
@@ -266,23 +248,17 @@ export const blogPosts = [
     tags: ['Gaming news', 'GTA 6', 'Nintendo Switch 2', 'Zelda', 'Wolfenstein 3'],
     excerpt: 'GTA VI is days away, Nintendo sets a Switch 2 record with Ocarina of Time, and MachineGames confirms Wolfenstein 3.',
     body: [
-      'One launch dominates this week’s gaming news, but two other stories are worth your time. Here are the three that matter most as of November 17, 2026.',
+      'Three stories matter most in gaming news as of November 17, 2026: the GTA VI launch, a Switch 2 sales record for Ocarina of Time, and the confirmation of Wolfenstein 3.',
       '## GTA VI launches on November 19',
-      'Rockstar’s Grand Theft Auto VI arrives this Thursday on PS5 and Xbox Series X|S, after two delays. PlayStation and Xbox both say it is the most pre-ordered game in the history of their stores, and Xbox confirmed it will also stream through Xbox Cloud Gaming at launch, including on Xbox One. There is still no PC version announced.',
+      'Rockstar\'s Grand Theft Auto VI arrives this Thursday on PS5 and Xbox Series X|S, after two delays. PlayStation and Xbox both say it is the most pre-ordered game in the history of their stores, and Xbox confirmed it will also stream through Xbox Cloud Gaming at launch, including on Xbox One. There is still no PC version announced.',
       'If you have pre-ordered, pre-load now, and expect slow stores and busy servers on launch night. For the full date history, platforms, setting and open questions, read [GTA 6 release date, platforms and everything we know](/blogs/gta-6-release-date-platforms).',
       '## Ocarina of Time remake breaks a Switch 2 record',
       'Nintendo says The Legend of Zelda: Ocarina of Time for Nintendo Switch 2 sold more than 5.2 million copies worldwide in its first four days after launching on November 5. That makes it the fastest-selling Nintendo-published Switch 2 game so far, counting physical and digital copies, with about 810,000 of those sales in Japan.',
       'For context, the original Nintendo 64 version sold about 7.6 million copies over its whole life, and the 3DS remake about 6.4 million. At this pace the Switch 2 version could pass both within weeks. Remakes of classics are clearly selling, so more may be on the way.',
       '## Wolfenstein 3 is officially in production',
-      'MachineGames has confirmed that Wolfenstein 3 is in development, ending years of rumours since Wolfenstein II: The New Colossus in 2017. The announcement came during Xbox’s 25th-anniversary celebrations, and the studio’s own post read: “His reputation precedes him. Wolfenstein 3 is in production.”',
-      'There is no release date, platform list or gameplay footage yet. With not even a trailer to show, this looks like a “years, not months” project.',
-      '## Quick takeaways',
-      [
-        'GTA VI: out November 19 on PS5 and Xbox Series X|S, with cloud streaming on Xbox; no PC date',
-        'Ocarina of Time (Switch 2): 5.2 million sold in four days, a Nintendo record for Switch 2',
-        'Wolfenstein 3: confirmed in production at MachineGames, no date',
-      ],
-      'Need something quick between big releases? Try today’s daily challenge in [Sudoku](/games/sudoku) or [Code Breaker](/games/code). Both are free and run in your browser.',
+      'MachineGames has confirmed that Wolfenstein 3 is in development, ending years of rumours since Wolfenstein II: The New Colossus in 2017. The announcement came during Xbox\'s 25th-anniversary celebrations, and the studio\'s own post read: "His reputation precedes him. Wolfenstein 3 is in production."',
+      'There is no release date, platform list or gameplay footage yet. With not even a trailer to show, this looks like a "years, not months" project.',
+      'Need something quick between big releases? Try today\'s daily challenge in [Sudoku](/games/sudoku) or [Code Breaker](/games/code). Both are free and run in your browser.',
     ],
     faq: [
       { q: 'What is the biggest gaming news this week?', a: 'The launch of Grand Theft Auto VI on November 19, 2026, the most pre-ordered game ever on PlayStation and Xbox stores.' },
@@ -292,7 +268,7 @@ export const blogPosts = [
     sources: [
       { name: 'Rockstar Games Newswire: GTA VI release date', url: 'https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026' },
       { name: 'Xbox Wire: GTA VI comes to Xbox Cloud Gaming on November 19', url: 'https://news.xbox.com/en-us/2026/11/10/grand-theft-auto-6-comes-to-xbox-cloud-gaming-november-19/' },
-      { name: 'Game Informer: Ocarina of Time remake is Nintendo’s fastest-selling Switch 2 game', url: 'https://gameinformer.com/2026/11/11/the-legend-of-zelda-ocarina-of-time-remake-is-nintendos-fastest-selling-switch-2-game' },
+      { name: 'Game Informer: Ocarina of Time remake is Nintendo\'s fastest-selling Switch 2 game', url: 'https://gameinformer.com/2026/11/11/the-legend-of-zelda-ocarina-of-time-remake-is-nintendos-fastest-selling-switch-2-game' },
       { name: 'VGC: MachineGames confirms Wolfenstein 3 is in development', url: 'https://www.videogameschronicle.com/news/machinegames-has-finally-officially-confirmed-that-wolfenstein-3-is-in-development/' },
       { name: 'CNN: GTA VI is the biggest entertainment event of the year', url: 'https://www.cnn.com/2026/11/16/media/grand-theft-auto-gta-vi-entertainment-media' },
     ],
@@ -310,7 +286,7 @@ export const blogPosts = [
     tags: ['Casual games', 'Browser games', 'Free online games', 'Puzzle games'],
     excerpt: 'The best free casual games you can start in seconds without a download or an account, sorted by the kind of break you need.',
     body: [
-      'The best free casual games start in seconds, teach themselves in a few moves and save your progress when you stop. They fit the gaps in your day: a coffee break, a commute, five minutes before a meeting.',
+      'The best free casual games start in seconds and teach themselves in a few moves. They save your progress when you stop, so they fit the gaps in your day: a coffee break, a commute, five minutes before a meeting.',
       'Browser games are the easiest way to get that. There is nothing to install and nothing to update, and the same game works on your phone and your laptop. Here is how to pick one based on the kind of break you want, with a free game for each.',
       '## Quick logic games for a two-minute break',
       'Pick something with short levels and a clear goal. [Arrow Escape](/games/arrow) asks you to slide arrows off the board in the right order. Each level takes under a minute, and the difficulty climbs slowly. [Traffic Escape](/games/traffic) is the classic rush-hour puzzle: move the cars until yours can get out.',
@@ -322,14 +298,6 @@ export const blogPosts = [
       '[Memory Sequence](/games/memory) plays a pattern of lights and notes and asks you to repeat it, adding one step each round. It is harder than it sounds once the sequence passes ten steps, and later levels shuffle the pads around.',
       '## Planning games: merge and push puzzles',
       '[Merge Rush](/games/merge) is a merge game: slide tiles, merge three of a kind and keep the board from filling up. [Box Escape](/games/box) is a crate-pushing puzzle where crates cannot be pulled, so one careless push can trap you. Both reward thinking two or three moves ahead.',
-      '## Which casual game should you start with?',
-      [
-        'Two minutes to spare: Arrow Escape or Traffic Escape',
-        'Want to relax: Color Connect or Pipe Connect',
-        'Want to think hard: Sudoku, Code Breaker or Find God',
-        'Want to test your memory: Memory Sequence',
-        'Like planning ahead: Merge Rush or Box Escape',
-      ],
       '## What makes a good casual game?',
       [
         'It starts in seconds, with no download, sign-up or long intro',
@@ -338,7 +306,7 @@ export const blogPosts = [
         'Progress saves automatically, so you can leave at any time',
         'It works the same with touch, mouse and keyboard',
       ],
-      'Every game on [Game8Arena](/) is built around those rules. They are all free, need no account, and save your progress on your own device. Most have a daily challenge and achievements if you want a reason to come back each day. Want to get better at them? Read our [7 habits that make you better at puzzle games](/blogs/get-better-at-puzzle-games), or browse the full list of [free online puzzle games](/blogs/best-free-online-puzzle-games).',
+      'Every game on [Game8Arena](/) follows those rules, and each one is free with no account. Progress saves on your own device. Most have a daily challenge and achievements if you want a reason to come back each day. Want to get better at them? Read our [7 habits that make you better at puzzle games](/blogs/get-better-at-puzzle-games), or browse the full list of [free online puzzle games](/blogs/best-free-online-puzzle-games).',
     ],
     faq: [
       { q: 'What is a casual game?', a: 'A casual game has simple rules, short sessions and no big time commitment. You can learn it in a minute and play it in short breaks.' },
@@ -360,33 +328,23 @@ export const blogPosts = [
     tags: ['Puzzle games', 'Puzzle tips', 'Sudoku tips', 'Casual games'],
     excerpt: 'Most puzzle players get stuck in the same ways. These seven habits work in Sudoku, sliding puzzles, memory games and more.',
     body: [
-      'Puzzle games feel like a test of raw intelligence, but most of the gap between a stuck player and a fast one is habit. Good players approach every level the same way. Here are seven habits that make you better at any puzzle game, with examples you can try for free.',
+      'Most of the gap between a stuck player and a fast one is habit. Good players approach every level the same way. Here are seven habits that make you better at puzzle games, with examples you can try for free.',
       '## 1. Scan the whole board before you move',
       'Take five seconds to look at everything before you touch anything. In [Traffic Escape](/games/traffic) or [Box Escape](/games/box), the piece blocking you is often not the one next to your exit but one further back that has to move first.',
       '## 2. Work backwards from the goal',
-      'Ask “what has to be true just before I win?” and keep going back from there. In sliding puzzles, that means working out which pieces must be clear of the exit path. In [Arrow Escape](/games/arrow), look for the arrows that can leave right now, and the ones that only open up once those are gone.',
+      'Ask "what has to be true just before I win?" and keep going back from there. In sliding puzzles, that means working out which pieces must be clear of the exit path. In [Arrow Escape](/games/arrow), look for the arrows that can leave right now, and the ones that only open up once those are gone.',
       '## 3. Start with the most constrained spot',
       'The square with the fewest options is usually the best place to start. In [Sudoku](/games/sudoku), look for the row, column or box with the most digits already filled in. In [Color Connect](/games/connect), draw the pairs in corners and along edges first, because they have the fewest possible routes.',
       '## 4. Use every clue you get',
       'Deduction games give you more information than it seems. In [Code Breaker](/games/code), a guess that scores zero is not wasted: it tells you which symbols to drop. Before each new guess, check that it fits every result you have seen so far. The same goes for [Find God](/games/god): each failed search rules out more than one place.',
       '## 5. Chunk what you need to remember',
-      'Memory is limited, but grouping helps. In [Memory Sequence](/games/memory), remember the pattern as shapes or groups of three (“top row, then diagonal”) rather than as single taps. It is the same trick people use to remember phone numbers.',
+      'Memory is limited, but grouping helps. In [Memory Sequence](/games/memory), remember the pattern as shapes or groups of three ("top row, then diagonal") rather than as single taps. It is the same trick people use to remember phone numbers.',
       '## 6. Use undo to experiment',
       'Undo works best as a way to test ideas. If you are torn between two moves, try one and see where it leads, then undo if it is a dead end. Testing an idea on purpose is faster than staring at the board.',
       '## 7. Take a break when you are stuck',
       'If you have been stuck for a few minutes, walk away. Many players find the answer is obvious when they come back, because they stop repeating the same failed idea. Casual games that save automatically make this easy.',
-      '## Quick checklist for any puzzle',
-      [
-        'Scan the board first',
-        'Work backwards from the goal',
-        'Start where there are fewest options',
-        'Use every clue, including failed attempts',
-        'Group things you need to remember',
-        'Experiment with undo',
-        'Take a break when stuck',
-      ],
       '## Put it into practice',
-      'Pick one habit and use it on purpose for a few levels. “Most constrained spot first” in Sudoku is a good place to start, because the difference shows up right away. All of our [free puzzle games](/) save your progress, so you can practise in short sessions. Not sure which to try? See [the best free casual games you can play in your browser](/blogs/best-free-casual-games-browser).',
+      'Pick one habit and use it on purpose for a few levels. "Most constrained spot first" in Sudoku is a good place to start, because the difference shows up right away. All of our [free puzzle games](/) save your progress, so you can practise in short sessions. Not sure which to try? See [the best free casual games you can play in your browser](/blogs/best-free-casual-games-browser).',
     ],
     faq: [
       { q: 'How can I get better at puzzle games?', a: 'Scan the whole board before moving, work backwards from the goal, start with the most constrained spot, and use every clue, including failed attempts.' },
@@ -401,5 +359,5 @@ export const blogPostBySlug = Object.fromEntries(blogPosts.map(p => [p.slug, p])
 export const blogPath = slug => `/blogs/${slug}`
 
 const flat = post => post.body.flat().join(' ')
-/** Posts whose body links to a game's landing page (shown as "From the blog" on that page). */
+/** Posts whose body links to a game\'s landing page (shown as "From the blog" on that page). */
 export const postsForGame = id => blogPosts.filter(p => flat(p).includes(`(/games/${id})`))
