@@ -85,7 +85,11 @@ export default function GameLanding() {
           {commonFeatures.map(f => (
             <li key={f.title}><span aria-hidden="true">{f.icon}</span><div><h3>{f.title}</h3><p>{f.body}</p></div></li>
           ))}
-          <li><span aria-hidden="true">💡</span><div><h3>Hints &amp; undo</h3><p>{config.hints} hints and {config.undos} undos per level, so you’re never stuck for long.</p></div></li>
+          {config.undos > 0 ? (
+            <li><span aria-hidden="true">💡</span><div><h3>Hints &amp; undo</h3><p>{config.hints} hints and {config.undos} undos per level, so you’re never stuck for long.</p></div></li>
+          ) : (
+            <li><span aria-hidden="true">💡</span><div><h3>Hints</h3><p>{config.hints} hints per level, so you’re never stuck for long.</p></div></li>
+          )}
           <li><span aria-hidden="true">🏆</span><div><h3>{config.achievements.length} achievements</h3><p>Stars for every level and badges to unlock as you improve.</p></div></li>
         </ul>
       </section>

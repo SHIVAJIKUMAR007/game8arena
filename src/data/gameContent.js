@@ -12,6 +12,7 @@ import { config as connect } from '../games/ColorConnect/config'
 import { config as pipe } from '../games/pipeConnect/config'
 import { config as code } from '../games/codeBreaker/config'
 import { config as sudoku } from '../games/sudoku/config'
+import { config as word } from '../games/wordGuess/config'
 
 export const gameContent = {
   arrow: {
@@ -261,6 +262,32 @@ export const gameContent = {
       { q: 'Does every puzzle have a single solution?', a: 'Yes. Each puzzle is checked so that only one grid fits, which means you can always find the next digit by logic, without guessing.' },
       { q: 'What happens if I place a wrong digit?', a: 'The digit is rejected and you lose a life. Lose all three and the level restarts. Hints fill in the easiest cell, and undo removes your last digit.' },
       { q: 'How does the difficulty change?', a: 'Each level starts with fewer given digits than the one before, so the puzzles need more logic as you go.' },
+    ],
+  },
+
+  word: {
+    config: word,
+    metaTitle: 'Word Guess — Free Five-Letter Word Game Online',
+    metaDescription:
+      'Play Word Guess free online: find the hidden five-letter word in six tries with green, yellow and grey clues. Unlimited levels, a daily word and hard mode.',
+    tagline: 'Six tries to find the hidden five-letter word, with a new word on every level.',
+    genres: ['Word game', 'Word puzzle', 'Vocabulary game'],
+    intro: [
+      'Word Guess is a free online word puzzle. You get six tries to find a hidden five-letter English word. After each guess, every letter changes colour: green means it’s in the right spot, yellow means it’s in the word but somewhere else, and grey means it isn’t in the word.',
+      'You can play as many words as you like. Level 1 uses everyday words, and the words get harder as you go: rarer letters, repeated letters, and words with lots of near look-alikes. Every answer is a real word that can be found in six guesses. There’s also a daily word, the same for everyone.',
+    ],
+    tips: [
+      'Start with a word full of common letters such as E, A, R, T, O and S.',
+      'Grey letters aren’t in the word, so leave them out of later guesses.',
+      'Letters can repeat. If nothing seems to fit, try a double letter.',
+      'Word families like -IGHT or -ATCH can eat up guesses. In normal mode, spend one guess on a word that tests several possible first letters at once.',
+    ],
+    faq: [
+      { q: 'What do the colours mean?', a: 'Green: the letter is in the word and in the right spot. Yellow: the letter is in the word but in another spot. Grey: the letter is not in the word, or you used it more times than it appears.' },
+      { q: 'How do repeated letters work?', a: 'Each letter in the hidden word can only light up one tile. If the word has one E and you guess two, only one E is coloured; the other is grey.' },
+      { q: 'What is hard mode?', a: 'In hard mode every green and yellow letter you have found must be used in your next guesses. Greens stay in their spot; yellows must appear somewhere. Turn it on from the menu before you start a word.' },
+      { q: 'Can I play more than one word a day?', a: 'Yes. There’s no limit on levels, and words don’t repeat until you’ve used up every word at your difficulty. The daily word is separate and the same for everyone.' },
+      { q: 'Is my progress saved?', a: 'Yes. Your level, statistics, streak and any word you are halfway through are saved in your browser, so you can close the tab and come back later.' },
     ],
   },
 }

@@ -1,0 +1,149 @@
+/* Word Guess: letter tiles + on-screen keyboard on the shared --g-* theme tokens.
+   Clue colours are fixed per theme; the colour-blind theme swaps green/yellow for orange/blue.
+   Sizes come from container units so the board and keyboard always fit the game screen. */
+/* The site's game screen is 4:3 next to the sidebar, which is too short for six rows + a keyboard on
+   narrow two-column widths (tablets). There, while this game is mounted, give it a fixed height instead.
+   Other games are unaffected; wide screens keep 4:3 and phones keep the site's own 78vh rule. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .screen:has(.wg-root, .wg-menu) { aspect-ratio: auto; height: min(560px, 78vh); }
+}
+
+.wg-root {
+  --wg-correct: #3aa35b; --wg-present: #d4a72c; --wg-absent: #7c7f86; --wg-on-clue: #fff;
+  --wg-tile-border: color-mix(in srgb, var(--g-ink) 28%, transparent);
+  --wg-key-bg: color-mix(in srgb, var(--g-ink) 14%, var(--g-panel));
+  --tile: 50px;
+  --key-h: 46px;
+  container-type: size;
+}
+@supports (width: 1cqh) {
+  .wg-root {
+    /* height left for the board = root height − HUD, message line, keyboard (3 × --key-h) and gaps */
+    --key-h: clamp(34px, 7.5cqh, 52px);
+    --tile: min(58px, calc((100cqh - 3 * var(--key-h) - 160px) / 6.5), calc((100cqw - 32px) / 5.6));
+  }
+}
+:root[data-game-theme='dark'] .wg-root { --wg-absent: #4a4f6a; --wg-correct: #2f9e58; --wg-present: #c79a1e; }
+:root[data-game-theme='colorblind'] .wg-root { --wg-correct: #e66100; --wg-present: #3b8fd9; --wg-absent: #6b6b6b; }
+
+.wg-hud { flex: none; }
+.wg-hud .lg-title { display: inline-flex; align-items: center; gap: 8px; }
+.wg-hud-actions { display: inline-flex; align-items: center; gap: 4px; }
+.wg-badge {
+  font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+  background: var(--g-bad); color: #fff; border-radius: 999px; padding: 2px 8px;
+}
+
+.wg-play {
+  flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: space-between; gap: 6px; padding: 0 8px 10px; box-sizing: border-box;
+}
+.wg-msg { margin: 0; height: 1.9em; display: flex; align-items: center; justify-content: center; flex: none; }
+.wg-msg span {
+  background: var(--g-ink); color: var(--g-bg); font-weight: 700; font-size: .85rem;
+  padding: 4px 12px; border-radius: 8px; animation: wg-fade .15s ease-out;
+}
+.wg-given { margin: 0; display: flex; gap: 4px; flex: none; font-weight: 800; text-transform: uppercase; }
+.wg-given span { width: 1.4em; text-align: center; color: var(--g-muted); }
+.wg-given span.on { color: var(--wg-correct); border-bottom: 2px solid var(--wg-correct); }
+
+/* Board */
+.wg-board { display: grid; grid-template-rows: repeat(6, var(--tile)); gap: 5px; flex: none; }
+.wg-row { display: grid; grid-template-columns: repeat(5, var(--tile)); gap: 5px; position: relative; }
+.wg-tile {
+  width: var(--tile); height: var(--tile); box-sizing: border-box;
+  display: grid; place-items: center; text-transform: uppercase; font-weight: 800;
+  font-size: calc(var(--tile) * .52); line-height: 1; user-select: none;
+  border: 2px solid var(--wg-tile-border); border-radius: 6px; background: transparent; color: var(--g-ink);
+}
+.wg-tile.filled { border-color: color-mix(in srgb, var(--g-ink) 60%, transparent); animation: wg-pop .1s ease-out; }
+.wg-tile.correct { --clue: var(--wg-correct); }
+.wg-tile.present { --clue: var(--wg-present); }
+.wg-tile.absent { --clue: var(--wg-absent); }
+.wg-tile.reveal { --clue: var(--g-ink); }
+.wg-tile.shown { background: var(--clue); border-color: var(--clue); color: var(--wg-on-clue); animation: none; }
+.wg-tile.reveal.shown { color: var(--g-bg); }
+.wg-tile.flip { animation: wg-flip var(--flip, 500ms) ease-in-out both; animation-delay: calc(var(--i) * 300ms); }
+.wg-row.shake { animation: wg-shake .5s ease-in-out; }
+.wg-row.win .wg-tile { animation: wg-bounce .6s ease both; animation-delay: calc(var(--i) * 90ms); }
+
+@keyframes wg-pop { 0% { transform: scale(.85); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@keyframes wg-flip {
+  0% { transform: rotateX(0); background: transparent; border-color: color-mix(in srgb, var(--g-ink) 60%, transparent); color: var(--g-ink); }
+  49% { transform: rotateX(90deg); background: transparent; border-color: color-mix(in srgb, var(--g-ink) 60%, transparent); color: var(--g-ink); }
+  50% { transform: rotateX(90deg); background: var(--clue); border-color: var(--clue); color: var(--wg-on-clue); }
+  100% { transform: rotateX(0); background: var(--clue); border-color: var(--clue); color: var(--wg-on-clue); }
+}
+@keyframes wg-shake {
+  10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); }
+}
+@keyframes wg-bounce {
+  0%, 20% { transform: translateY(0); } 40% { transform: translateY(-30%); } 50% { transform: translateY(5%); }
+  60% { transform: translateY(-15%); } 80% { transform: translateY(2%); } 100% { transform: translateY(0); }
+}
+@keyframes wg-fade { from { opacity: 0; transform: translateY(-4px); } }
+@keyframes wg-press { 50% { transform: scale(.9); filter: brightness(1.25); } }
+
+/* Keyboard */
+.wg-kb { width: min(100%, 500px); display: flex; flex-direction: column; gap: 6px; flex: none; }
+.wg-kb-row { display: flex; justify-content: center; gap: 5px; }
+.wg-key {
+  flex: 1 1 0; max-width: 44px; height: var(--key-h); min-width: 0; padding: 0;
+  border: 0; border-radius: 6px; background: var(--wg-key-bg); color: var(--g-ink);
+  font: inherit; font-weight: 800; font-size: clamp(.8rem, 2.4cqh, 1.05rem); text-transform: uppercase;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: background-color .25s, color .25s, transform .08s;
+}
+.wg-key.wide { flex: 1.6 1 0; max-width: 72px; font-size: clamp(.68rem, 2cqh, .85rem); }
+.wg-key:active, .wg-key.pressed { animation: wg-press .13s ease-out; }
+.wg-key:hover:not(:disabled) { filter: brightness(1.08); }
+.wg-key:disabled { cursor: default; opacity: .6; }
+.wg-key.correct { background: var(--wg-correct); color: var(--wg-on-clue); }
+.wg-key.present { background: var(--wg-present); color: var(--wg-on-clue); }
+.wg-key.absent { background: var(--wg-absent); color: var(--wg-on-clue); opacity: .75; }
+
+/* After a word ends (result closed) */
+.wg-endbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 8px 0; }
+.wg-primary { background: var(--g-accent); border-color: var(--g-accent); color: var(--g-on-accent); }
+
+/* Result screen */
+.wg-result h2 { margin: 0; }
+.wg-result p { margin: 0; }
+.wg-result-label { color: var(--g-muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+.wg-answer { display: flex; gap: 5px; --tile: 44px; }
+.wg-result-streak { color: var(--g-muted); }
+
+/* Menu */
+.wg-sub { margin: -8px 0 0; color: var(--g-muted); max-width: 340px; }
+.wg-toggle {
+  display: flex; gap: 10px; align-items: flex-start; text-align: left; cursor: pointer;
+  background: var(--g-panel); border-radius: 12px; padding: 10px 14px;
+  border: 2px solid color-mix(in srgb, var(--g-ink) 18%, transparent);
+}
+.wg-toggle input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--g-accent); flex: none; }
+.wg-toggle small { display: block; color: var(--g-muted); font-size: .78rem; }
+
+/* Statistics */
+.wg-stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 0 0 14px; text-align: center; }
+.wg-stat-grid div { display: flex; flex-direction: column-reverse; }
+.wg-stat-grid dt { font-size: .7rem; color: var(--g-muted); line-height: 1.2; }
+.wg-stat-grid dd { margin: 0; font-size: 1.6rem; font-weight: 800; }
+.wg-stats h3 { margin: 0 0 8px; font-size: .95rem; }
+.wg-dist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.wg-dist li { display: flex; align-items: center; gap: 8px; }
+.wg-dist-n { width: 1em; font-weight: 700; }
+.wg-dist-bar {
+  width: var(--w); min-width: 1.6em; box-sizing: border-box; text-align: right; padding: 2px 6px;
+  background: var(--wg-correct, #3aa35b); color: #fff; font-weight: 700; font-size: .85rem; border-radius: 4px;
+}
+
+@media (max-width: 380px) {
+  .wg-stat-grid dd { font-size: 1.25rem; }
+  .wg-kb-row { gap: 4px; }
+}
+
+:root[data-reduced-motion='1'] .wg-tile,
+:root[data-reduced-motion='1'] .wg-row,
+:root[data-reduced-motion='1'] .wg-msg span,
+:root[data-reduced-motion='1'] .wg-key { animation: none !important; transition: none; }

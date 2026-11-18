@@ -14,5 +14,6 @@ import colorConnect from "../games/ColorConnect";
 import pipeConnect from "../games/pipeConnect";
 import codeBreaker from "../games/codeBreaker";
 import sudoku from "../games/sudoku";
+import wordGuess from "../games/wordGuess";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess];
