@@ -13,6 +13,7 @@ import { config as pipe } from '../games/pipeConnect/config'
 import { config as code } from '../games/codeBreaker/config'
 import { config as sudoku } from '../games/sudoku/config'
 import { config as word } from '../games/wordGuess/config'
+import { config as minesweeper } from '../games/minesweeper/config'
 
 export const gameContent = {
   arrow: {
@@ -288,6 +289,36 @@ export const gameContent = {
       { q: 'What is hard mode?', a: 'In hard mode every green and yellow letter you have found must be used in your next guesses. Greens stay in their spot; yellows must appear somewhere. Turn it on from the menu before you start a word.' },
       { q: 'Can I play more than one word a day?', a: 'Yes. There’s no limit on levels, and words don’t repeat until you’ve used up every word at your difficulty. The daily word is separate and the same for everyone.' },
       { q: 'Is my progress saved?', a: 'Yes. Your level, statistics, streak and any word you are halfway through are saved in your browser, so you can close the tab and come back later.' },
+    ],
+  },
+
+  minesweeper: {
+    config: minesweeper,
+    metaTitle: 'Minesweeper: Free Online Game with Levels and Daily Board',
+    metaDescription:
+      'Play Minesweeper free online. Use the numbers to find the mines and open every safe square. Levels, classic boards, a daily board and best times.',
+    tagline: 'Open every safe square and use the numbers to work out where the mines are.',
+    genres: ['Minesweeper', 'Logic puzzle', 'Puzzle game'],
+    intro: [
+      'Minesweeper is played on a grid of closed squares, and some of them hide mines. Click a square to open it. If it holds a mine, the round is over. If it is safe, it shows a number: how many of the eight squares around it have a mine. You use those numbers to decide which closed squares are safe and which are mines, and you win when every safe square is open.',
+      'Levels start on a 6×6 grid with four mines and grow slowly, up to a 16×20 board with 61 mines at level 60. Each board is checked by a solver before you play it, so you can always finish it by reasoning from the numbers. Your first click is always safe. You can also play the classic Beginner, Intermediate and Expert boards, and there is a daily board that is the same for everyone.',
+    ],
+    tips: [
+      'Open the glowing square first, or any square you like. The first click and the squares around it never hold a mine.',
+      'A 1 with exactly one closed square next to it means that square is a mine. Flag it.',
+      'When a number already has as many flags around it as it shows, every other closed square next to it is safe. Click the number to open them all at once.',
+      'Compare neighbouring numbers. If a 1 touches squares A and B, and a 2 touches A, B and C, then C is a mine.',
+      'Check your flags before you open squares next to them. A wrong flag makes the click on a number open a mine.',
+    ],
+    faq: [
+      { q: 'Is the first click always safe?', a: 'Yes. The square you open first and the squares around it never hold a mine, so your first click always opens a patch of the board. The board is built when you make that click.' },
+      { q: 'Do I ever have to guess?', a: 'Not on levels or the daily board. A solver that uses only the numbers you can see has to finish each of them before it is offered to you. The classic boards are checked the same way where it is possible. Expert is the hardest to find a guess-free layout for, and a board that could not be verified is marked “May need a guess”.' },
+      { q: 'How do I place a flag?', a: 'On a computer, right-click a closed square. On a phone or tablet, press and hold it, or switch to flag mode with the button under the board and tap. Do the same again to remove the flag.' },
+      { q: 'What does clicking a number do?', a: 'If you have flagged as many squares around it as the number shows, clicking it opens all the other closed squares around it. This is called chording and it saves a lot of clicks.' },
+      { q: 'How does the difficulty grow?', a: 'Boards get a little bigger and a little denser with each level, and the mine density never goes above 20%. From level 7 some moves need you to compare two numbers. From level 30 a few need a longer chain of reasoning. After level 60 you keep getting new boards at that same difficulty.' },
+      { q: 'How are stars and the score worked out?', a: 'A cleared level gives one star, a second if you used no hints, and a third if you finished within the par time shown on the result screen. Your score also goes up with the difficulty of the board and how fast you finish.' },
+      { q: 'What do the hints do?', a: 'You get three hints per board. A hint points at one square you can be sure about, safe or a mine, and tells you which kind of reasoning finds it. It only uses the numbers on the board.' },
+      { q: 'Is my progress saved?', a: 'Yes. Your level, statistics, best times and the board you are halfway through are saved in your browser, so you can close the tab and come back to the same position and time.' },
     ],
   },
 }
