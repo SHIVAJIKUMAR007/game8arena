@@ -9,6 +9,8 @@ import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 import ConsentBanner from "./platform/ui/ConsentBanner";
 import ToastHost from "./platform/ui/ToastHost";
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

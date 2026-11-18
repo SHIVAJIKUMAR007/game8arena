@@ -32,6 +32,8 @@ export function routes() {
     { path: '/about', sitemap: true, priority: '0.5', changefreq: 'monthly' },
     { path: '/contact', sitemap: true, priority: '0.4', changefreq: 'yearly' },
     { path: '/privacy', sitemap: true, priority: '0.3', changefreq: 'yearly' },
+    { path: '/terms', sitemap: true, priority: '0.3', changefreq: 'yearly' },
+    { path: '/disclaimer', sitemap: true, priority: '0.3', changefreq: 'yearly' },
     // Play screens are prerendered so direct links work on any static host, but they're noindex and not in the sitemap.
     ...games.map(g => ({ path: playPath(g.id) })),
   ]
