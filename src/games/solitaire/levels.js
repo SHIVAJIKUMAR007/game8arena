@@ -19,7 +19,9 @@
 import { rampTarget, clampDifficulty } from '../../platform/engine'
 import { KING, canStack, rankOf } from './cards'
 import { dealFromSeed, isValidDeal } from './deal'
-import { applyMove, createGame, foundationFor, isWon, listMoves, reachableTalon, replay, topOf } from './rules'
+import {
+  applyMove, autoFinishMove, canAutoFinish, createGame, foundationFor, hiddenCount, isWon, listMoves, reachableTalon, replay, topOf,
+} from './rules'
 import { solve } from './solver'
 
 export const MAX_LEVEL = 50
@@ -329,6 +331,31 @@ export function findHint(game, maxNodes = 15000) {
   }
   const best = moves.map(m => ({ m, s: score(m) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s)[0]
   return best ? { move: best.m, winnable: r.status === 'unsolved' ? false : null } : null
+}
+
+/**
+ * Once every column card is face up, the rest of the game can usually be played out for the player. Returns the
+ * moves that finish it (rules.js format, draws included), or null when that is not certain yet:
+ *   • some column card is still face down, or
+ *   • the solver can't find a win from here (rare: in draw-three a stock card can be stuck out of reach).
+ * With the stock and waste empty this is just "send the lowest card up" each time; otherwise the solver's line is used,
+ * so cards still in the stock or waste are drawn and played too.
+ */
+export function planFinish(game, maxNodes = 20000) {
+  if (isWon(game) || hiddenCount(game) > 0) return null
+  if (canAutoFinish(game)) {
+    const line = []
+    let s = game
+    while (!isWon(s)) {
+      const m = autoFinishMove(s)
+      if (!m) return null
+      line.push(m)
+      s = applyMove(s, m).state
+    }
+    return line
+  }
+  const r = solve(game, { maxNodes })
+  return r.status === 'solved' ? r.moves : null
 }
 
 /**

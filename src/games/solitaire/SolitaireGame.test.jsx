@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import SolitaireGame from './SolitaireGame'
 import { generatePuzzle, makeSetup } from './levels'
-import { applyMove, canAutoFinish, createGame, isWon, pileCards, replay, topOf, validateMove } from './rules'
+import { applyMove, canAutoFinish, createGame, hiddenCount, isWon, pileCards, replay, topOf, validateMove } from './rules'
 import { columnOffsets, tableMetrics } from './layout'
 import { SAVE_VERSION, readStats } from './store'
 import { getProgress, progressStore } from '../../platform/progress'
@@ -213,6 +213,27 @@ describe('Solitaire end-to-end', { timeout: 30000 }, () => {
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     await screen.findByRole('dialog', { name: 'You won' }, { timeout: 5000 })
     expect(getProgress('solitaire').level).toBe(2)
+  })
+
+  it('finishes the game by itself once every card is face up, even with cards left in the stock', async () => {
+    const p = level1()
+    const start = createGame(p.deal, 1)
+    // the first point on the winning line where nothing in the columns is face down but the stock/waste still hold cards
+    const cut = prefixUntil(p.analysis.solution, (m, s) => {
+      const next = applyMove(s, m).state
+      return hiddenCount(next) === 0 && next.stock.length + next.waste.length > 0
+    }, start)
+    expect(cut).not.toBeNull()
+    progressStore('solitaire').set(prog => ({
+      ...prog,
+      solSaves: { campaign: { v: SAVE_VERSION, key: 'campaign:d1:L1', seed: '', moves: cut.moves, elapsed: 120, hints: 0, undos: 0 } },
+    }))
+    render(<SolitaireGame />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    await screen.findByRole('dialog', { name: 'You won' }, { timeout: 8000 })
+    const saved = getProgress('solitaire')
+    expect(saved.level).toBe(2)
+    expect(document.querySelectorAll('.sol-card.face[data-pile^="f"]')).toHaveLength(52)
   })
 
   it('ignores a corrupted save and deals afresh', async () => {

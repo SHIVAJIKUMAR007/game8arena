@@ -29,15 +29,16 @@ import './SolitaireGame.css'
 import { config } from './config'
 import { cardLabel } from './cards'
 import {
-  REASONS, applyMove, autoFinishMove, canAutoFinish, createGame, foundationCount, hasUsefulMove, isMovableRun,
+  REASONS, applyMove, createGame, foundationCount, hasUsefulMove, isMovableRun,
   isWon, parsePile, pileCards, replay, smartMove, validateMove,
 } from './rules'
-import { difficultyBand, difficultyLabel, findHint, generatePuzzle, makeSetup, timeBonus } from './levels'
+import { difficultyBand, difficultyLabel, findHint, generatePuzzle, makeSetup, planFinish, timeBonus } from './levels'
 import { GAME_ID, SAVE_VERSION, formatTime, modeKey, readPrefs, readSave, readStats, recordStart, recordWin, summarize } from './store'
 import SolitaireTable from './SolitaireTable'
 
 const TITLE = 'Solitaire'
-const AUTO_STEP_MS = 110
+const AUTO_STEP_MS = 170 // a card flying to its pile (the CSS move takes 160 ms)
+const AUTO_DRAW_MS = 70 // turning a stock card while finishing
 
 const saves = p => (p.solSaves && typeof p.solSaves === 'object' ? p.solSaves : {})
 const clearSave = slot => updateProgress(GAME_ID, p => (saves(p)[slot] ? { ...p, solSaves: { ...saves(p), [slot]: null } } : p))
@@ -466,18 +467,34 @@ function Play({ setup, puzzle, prefs, locked, onMenu, onRestart, onNext, onNew, 
   const restartHere = () => { discard.current = true; onRestart() }
   const newHere = () => { discard.current = true; onNew() }
 
-  /* ───── auto-finish: once every card is face up and the stock is used, play the rest up ───── */
-  const finishable = canAutoFinish(game)
+  /* ───── auto-finish: once every column card is face up and a win is certain, play the rest out ───── */
+  // planFinish proves the win (with the solver when cards are left in the stock or waste) and returns the moves.
+  const finishPlan = useMemo(() => (won || auto ? null : planFinish(game)), [game, won, auto])
+  const plan = useRef(null)
+  const startAuto = useCallback(line => {
+    plan.current = [...line]
+    setSelection(null)
+    setHint(null)
+    setMsg('Every card is face up. Finishing the game for you…')
+    setAuto(true)
+  }, [])
   useEffect(() => {
-    if (finishable && prefs.autoFinish && !auto && !locked && !paused) setAuto(true)
-  }, [finishable, prefs.autoFinish, auto, locked, paused])
+    if (finishPlan && prefs.autoFinish && !auto && !locked && !paused) startAuto(finishPlan)
+  }, [finishPlan, prefs.autoFinish, auto, locked, paused, startAuto])
   useEffect(() => {
     if (!auto) return undefined
     if (won) { setAuto(false); return undefined }
+    const next = plan.current?.[0]
+    const reduced = prefersReducedMotion()
+    // One card at a time; turning stock cards goes quicker so a long pass through the stock doesn't drag.
+    const delay = reduced ? 0 : next?.type === 'draw' ? AUTO_DRAW_MS : AUTO_STEP_MS
     const id = setTimeout(() => {
-      const move = autoFinishMove(game)
-      if (!move || !doMove(move, { silent: true })) setAuto(false)
-    }, prefersReducedMotion() ? 0 : AUTO_STEP_MS)
+      const move = plan.current?.shift()
+      if (!move || !doMove(move, { silent: true })) {
+        plan.current = null
+        setAuto(false)
+      }
+    }, delay)
     return () => clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auto, game, won])
@@ -569,8 +586,8 @@ function Play({ setup, puzzle, prefs, locked, onMenu, onRestart, onNext, onNew, 
         <button className="lg-btn small" onClick={togglePause} disabled={!started || won}>{paused ? '▶ Resume' : '⏸ Pause'}</button>
         <button className="lg-btn small" onClick={restartHere}>⟳ Restart</button>
         {mode === 'random' && <button className="lg-btn small" onClick={newHere}>🎲 New deal</button>}
-        {finishable && !prefs.autoFinish && !auto && (
-          <button className="lg-btn small sol-auto" onClick={() => setAuto(true)}>⚡ Auto-finish</button>
+        {finishPlan && !prefs.autoFinish && !auto && (
+          <button className="lg-btn small sol-auto" onClick={() => startAuto(finishPlan)}>⚡ Auto-finish</button>
         )}
       </div>
 

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { validateEngine } from '../../platform/engine'
 import { dealFromSeed } from './deal'
-import { createGame, isWon, replay, validateMove } from './rules'
+import { applyMove, canAutoFinish, createGame, hiddenCount, isWon, replay, validateMove } from './rules'
 import {
   MAX_LEVEL, RAMPS, analyzeDeal, difficultyBand, difficultyLabel, engine, evaluateDifficulty, findHint, generateDeal,
-  generateLevel, levelBand, levelTarget, makeSetup, maxDifficulty, parTime, staticMetrics, timeBonus, validateLevel,
+  generateLevel, levelBand, levelTarget, makeSetup, maxDifficulty, parTime, planFinish, staticMetrics, timeBonus, validateLevel,
 } from './levels'
 
 describe('difficulty ramp', () => {
@@ -154,5 +154,45 @@ describe('engine contract', { timeout: 30000 }, () => {
     const h = findHint(mid)
     expect(validateMove(mid, h.move).ok).toBe(true)
     expect(findHint(replay(p.deal, 1, p.analysis.solution).state)).toBeNull()
+  })
+})
+
+describe('finishing for the player', { timeout: 30000 }, () => {
+  /** The first position on a level's winning line where every column card is face up but cards are still in the stock or waste. */
+  function faceUpWithStockLeft(level, draw) {
+    const p = generateLevel(level, draw)
+    let s = createGame(p.deal, draw)
+    for (const m of p.analysis.solution) {
+      if (hiddenCount(s) === 0 && (s.stock.length || s.waste.length)) return s
+      s = applyMove(s, m).state
+    }
+    return null
+  }
+  const playOut = (s, line) => line.reduce((g, m) => { const r = applyMove(g, m); expect(r.ok).toBe(true); return r.state }, s)
+
+  it('plans a finish once every column card is face up, even with cards left in the stock and waste', () => {
+    for (const [level, draw] of [[1, 1], [4, 1], [2, 3]]) {
+      const s = faceUpWithStockLeft(level, draw)
+      expect(s, `level ${level} draw ${draw} reaches that position`).not.toBeNull()
+      expect(canAutoFinish(s)).toBe(false) // the old rule would have waited for the stock and waste to empty
+      const line = planFinish(s)
+      expect(line).not.toBeNull()
+      expect(isWon(playOut(s, line))).toBe(true)
+    }
+  })
+
+  it('plays the last cards up one at a time when the stock is used up', () => {
+    const p = generateLevel(1, 1)
+    let s = createGame(p.deal, 1)
+    for (const m of p.analysis.solution) { if (canAutoFinish(s)) break; s = applyMove(s, m).state }
+    const line = planFinish(s)
+    expect(line.every(m => m.type === 'move' && m.to === 'f' && m.count === 1)).toBe(true)
+    expect(isWon(playOut(s, line))).toBe(true)
+  })
+
+  it('does not plan anything while a card is face down, or after the win', () => {
+    const p = generateLevel(1, 1)
+    expect(planFinish(createGame(p.deal, 1))).toBeNull()
+    expect(planFinish(replay(p.deal, 1, p.analysis.solution).state)).toBeNull()
   })
 })
