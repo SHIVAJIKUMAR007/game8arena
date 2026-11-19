@@ -14,6 +14,7 @@ import { config as code } from '../games/codeBreaker/config'
 import { config as sudoku } from '../games/sudoku/config'
 import { config as word } from '../games/wordGuess/config'
 import { config as minesweeper } from '../games/minesweeper/config'
+import { config as solitaire } from '../games/solitaire/config'
 
 export const gameContent = {
   arrow: {
@@ -319,6 +320,34 @@ export const gameContent = {
       { q: 'How are stars and the score worked out?', a: 'A cleared level gives one star, a second if you used no hints, and a third if you finished within the par time shown on the result screen. Your score also goes up with the difficulty of the board and how fast you finish.' },
       { q: 'What do the hints do?', a: 'You get three hints per board. A hint points at one square you can be sure about, safe or a mine, and tells you which kind of reasoning finds it. It only uses the numbers on the board.' },
       { q: 'Is my progress saved?', a: 'Yes. Your level, statistics, best times and the board you are halfway through are saved in your browser, so you can close the tab and come back to the same position and time.' },
+    ],
+  },
+  solitaire: {
+    config: solitaire,
+    metaTitle: 'Solitaire: Free Klondike Card Game with Levels',
+    metaDescription:
+      'Play Klondike Solitaire free online. Draw one or draw three, unlimited undo, hints and levels that grow harder slowly. Every deal can be won.',
+    tagline: 'Build all four foundations from Ace to King, one suit at a time.',
+    genres: ['Card game', 'Solitaire', 'Patience'],
+    intro: [
+      'Klondike is the solitaire most people know. Seven columns of cards are dealt with only the top card of each face up, and the rest of the deck sits in the stock. Your goal is to move all 52 cards up to four foundation piles, one per suit, starting with the Ace and ending with the King. In the columns you build down in alternating colours, so a red 9 goes on a black 10, and every card you move off a face-down card turns it over.',
+      'Each deal is checked by a solver before you get it, so every game can be won. Level 1 is a gentle deal with plenty of moves. Later levels bury low cards deeper, give you fewer moves at the start and need longer plans, and after level 50 you keep getting new deals at that same top difficulty. Pick draw one for a relaxed game or draw three for the classic challenge.',
+    ],
+    tips: [
+      'Turning over face-down cards matters more than anything else. When you have a choice, move cards off the column with the most face-down cards.',
+      'Do not rush cards up to the foundations. A low black card may still be needed to hold a red card in a column.',
+      'Keep an empty column for a King that is sitting on top of face-down cards. Moving a King into an empty column for nothing wastes the space.',
+      'In draw three, the order of the stock shifts each time you play a card from it. If you are stuck, playing one waste card can bring new cards to the top on the next pass.',
+      'Undo is free. If a line of play leads nowhere, go back and try the other column.',
+    ],
+    faq: [
+      { q: 'Can every deal be won?', a: 'Yes. Before a deal is offered, a solver plays it with every card known and has to find a win. Deals it cannot win are thrown away, so you are never given a hopeless game. You can still get stuck by making the wrong moves, and then undo helps.' },
+      { q: 'What is the difference between draw one and draw three?', a: 'In draw one you turn one card from the stock at a time, and you can reach every card. In draw three you turn three and can only play the top one, so many cards stay out of reach until the order shifts. Draw three is harder, and its levels are rated on their own scale.' },
+      { q: 'How do I move cards?', a: 'Drag them with the mouse or your finger. Or tap a card to pick it up and tap where it should go. Tap a picked-up card again, or double-click it, to send it to the best place, usually a foundation. On a keyboard, Tab moves between cards and Enter picks up and puts down.' },
+      { q: 'How does the difficulty grow?', a: 'Each deal is rated from how deeply the low cards are buried under face-down cards, how many moves you have at the start, and how much searching the solver needed to win. Level 1 starts easy, each level aims a little higher, and the rating never goes above the cap for your draw mode.' },
+      { q: 'How is the score worked out?', a: 'You get 10 points for each card on a foundation, 5 for moving a waste card to a column and 5 for each card you turn over. Moving a card back down from a foundation costs 15, and turning the waste back over costs 100 in draw one and 20 in draw three. A fast win adds a time bonus.' },
+      { q: 'How do stars work?', a: 'A win gives one star, a second if you used no hints and a third if you finished within the par time shown on the result screen. Undo does not cost a star.' },
+      { q: 'Is my game saved?', a: 'Yes. Your level, statistics, personal bests and the game you are in the middle of are saved in your browser, so you can close the tab and continue the same deal later.' },
     ],
   },
 }

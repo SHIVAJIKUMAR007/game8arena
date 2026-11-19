@@ -16,5 +16,6 @@ import codeBreaker from "../games/codeBreaker";
 import sudoku from "../games/sudoku";
 import wordGuess from "../games/wordGuess";
 import minesweeper from "../games/minesweeper";
+import solitaire from "../games/solitaire";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire];

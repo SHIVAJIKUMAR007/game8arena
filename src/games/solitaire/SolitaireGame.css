@@ -1,0 +1,153 @@
+/* Solitaire: a felt table with CSS-drawn cards, on the shared --g-* theme tokens.
+   Card size comes from layout.js as --cw / --ch, so every number here scales with the table. */
+
+/* The site's game screen is 4:3 next to the sidebar. On tablet-width two-column layouts that is short for seven
+   columns of cards, so while this game is mounted give it a fixed height instead (as Minesweeper does). */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .screen:has(.sol-root, .sol-menu) { aspect-ratio: auto; height: min(680px, 80vh); }
+}
+
+.sol-root {
+  --sol-felt: #1d7a55;
+  --sol-felt-edge: #135c3f;
+  --sol-card: #fffdf8;
+  --sol-red: #c8202f;
+  --sol-black: #1b1b22;
+  --sol-s1: var(--sol-red); --sol-s2: var(--sol-red); --sol-s0: var(--sol-black); --sol-s3: var(--sol-black);
+  --sol-back: #b3262f;
+  --sol-back-2: #d24a4f;
+  --sol-line: rgba(255, 255, 255, .28);
+}
+:root[data-game-theme='dark'] .sol-root {
+  --sol-felt: #0f3d2e; --sol-felt-edge: #0a2a20; --sol-card: #f1efe8; --sol-back: #3a3f8f; --sol-back-2: #5961c0;
+}
+/* Colour-blind friendly: a four-colour deck, so no two suits share a colour. */
+:root[data-game-theme='colorblind'] .sol-root {
+  --sol-felt: #2b6a5a; --sol-felt-edge: #1d4c40;
+  --sol-s0: #1a1a1a; --sol-s1: #cc3311; --sol-s2: #0072b2; --sol-s3: #117733;
+}
+
+.sol-hud { flex: none; }
+.sol-hud .lg-title { white-space: nowrap; }
+.sol-diff { display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--g-muted); }
+.sol-diff-dots { display: inline-flex; gap: 3px; }
+.sol-diff-dots i { width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--g-ink) 22%, transparent); }
+.sol-diff-dots i.on { background: var(--g-warn); }
+.sol-stats { display: inline-flex; gap: 12px; font-variant-numeric: tabular-nums; }
+.sol-stats b { font-size: 1.05em; }
+.sol-hud-actions { display: inline-flex; align-items: center; gap: 2px; }
+
+.sol-felt {
+  position: relative; flex: 1; min-height: 0; margin: 0 8px; border-radius: 12px; overflow: hidden;
+  /* Own stacking context: the cards' z-indexes (stacking order, dragging, win cascade) stay inside the table and can
+     never rise above page-level layers like dialogs (.md-backdrop), toasts or the consent banner. */
+  isolation: isolate;
+  background: radial-gradient(ellipse at 50% 30%, var(--sol-felt), var(--sol-felt-edge));
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, .25);
+}
+.sol-dealing { flex: 1; display: grid; place-items: center; color: var(--g-muted); font-weight: 700; }
+
+.sol-msg { flex: none; margin: 6px 12px 0; min-height: 2.6em; text-align: center; font-size: .82rem; line-height: 1.3; color: var(--g-muted); }
+.sol-toolbar { flex: none; flex-wrap: wrap; padding-top: 2px; }
+.sol-auto { background: var(--g-accent); border-color: var(--g-accent); color: var(--g-on-accent); }
+
+/* ───── Table ───── */
+.sol-table { position: absolute; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
+.sol-slot {
+  position: absolute; width: var(--cw); height: var(--ch); box-sizing: border-box; padding: 0; margin: 0;
+  display: grid; place-items: center; cursor: pointer; font-family: inherit;
+  background: rgba(0, 0, 0, .12); border: 2px solid var(--sol-line); border-radius: calc(var(--cw) * .08);
+  color: var(--sol-line); font-weight: 800; font-size: calc(var(--cw) * .36);
+}
+.sol-slot.stock { background: transparent; border-color: transparent; color: rgba(255, 255, 255, .55); font-size: calc(var(--cw) * .5); }
+.sol-slot.stock:not(.full) { border-color: var(--sol-line); background: rgba(0, 0, 0, .12); }
+.sol-slot.hint-to, .sol-slot.hint-from { border-color: var(--g-warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-warn) 55%, transparent); }
+
+.sol-card {
+  position: absolute; width: var(--cw); height: var(--ch); box-sizing: border-box; padding: 0; margin: 0;
+  border-radius: calc(var(--cw) * .08); font-family: inherit; touch-action: none;
+  transition: left .16s ease, top .16s ease, transform .12s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+.sol-card.back {
+  border: 2px solid #fff;
+  background:
+    repeating-linear-gradient(45deg, var(--sol-back) 0 4px, var(--sol-back-2) 4px 5px),
+    var(--sol-back);
+  box-shadow: inset 0 0 0 2px var(--sol-back), 0 1px 2px rgba(0, 0, 0, .35);
+}
+.sol-card.face { background: var(--sol-card); border: 1px solid rgba(0, 0, 0, .25); cursor: grab; overflow: hidden; color: var(--sol-black); }
+.sol-card.face.s0 { color: var(--sol-s0); } .sol-card.face.s1 { color: var(--sol-s1); }
+.sol-card.face.s2 { color: var(--sol-s2); } .sol-card.face.s3 { color: var(--sol-s3); }
+
+.sol-corner {
+  position: absolute; top: calc(var(--cw) * .04); left: calc(var(--cw) * .07); right: calc(var(--cw) * .07);
+  display: flex; justify-content: space-between; align-items: baseline; line-height: 1;
+  font-size: calc(var(--cw) * .26);
+}
+.sol-corner b { font-weight: 700; letter-spacing: -.04em; }
+.sol-corner i { font-style: normal; }
+.sol-pip {
+  position: absolute; left: 0; right: 0; bottom: calc(var(--ch) * .08); text-align: center; line-height: 1;
+  font-size: calc(var(--cw) * .62);
+}
+.sol-pip.court { font-size: calc(var(--cw) * .4); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sol-pip.court b { font-size: 1.4em; font-family: Georgia, 'Times New Roman', serif; }
+
+.sol-card.sel { transform: translateY(-5px); box-shadow: 0 0 0 3px var(--g-accent), 0 6px 12px rgba(0, 0, 0, .35); }
+.sol-card.hint { box-shadow: 0 0 0 3px var(--g-warn), 0 0 14px var(--g-warn); }
+.sol-card.drag { transition: none; cursor: grabbing; box-shadow: 0 10px 22px rgba(0, 0, 0, .45); }
+.sol-card.bad { animation: sol-shake .36s ease; }
+.sol-table.disabled .sol-card.face { cursor: default; }
+
+@keyframes sol-shake {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Win cascade: the foundation cards fly off the table, one after another. */
+.sol-cascade { position: absolute; inset: 0; pointer-events: none; z-index: 2000; }
+.sol-card.fly { animation: sol-fly 1.5s cubic-bezier(.35, 0, .85, .45) both; }
+@keyframes sol-fly {
+  0% { transform: none; opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+
+:root[data-reduced-motion='1'] .sol-card { transition: none; }
+:root[data-reduced-motion='1'] .sol-card.bad { animation: none; outline: 3px solid var(--g-bad); }
+:root[data-reduced-motion='1'] .sol-cascade { display: none; }
+
+.sol-paused {
+  position: absolute; inset: 0; z-index: 3000; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--sol-felt-edge) 92%, transparent); color: #fff; font-size: 1.3rem;
+}
+
+/* ───── Menu ───── */
+.sol-sub { max-width: 34em; margin: 0; color: var(--g-muted); font-size: .92rem; }
+.sol-draw { display: flex; gap: 8px; width: min(100%, 340px); }
+.sol-draw-btn {
+  flex: 1; display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; cursor: pointer; font-family: inherit;
+  background: var(--g-panel); color: var(--g-ink); border: 2px solid color-mix(in srgb, var(--g-ink) 30%, transparent); border-radius: 12px;
+}
+.sol-draw-btn small { color: var(--g-muted); font-size: .75rem; }
+.sol-draw-btn.on { border-color: var(--g-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-accent) 30%, transparent); }
+
+/* ───── Results and statistics ───── */
+.sol-result-sub { margin: 0; color: var(--g-muted); font-size: .85rem; }
+.sol-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 12px; text-align: center; }
+.sol-stat-grid div { background: color-mix(in srgb, var(--g-ink) 6%, transparent); border-radius: 10px; padding: 8px 4px; }
+.sol-stat-grid dt { font-size: .72rem; color: var(--g-muted); }
+.sol-stat-grid dd { margin: 2px 0 0; font-size: 1.2rem; font-weight: 800; }
+.sol-statsview h3 { margin: 8px 0 6px; font-size: 1rem; }
+.sol-bests { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.sol-bests th, .sol-bests td { padding: 5px 4px; text-align: center; border-bottom: 1px solid color-mix(in srgb, var(--g-ink) 15%, transparent); }
+.sol-bests th[scope='row'] { text-align: left; }
+
+@media (max-width: 760px) {
+  .sol-stats { gap: 8px; }
+  .sol-diff { display: none; }
+  .sol-felt { margin: 0 4px; }
+  .sol-toolbar .lg-btn.small { padding: 6px 10px; }
+}
