@@ -36,16 +36,14 @@ export default function Blogs() {
       </p>
       <div className="blog-list">
         {posts.map((p) => (
-          <Link to={blogPath(p.slug)}>
-            <article key={p.slug} className="blog-card">
+          <Link key={p.slug} to={blogPath(p.slug)} aria-label={p.title}>
+            <article className="blog-card">
               <p className="blog-meta">
                 <span className="blog-cat">{p.category}</span> · <time dateTime={p.date}>{formatDate(p.date)}</time>
               </p>
               <h2>{p.title}</h2>
               <p>{p.excerpt}</p>
-              <p to={blogPath(p.slug)} className="blog-more" aria-label={`Read: ${p.title}`}>
-                Read more →
-              </p>
+              <p className="blog-more">Read more →</p>
             </article>
           </Link>
         ))}
