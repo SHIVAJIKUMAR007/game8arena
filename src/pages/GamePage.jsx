@@ -1,9 +1,10 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { games } from '../data/games'
 import ErrorBoundary from '../platform/ui/ErrorBoundary'
 import { totalStars, useProgress } from '../platform/progress'
 import { pickDaily } from '../platform/daily'
+import { recordPlay } from '../platform/plays'
 import Seo from '../seo/Seo'
 import { landingPath, playPath } from '../seo/site'
 import NotFound from './NotFound'
@@ -13,6 +14,10 @@ export default function GamePage() {
   const [params] = useSearchParams()
   const game = games.find(g => g.id === id)
   const progress = useProgress(id)
+  const known = Boolean(game)
+  useEffect(() => {
+    if (known) recordPlay(id)
+  }, [id, known])
 
   if (!game) return <NotFound />
 

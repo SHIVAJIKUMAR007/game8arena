@@ -13,6 +13,7 @@
 //   - every post has an FAQ answering the follow-up questions people search for
 // Any game linked from a post\'s body gets a "From the blog" link back on that game\'s page.
 // News posts go stale: update `updated` and the text when facts change, and cite sources.
+import { blogImages } from './blogImages'
 import { seoBlogPosts } from './seoBlogPosts'
 
 export const blogPosts = [
@@ -27,6 +28,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["How to solve Sudoku", "Sudoku for beginners", "Sudoku rules", "Easy Sudoku online", "Puzzle games"],
     excerpt: "The Sudoku rules, a step-by-step way to fill your first grid, and the three techniques that solve most easy puzzles.",
+    images: blogImages("sudoku"),
     body: [
       "Learning how to solve Sudoku is easier than it looks. The puzzle has no arithmetic in it. You find the answer by noticing what is already on the grid and ruling out what cannot go in each empty cell. This guide takes you through the rules and a method you can use on your first puzzle.",
       "## What is Sudoku?",
@@ -95,6 +97,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Sudoku strategies", "Sudoku tips and tricks", "Solve Sudoku faster", "Sudoku techniques", "Logic puzzles"],
     excerpt: "A practical routine for solving Sudoku, from scanning nearly full rows to spotting pairs and reducing candidates without guessing.",
+    images: blogImages("sudoku", true),
     body: [
       "Sudoku strategies help you find the next move by ruling out digits that cannot fit. You do not need to memorize every advanced technique to solve puzzles faster. Start with a clear scanning routine, write candidates when they help, and use each confirmed number to check the surrounding row, column and box again.",
       "## 1. Start with nearly full rows",
@@ -174,6 +177,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["How to play Mastermind", "Mastermind strategy", "Code Breaker game", "Crack the secret code", "Logic games"],
     excerpt: "Learn the Mastermind rules, read exact and misplaced-color clues, and plan each guess to narrow down the hidden code.",
+    images: blogImages("mastermind"),
     body: [
       "Learning how to play Mastermind is straightforward: guess a hidden sequence of colors, read the feedback, and use it to rule out impossible codes. The challenge is keeping track of what each clue proves. A useful guess should test an idea or narrow the possibilities, not just offer another random combination.",
       "## What is Mastermind?",
@@ -280,6 +284,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Brain games for adults", "Free brain games online", "Logic games", "Memory games", "Puzzle games"],
     excerpt: "Ten free brain games for adults, from Sudoku to memory and code-breaking puzzles, with a note on what each one asks of your brain.",
+    images: blogImages("brain"),
     body: [
       "The best brain games for adults give you something to chew on during a break, and they beat another round of scrolling. Some test your memory, and others reward careful deduction and planning. Here are ten you can play free in your browser, each with a note on what it asks of you.",
       "## 1. Sudoku for logical thinking",
@@ -334,6 +339,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Free online puzzle games", "Puzzle games no download", "Free browser games", "Brain games", "Logic puzzles"],
     excerpt: "Ten kinds of free online puzzle games you can play in your browser, from Sudoku and memory games to box-pushing and code-breaking puzzles.",
+    images: blogImages("casual"),
     body: [
       "Free online puzzle games let you take a break and give your brain a workout without installing an app or creating an account. You open a page, and you are playing within seconds. This list covers 10 kinds of puzzle, from number grids to memory tests, and each one links to a free game you can try right now.",
       "## 1. Sudoku",
@@ -398,6 +404,7 @@ export const blogPosts = [
     category: "News",
     tags: ["GTA 6", "Grand Theft Auto VI", "Rockstar Games", "Release dates"],
     excerpt: "The GTA 6 release date is November 19, 2026. Here is the date history, platforms, PC status, setting and what is still unknown.",
+    images: blogImages("gamenews"),
     body: [
       "The GTA 6 release date is Thursday, November 19, 2026, on PlayStation 5 and Xbox Series X|S. After two delays, Rockstar Games locked in that date a year ago and it has held. Below is everything confirmed as of November 17, 2026, plus the questions Rockstar has not answered yet.",
       "## When does GTA 6 come out?",
@@ -475,6 +482,7 @@ export const blogPosts = [
     category: "News",
     tags: ["Gaming news", "GTA 6", "Nintendo Switch 2", "Zelda", "Wolfenstein 3"],
     excerpt: "GTA VI is days away, Nintendo sets a Switch 2 record with Ocarina of Time, and MachineGames confirms Wolfenstein 3.",
+    images: blogImages("gamenews", true),
     body: [
       "Three stories matter most in gaming news as of November 17, 2026: the GTA VI launch, a Switch 2 sales record for Ocarina of Time, and the confirmation of Wolfenstein 3.",
       "## GTA VI launches on November 19",
@@ -534,6 +542,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Casual games", "Browser games", "Free online games", "Puzzle games"],
     excerpt: "The best free casual games you can start in seconds without a download or an account, sorted by the kind of break you need.",
+    images: blogImages("casual", true),
     body: [
       "The best free casual games start in seconds and teach themselves in a few moves. They save your progress when you stop, so they fit the gaps in your day: a coffee break, a commute, five minutes before a meeting.",
       "Browser games are the easiest way to get that. There is nothing to install and nothing to update, and the same game works on your phone and your laptop. Here is how to pick one based on the kind of break you want, with a free game for each.",
@@ -585,6 +594,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Puzzle games", "Puzzle tips", "Sudoku tips", "Casual games"],
     excerpt: "Most puzzle players get stuck in the same ways. These seven habits work in Sudoku, sliding puzzles, memory games and more.",
+    images: blogImages("brain", true),
     body: [
       "Most of the gap between a stuck player and a fast one is habit. Good players approach every level the same way. Here are seven habits that make you better at puzzle games, with examples you can try for free.",
       "## 1. Scan the whole board before you move",
@@ -634,6 +644,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Logic grid puzzles", "Logic puzzles online", "How to solve logic puzzles", "Queens puzzle strategy", "Puzzle tips"],
     excerpt: "Learn the rules of logic grid puzzles and use a repeatable step-by-step method to eliminate possibilities and find the answer.",
+    images: blogImages("logicgrid"),
     body: [
       "Logic grid puzzles ask you to find an answer through relationships and elimination. They reward careful reading more than guesswork, although one wrong assumption can spread through the whole grid.",
       "## What is a logic grid puzzle?",
@@ -715,6 +726,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["How to solve Sokoban puzzles", "Sokoban strategy", "Box pushing puzzle", "Sokoban tips", "Logic puzzles"],
     excerpt: "Plan Sokoban pushes, recognize deadlocks and keep open routes so you can solve box-pushing puzzles from the first level to harder layouts.",
+    images: blogImages("box", true),
     body: [
       "Learning how to solve Sokoban puzzles starts with one rule: boxes can be pushed, but they cannot normally be pulled. That restriction turns every crate into a commitment. A push that looks useful now can trap a box against a wall or seal off a route you need later.",
       "## What is Sokoban?",
@@ -807,6 +819,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Games like 2048", "Number merge games", "2048 alternatives", "Free merge puzzle games", "Browser puzzles"],
     excerpt: "Try these free number merge, tile, Sudoku, code-breaking and memory games for the same planning and puzzle-solving appeal as 2048.",
+    images: blogImages("merge"),
     body: [
       "Games like 2048 combine simple controls with choices that become more demanding as the board fills. The next move matters because it changes the space available for every move after it.",
       "2048 is especially satisfying for that reason. You merge matching values, build larger numbers and watch the board gradually tighten. The alternatives below keep the same ideas in different forms: preserve space, spot useful patterns and plan before the options disappear.",
@@ -895,6 +908,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Memory games online", "Free memory games", "Memory sequence test", "Games to improve memory", "Concentration games"],
     excerpt: "Explore 12 ways to practise recall, from memory sequences and matching cards to number, spatial and picture challenges.",
+    images: blogImages("memory"),
     body: [
       "Memory games online give you a short, structured way to practise remembering an order, location or detail. Some use a growing series of lights and sounds. Others place objects face down or ask you to compare two pictures.",
       "The basic challenge is easy to understand: notice useful information, hold it briefly and reproduce it correctly. Difficulty comes from the amount of information and the time available to process it.",
@@ -991,6 +1005,7 @@ export const blogPosts = [
     category: "Guides",
     tags: ["Free games to play when bored", "Games to play when bored", "Free browser games", "Online games no download", "Casual games online"],
     excerpt: "A practical list of 15 browser games for quick breaks, from Sudoku and merge puzzles to memory, code-breaking and spatial challenges.",
+    images: blogImages("casual"),
     body: [
       "Free games to play when bored can fill a short break without asking you to install an app or create an account. A browser puzzle can start in seconds, and a good puzzle also gives you a clear decision to make rather than another endless feed.",
       "Some players want numbers. Others prefer words, colors or moving pieces around a board. The choices below cover several styles, so you can pick a game based on how much attention and time you have.",

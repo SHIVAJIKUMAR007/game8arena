@@ -38,7 +38,7 @@ export default function Home() {
           <section className="toolbar">
             <div className="chips">
               {categories.map((c) => (
-                <button key={c} className={c === cat ? "chip active" : "chip"} onClick={() => setCat(c)}>
+                <button key={c} className={c === cat ? "chip active" : "chip"} aria-pressed={c === cat} onClick={() => setCat(c)}>
                   {c}
                 </button>
               ))}
@@ -47,8 +47,8 @@ export default function Home() {
           </section>
 
           <section className="grid" aria-label="Games">
-            {shown.map((g) => (
-              <GameCard key={g.id} game={g} />
+            {shown.map((g, i) => (
+              <GameCard key={g.id} game={g} index={i} />
             ))}
             {shown.length === 0 && <p className="empty">No games found.</p>}
           </section>

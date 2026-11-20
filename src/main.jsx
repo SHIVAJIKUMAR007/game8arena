@@ -1,6 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import '@fontsource-variable/bricolage-grotesque/wght.css'
+import '@fontsource-variable/hanken-grotesk/wght.css'
 import App from './App'
 import ErrorBoundary from './platform/ui/ErrorBoundary'
 import './platform/settings' // applies saved theme / motion preference before first paint

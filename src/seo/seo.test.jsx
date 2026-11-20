@@ -72,7 +72,7 @@ describe('Blog SEO', () => {
       const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
       expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThanOrEqual(900)
       expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => image.url.startsWith('https://') && image.alt && image.filename), post.slug).toBe(true)
+      expect(post.images.every(image => /^(https:\/\/|\/)/.test(image.url) && image.alt && image.filename), post.slug).toBe(true)
       expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
       expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
       expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
