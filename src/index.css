@@ -782,6 +782,24 @@ main {
 .blog-post li a {
   color: var(--cyan);
 }
+.blog-image {
+  margin: 22px 0;
+}
+.blog-image img {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.blog-image figcaption {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.blog-image a {
+  color: var(--cyan);
+}
 .blog-post ul li + li {
   margin-top: 4px;
 }

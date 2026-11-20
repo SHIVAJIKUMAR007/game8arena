@@ -31,12 +31,23 @@ function Inline({ text }) {
 }
 
 function Block({ block }) {
+  if (block?.type === 'image')
+    return (
+      <figure className="blog-image">
+        <img src={block.url} alt={block.alt} loading="lazy" data-filename={block.filename} />
+        <figcaption>
+          {block.caption}{' '}
+          {block.sourceUrl && <a href={block.sourceUrl} target="_blank" rel="noopener noreferrer">Photo source</a>}
+        </figcaption>
+      </figure>
+    )
   if (Array.isArray(block))
     return (
       <ul>
         {block.map((item, i) => <li key={i}><Inline text={item} /></li>)}
       </ul>
     )
+  if (block.startsWith('### ')) return <h3>{block.slice(4)}</h3>
   if (block.startsWith('## ')) return <h2>{block.slice(3)}</h2>
   return <p><Inline text={block} /></p>
 }

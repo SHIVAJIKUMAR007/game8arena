@@ -8,6 +8,7 @@ import GameLanding from '../pages/GameLanding'
 import Blogs from '../pages/Blogs'
 import BlogPost from '../pages/BlogPost'
 import { blogPosts } from '../data/blogPosts'
+import { seoBlogPosts } from '../data/seoBlogPosts'
 import { buildHead } from './head'
 
 const landing = id =>
@@ -62,6 +63,27 @@ describe('SEO', () => {
 })
 
 describe('Blog SEO', () => {
+  it('new Game8Arena guides meet the long-form content requirements', () => {
+    expect(seoBlogPosts).toHaveLength(20)
+    for (const post of seoBlogPosts) {
+      const bodyText = post.body
+        .flatMap(block => Array.isArray(block) ? block : typeof block === 'string' ? [block] : [])
+        .join(' ')
+      const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
+      expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThanOrEqual(900)
+      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.images.every(image => image.url.startsWith('https://') && image.alt && image.filename), post.slug).toBe(true)
+      expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
+      expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.metaDescription.length, post.slug).toBeGreaterThanOrEqual(140)
+      expect(post.metaDescription.length, post.slug).toBeLessThanOrEqual(160)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeGreaterThanOrEqual(50)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeLessThanOrEqual(60)
+      expect(post.body.some(block => typeof block === 'string' && block.startsWith('### ')), post.slug).toBe(true)
+    }
+  })
+
   it.each(blogPosts.map(p => [p.slug]))('post "%s" has meta copy that fits Google’s limits', slug => {
     const p = blogPosts.find(x => x.slug === slug)
     expect(buildHead({ title: p.metaTitle, description: p.metaDescription, path: '/' }).title.length).toBeLessThanOrEqual(60)
@@ -107,6 +129,13 @@ describe('Blog SEO', () => {
     expect(ld).toContain('FAQPage')
     expect(document.head.querySelector('meta[property="article:published_time"]').getAttribute('content')).toBe('2026-11-17')
     expect(screen.getByRole('heading', { name: 'Is GTA 6 on PC?' })).toBeTruthy()
+  })
+
+  it('new guide renders its images and nested headings', () => {
+    at('/blogs/how-to-play-arrow-escape')
+    expect(screen.getAllByRole('img')).toHaveLength(2)
+    expect(screen.getByRole('heading', { level: 3, name: 'Trace each arrow’s full flight line' })).toBeTruthy()
+    expect(screen.getAllByRole('link', { name: 'Photo source' })).toHaveLength(2)
   })
 
   it('unknown post is a noindex 404', () => {

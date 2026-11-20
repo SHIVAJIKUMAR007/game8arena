@@ -2,8 +2,10 @@
 //
 // Body format, one array entry per block:
 //   '## Heading'            → <h2>
+//   '### Subheading'        → <h3>
 //   'Plain paragraph'       → <p>   (inline links: [text](/games/arrow) or [text](https://…))
 //   ['item', 'item']        → <ul>
+//   { type: 'image', ... }  → responsive figure with alt text and source link
 //
 // SEO rules (checked by src/seo/seo.test.jsx):
 //   - metaTitle + " | Game8Arena" ≤ 60 chars, metaDescription 70–160 chars
@@ -11,6 +13,7 @@
 //   - every post has an FAQ answering the follow-up questions people search for
 // Any game linked from a post\'s body gets a "From the blog" link back on that game\'s page.
 // News posts go stale: update `updated` and the text when facts change, and cite sources.
+import { seoBlogPosts } from './seoBlogPosts'
 
 export const blogPosts = [
   {
@@ -1076,11 +1079,12 @@ export const blogPosts = [
       },
     ],
   },
+  ...seoBlogPosts,
 ];
 
 export const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
 export const blogPath = (slug) => `/blogs/${slug}`;
 
-const flat = (post) => post.body.flat().join(" ");
+const flat = (post) => post.body.flat().filter((block) => typeof block === "string").join(" ");
 /** Posts whose body links to a game\'s landing page (shown as "From the blog" on that page). */
 export const postsForGame = (id) => blogPosts.filter((p) => flat(p).includes(`(/games/${id})`));

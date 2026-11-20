@@ -47,7 +47,7 @@ export const blogPostingSchema = post => ({
   mainEntityOfPage: blogUrl(post.slug),
   datePublished: post.date,
   dateModified: post.updated || post.date,
-  image: [absUrl('/icon-512.png')],
+  image: post.images?.length ? post.images.map(image => image.url) : [absUrl('/icon-512.png')],
   keywords: post.tags.join(', '),
   inLanguage: 'en',
   author: { '@type': 'Organization', name: `${SITE_NAME} team`, url: absUrl('/about') },

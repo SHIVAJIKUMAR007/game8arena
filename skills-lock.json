@@ -14,6 +14,20 @@
       "sourceType": "github",
       "skillPath": "skills/seo-content/SKILL.md",
       "computedHash": "6ea804d62407e269baa12d3f657b92fe9aa245bf464230edceda7ec4c17d2b47"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "commit": "2de1134dc4d1cfe112934611ae5803ae17a1bd7e",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "605686282fb6812d8e3f4b1a06c9fb8ba7be4d7395090f41f221a9ba5a3dbe6b"
+    },
+    "web-search": {
+      "source": "101-skills/superpowers",
+      "commit": "93a647364937903fa2f45629ca7c5f9c89fc57c9",
+      "sourceType": "github",
+      "skillPath": "tools/llm/web-search/SKILL.md",
+      "computedHash": "f055bf2f00177494716196261f605059303f72b36045f63089ab6bc9857c98c0"
     }
   }
 }
