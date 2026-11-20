@@ -9,6 +9,7 @@ import Blogs from '../pages/Blogs'
 import BlogPost from '../pages/BlogPost'
 import { blogPosts } from '../data/blogPosts'
 import { seoBlogPosts } from '../data/seoBlogPosts'
+import { seoBlogPostsMore } from '../data/seoBlogPostsMore'
 import { buildHead } from './head'
 
 const landing = id =>
@@ -84,6 +85,32 @@ describe('Blog SEO', () => {
     }
   })
 
+  it('the additional 20 guides meet long-form and metadata requirements', () => {
+    expect(seoBlogPostsMore).toHaveLength(20)
+    for (const post of seoBlogPostsMore) {
+      const bodyText = post.body
+        .flatMap(block => Array.isArray(block) ? block : typeof block === 'string' ? [block] : [])
+        .join(' ')
+      const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
+      expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThan(900)
+      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
+      expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.faq.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.metaDescription.length, post.slug).toBeGreaterThanOrEqual(140)
+      expect(post.metaDescription.length, post.slug).toBeLessThanOrEqual(160)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeGreaterThanOrEqual(50)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeLessThanOrEqual(60)
+      expect(post.body.some(block => typeof block === 'string' && block.startsWith('### ')), post.slug).toBe(true)
+      expect(blogPosts.filter(article => article.slug === post.slug), post.slug).toHaveLength(1)
+      for (const link of post.suggestedRelatedArticles) {
+        expect(blogPosts.some(article => `/blogs/${article.slug}` === link), `${post.slug}: ${link}`).toBe(true)
+      }
+    }
+  })
+
   it.each(blogPosts.map(p => [p.slug]))('post "%s" has meta copy that fits Google’s limits', slug => {
     const p = blogPosts.find(x => x.slug === slug)
     expect(buildHead({ title: p.metaTitle, description: p.metaDescription, path: '/' }).title.length).toBeLessThanOrEqual(60)
@@ -135,6 +162,13 @@ describe('Blog SEO', () => {
     at('/blogs/how-to-play-arrow-escape')
     expect(screen.getAllByRole('img')).toHaveLength(2)
     expect(screen.getByRole('heading', { level: 3, name: 'Trace each arrow’s full flight line' })).toBeTruthy()
+    expect(screen.getAllByRole('link', { name: 'Photo source' })).toHaveLength(2)
+  })
+
+  it('additional guide renders its images and nested headings', () => {
+    at('/blogs/pipe-connect-bolted-pipes')
+    expect(screen.getAllByRole('img')).toHaveLength(2)
+    expect(screen.getByRole('heading', { level: 3, name: 'Fixed pieces narrow the route' })).toBeTruthy()
     expect(screen.getAllByRole('link', { name: 'Photo source' })).toHaveLength(2)
   })
 

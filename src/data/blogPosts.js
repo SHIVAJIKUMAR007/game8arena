@@ -15,6 +15,7 @@
 // News posts go stale: update `updated` and the text when facts change, and cite sources.
 import { blogImages } from './blogImages'
 import { seoBlogPosts } from './seoBlogPosts'
+import { seoBlogPostsMore } from './seoBlogPostsMore'
 
 export const blogPosts = [
   {
@@ -1095,6 +1096,7 @@ export const blogPosts = [
     ],
   },
   ...seoBlogPosts,
+  ...seoBlogPostsMore,
 ];
 
 export const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
