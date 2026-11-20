@@ -16,6 +16,7 @@ import { config as word } from '../games/wordGuess/config'
 import { config as minesweeper } from '../games/minesweeper/config'
 import { config as solitaire } from '../games/solitaire/config'
 import { config as blocky } from '../games/blockyBlitz/config'
+import { config as bubbles } from '../games/bubbleSurge/config'
 
 export const gameContent = {
   arrow: {
@@ -378,6 +379,36 @@ export const gameContent = {
       { q: 'Is every set of pieces playable?', a: 'Every new set of three includes at least one piece that fits on the current board. Later pieces can still run out of room if the board fills up, which is how a game ends.' },
       { q: 'How do I play with a keyboard?', a: 'Tab to a piece and press Enter to pick it up. The arrow keys move it over the board, Enter places it, H sends it to the hold slot and Escape puts it back.' },
       { q: 'Is my game saved?', a: 'Yes. The board, your pieces, the hold slot, score and level are saved in your browser after every move, so you can close the tab and carry on. Your best score is saved too and you can reset it in the settings.' },
+    ],
+  },
+  bubbles: {
+    config: bubbles,
+    metaTitle: 'Bubble Surge: Free Online Bubble Shooter Game',
+    metaDescription:
+      'Play Bubble Surge free online. Aim a shooter in the middle of a huge bubble field, match three or more to pop them and clear each level before it creeps in.',
+    tagline: 'Pop your way out from the middle of a huge bubble field.',
+    genres: ['Bubble shooter', 'Casual puzzle', 'Arcade'],
+    intro: [
+      'Bubble Surge turns the usual bubble shooter inside out. The bubbles fill the whole screen and the shooter sits in the middle, inside a hole in the field. It turns all the way round, so you can fire in any direction. Aim with the mouse or a finger and the dotted guide shows where the bubble will go, including up to two bounces off the walls.',
+      'A bubble sticks to the first bubble it touches. Join three or more of the same colour and they pop, and any bubbles left with no link to the edge of the field drop for bonus points. Clear enough of the field to finish the level. Miss too many times in a row and a new layer creeps in around the hole. If a bubble touches the ring around your shooter, the game is over.',
+    ],
+    tips: [
+      'Aim at the edge of a clump of your colour. A bubble that lands beside two others of its colour pops all three.',
+      'Look for bubbles that hold a big group to the edge. Pop the link and the whole group drops, which scores 20 points for each bubble.',
+      'Use the bounce guide to reach spots you cannot hit in a straight line, such as a pocket behind a ridge.',
+      'Swap bubbles with Space or by clicking the ring. Keep a colour you will need later, and use the other one now.',
+      'Watch the arc on the ring. When it is nearly full, make a shot that pops, because a pop resets it.',
+      'Pop on five shots to fill the meter. The next bubble becomes a bomb that clears everything within three cells.',
+    ],
+    faq: [
+      { q: 'How do I aim and fire?', a: 'Move the mouse around the screen, or drag a finger. The shooter turns toward the pointer. Click or lift your finger to fire. With a keyboard, the left and right arrow keys turn the shooter and Enter fires.' },
+      { q: 'How do I swap the bubble in the shooter?', a: 'Click the ring in the middle, tap the preview bubble in the bar at the bottom, or press Space. The current bubble and the next one trade places.' },
+      { q: 'What makes bubbles drop?', a: 'After a pop, any bubble that is no longer linked to the edge of the field, either directly or through other bubbles, falls. The top, bottom, left and right edges all count as anchors.' },
+      { q: 'What do the bomb and rainbow bubbles do?', a: 'Pop on five shots to fill the five-circle meter and the bubble in the shooter turns into a bomb. It pops everything within three cells of where it lands. A rainbow bubble turns up now and then and matches whatever colour it lands next to.' },
+      { q: 'What is the arc around the ring?', a: 'It shows how close the field is to creeping in. Every few shots without a pop, a new layer of bubbles grows around the hole. A pop clears the warning. If a bubble reaches the ring, the game is over.' },
+      { q: 'How do levels and stars work?', a: 'Each level asks you to clear a share of the field, and the share grows slowly. Later levels add yellow and purple, start with a smaller hole and creep in sooner. You earn up to three stars for finishing in few shots.' },
+      { q: 'Can the game get stuck with a colour I do not have?', a: 'No. The bubbles you are dealt always use colours that are still on the field, so you can always make a match.' },
+      { q: 'Is my progress saved?', a: 'Yes. Your level, score, stars and best score are saved in your browser, so you can close the tab and come back to the same level.' },
     ],
   },
 }

@@ -18,5 +18,6 @@ import wordGuess from "../games/wordGuess";
 import minesweeper from "../games/minesweeper";
 import solitaire from "../games/solitaire";
 import blocky from "../games/blockyBlitz";
+import bubbles from "../games/bubbleSurge";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky, bubbles];
