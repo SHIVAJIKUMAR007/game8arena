@@ -15,6 +15,7 @@ import { config as sudoku } from '../games/sudoku/config'
 import { config as word } from '../games/wordGuess/config'
 import { config as minesweeper } from '../games/minesweeper/config'
 import { config as solitaire } from '../games/solitaire/config'
+import { config as blocky } from '../games/blockyBlitz/config'
 
 export const gameContent = {
   arrow: {
@@ -348,6 +349,35 @@ export const gameContent = {
       { q: 'How is the score worked out?', a: 'You get 10 points for each card on a foundation, 5 for moving a waste card to a column and 5 for each card you turn over. Moving a card back down from a foundation costs 15, and turning the waste back over costs 100 in draw one and 20 in draw three. A fast win adds a time bonus.' },
       { q: 'How do stars work?', a: 'A win gives one star, a second if you used no hints and a third if you finished within the par time shown on the result screen. Undo does not cost a star.' },
       { q: 'Is my game saved?', a: 'Yes. Your level, statistics, personal bests and the game you are in the middle of are saved in your browser, so you can close the tab and continue the same deal later.' },
+    ],
+  },
+  blocky: {
+    config: blocky,
+    metaTitle: 'Blocky Blitz: Free Online Block Puzzle Game',
+    metaDescription:
+      'Play Blocky Blitz free online. Drag blocks onto an 8x8 grid, fill rows and columns to clear them, chain combos and use the hold slot. No download, no sign-up.',
+    tagline: 'Drag blocks onto the grid, fill a row or column and watch it clear.',
+    genres: ['Block puzzle', 'Casual puzzle', 'Endless game'],
+    intro: [
+      'Blocky Blitz is a free block puzzle for your browser. You get three pieces at a time and drag each one onto an 8×8 grid. Pieces never rotate, so you have to look at the shape you are given and find the gap where it fits. Fill a whole row or column and it clears, which frees up space for the next pieces.',
+      'There is no timer and no end except running out of room. Clear several lines in one move, or clear lines on back-to-back moves, for a combo bonus. Reach the score target to move up a level and earn another re-roll. Save one piece in the hold slot when it does not fit yet, and drag it out when it does.',
+    ],
+    tips: [
+      'Keep the middle of the board open. Pieces that lean on a wall fit more often than pieces dropped in the centre.',
+      'Look at all three pieces before you place any. The right order is often the one that leaves the biggest gap for the largest piece.',
+      'Clear on every move you can. A streak of clears multiplies the bonus, and a gap you leave open usually gets filled by a later piece.',
+      'Use the hold slot for a big piece you cannot place yet, such as a 3×3 square. Drop another piece on it to swap.',
+      'Save re-rolls for a board that is nearly full. Each new set still has at least one piece that fits.',
+    ],
+    faq: [
+      { q: 'Can I rotate the pieces?', a: 'No. Every piece keeps the orientation it is dealt in, and the game has a separate piece for each orientation of every shape. That is what makes choosing where to place them the puzzle.' },
+      { q: 'How is the score worked out?', a: 'You get 1 point for every block you place. Clearing lines adds 10 × lines², so one line is 10, two lines are 40 and three are 90. Clearing on back-to-back moves multiplies that bonus by 1 + 0.5 for each move already in the streak. Emptying the whole board adds 200.' },
+      { q: 'What does the hold slot do?', a: 'The rounded square next to the board stores one piece. Drag a piece from the tray into it to save it, and drag the stored piece onto the board when you want it. If the slot is full, dropping another piece on it swaps the two. Placing the held piece does not deal new pieces.' },
+      { q: 'What does the swap button do?', a: 'It replaces the pieces still waiting in the tray with a new set and uses one re-roll. You start with 2 and earn one more each time you level up.' },
+      { q: 'When does the game end?', a: 'When none of the pieces in the tray, and none in the hold slot, fits anywhere on the board. The game checks after every move.' },
+      { q: 'Is every set of pieces playable?', a: 'Every new set of three includes at least one piece that fits on the current board. Later pieces can still run out of room if the board fills up, which is how a game ends.' },
+      { q: 'How do I play with a keyboard?', a: 'Tab to a piece and press Enter to pick it up. The arrow keys move it over the board, Enter places it, H sends it to the hold slot and Escape puts it back.' },
+      { q: 'Is my game saved?', a: 'Yes. The board, your pieces, the hold slot, score and level are saved in your browser after every move, so you can close the tab and carry on. Your best score is saved too and you can reset it in the settings.' },
     ],
   },
 }

@@ -88,20 +88,24 @@ export default function GameLanding() {
           {config.undos > 0 ? (
             <li><span aria-hidden="true">💡</span><div><h3>Hints &amp; undo</h3><p>{config.hints} hints and {config.undos} undos per level, so you’re never stuck for long.</p></div></li>
           ) : (
-            <li><span aria-hidden="true">💡</span><div><h3>Hints</h3><p>{config.hints} hints per level, so you’re never stuck for long.</p></div></li>
+            config.hints > 0 && <li><span aria-hidden="true">💡</span><div><h3>Hints</h3><p>{config.hints} hints per level, so you’re never stuck for long.</p></div></li>
           )}
-          <li><span aria-hidden="true">🏆</span><div><h3>{config.achievements.length} achievements</h3><p>Stars for every level and badges to unlock as you improve.</p></div></li>
+          {config.achievements.length > 0 && (
+            <li><span aria-hidden="true">🏆</span><div><h3>{config.achievements.length} achievements</h3><p>Stars for every level and badges to unlock as you improve.</p></div></li>
+          )}
         </ul>
       </section>
 
-      <section className="landing-section" aria-labelledby="ach-h">
-        <h2 id="ach-h">Achievements to unlock</h2>
-        <ul className="achievements">
-          {config.achievements.map(a => (
-            <li key={a.id}><span aria-hidden="true">{a.icon}</span> <b>{a.title}</b> — {a.description}</li>
-          ))}
-        </ul>
-      </section>
+      {config.achievements.length > 0 && (
+        <section className="landing-section" aria-labelledby="ach-h">
+          <h2 id="ach-h">Achievements to unlock</h2>
+          <ul className="achievements">
+            {config.achievements.map(a => (
+              <li key={a.id}><span aria-hidden="true">{a.icon}</span> <b>{a.title}</b> — {a.description}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="landing-section" aria-labelledby="faq-h">
         <h2 id="faq-h">{game.title} FAQ</h2>

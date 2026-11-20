@@ -15,6 +15,7 @@ const meta = {
   code: { difficulty: 'Hard' },
   sudoku: { difficulty: 'Hard' },
   minesweeper: { difficulty: 'Hard', isNew: true },
+  blocky: { difficulty: 'Medium', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}
