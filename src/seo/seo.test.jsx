@@ -10,6 +10,7 @@ import BlogPost from '../pages/BlogPost'
 import { blogPosts } from '../data/blogPosts'
 import { seoBlogPosts } from '../data/seoBlogPosts'
 import { seoBlogPostsMore } from '../data/seoBlogPostsMore'
+import { seoBlogPostsThird } from '../data/seoBlogPostsThird'
 import { buildHead } from './head'
 
 const landing = id =>
@@ -111,6 +112,37 @@ describe('Blog SEO', () => {
     }
   })
 
+  it('the puzzle guides meet long-form and metadata requirements', () => {
+    expect(seoBlogPostsThird).toHaveLength(20)
+    expect(new Set(seoBlogPostsThird.map(post => post.keyword.toLowerCase())).size).toBe(20)
+    for (const post of seoBlogPostsThird) {
+      const bodyText = post.body
+        .flatMap(block => Array.isArray(block) ? block : typeof block === 'string' ? [block] : [])
+        .join(' ')
+      const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
+      expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThan(900)
+      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
+      expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.faq.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.metaDescription.length, post.slug).toBeGreaterThanOrEqual(140)
+      expect(post.metaDescription.length, post.slug).toBeLessThanOrEqual(160)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeGreaterThanOrEqual(50)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeLessThanOrEqual(60)
+      expect(post.body.some(block => typeof block === 'string' && block.startsWith('### ')), post.slug).toBe(true)
+      expect(blogPosts.filter(article => article.slug === post.slug), post.slug).toHaveLength(1)
+      for (const link of post.internalLinkOpportunities) {
+        if (link.startsWith('/games/')) expect(games.some(game => `/games/${game.id}` === link), `${post.slug}: ${link}`).toBe(true)
+        if (link.startsWith('/play/')) expect(games.some(game => `/play/${game.id}` === link), `${post.slug}: ${link}`).toBe(true)
+      }
+      for (const link of post.suggestedRelatedArticles) {
+        expect(blogPosts.some(article => `/blogs/${article.slug}` === link), `${post.slug}: ${link}`).toBe(true)
+      }
+    }
+  })
+
   it.each(blogPosts.map(p => [p.slug]))('post "%s" has meta copy that fits Google’s limits', slug => {
     const p = blogPosts.find(x => x.slug === slug)
     expect(buildHead({ title: p.metaTitle, description: p.metaDescription, path: '/' }).title.length).toBeLessThanOrEqual(60)
@@ -145,7 +177,7 @@ describe('Blog SEO', () => {
     at('/blogs')
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Gaming News and Puzzle Game Guides')
     for (const p of blogPosts) expect(screen.getByRole('link', { name: p.title })).toBeTruthy()
-  })
+  }, 15000)
 
   it('post page renders H1, internal links and article schema', () => {
     at('/blogs/gta-6-release-date-platforms')
