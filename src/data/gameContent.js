@@ -17,6 +17,7 @@ import { config as minesweeper } from '../games/minesweeper/config'
 import { config as solitaire } from '../games/solitaire/config'
 import { config as blocky } from '../games/blockyBlitz/config'
 import { config as bubbles } from '../games/bubbleSurge/config'
+import { config as family } from '../games/familySort/config'
 
 export const gameContent = {
   arrow: {
@@ -409,6 +410,35 @@ export const gameContent = {
       { q: 'How do levels and stars work?', a: 'Each level asks you to clear a share of the field, and the share grows slowly. Later levels add yellow and purple, start with a smaller hole and creep in sooner. You earn up to three stars for finishing in few shots.' },
       { q: 'Can the game get stuck with a colour I do not have?', a: 'No. The bubbles you are dealt always use colours that are still on the field, so you can always make a match.' },
       { q: 'Is my progress saved?', a: 'Yes. Your level, score, stars and best score are saved in your browser, so you can close the tab and come back to the same level.' },
+    ],
+  },
+  family: {
+    config: family,
+    metaTitle: 'Family Sort: Free Online Water Sort Puzzle',
+    metaDescription:
+      'Play Family Sort free online. Pour coloured liquids between glass bottles until each holds one colour. Every level is solvable. Earn coins and unlock new looks.',
+    tagline: 'Pour, sort and fill every bottle with one colour.',
+    genres: ['Water sort puzzle', 'Casual puzzle', 'Relaxing game'],
+    intro: [
+      'Family Sort is a free liquid sorting puzzle for your browser. Each glass bottle holds up to four layers of coloured liquid, and your job is to pour them around until every bottle is either empty or full of one colour. Tap a bottle to lift it, then tap the bottle you want to pour into.',
+      'You can pour onto the same colour or into an empty bottle, and only the matching layers on top of the bottle move. Colours never mix. The first levels use two colours and a couple of empty bottles, and the puzzles grow slowly from there, with more colours, more bottles and more tangled layers. Every level is built so that it can be solved.',
+    ],
+    tips: [
+      'Look at the tops of all the bottles before your first pour. The colour you can collect most easily is usually the best one to start with.',
+      'Empty bottles are your workspace. Use one to move a layer out of the way, then fill it with that colour later.',
+      'Try not to bury a colour you need under another one. A layer that is already on the right colour is worth leaving alone.',
+      'Undo is free. If a plan goes wrong, take back a few moves and try another order.',
+      'Save hints and extra bottles for the hard levels. A level cleared without hints pays a coin bonus.',
+    ],
+    faq: [
+      { q: 'What are the rules for pouring?', a: 'You can pour from one bottle into another when the target bottle is empty or has the same colour on top, and has room. Only the top group of one colour moves, as much of it as fits. You cannot pour into the bottle you picked up.' },
+      { q: 'Is every level solvable?', a: 'Yes. Each level is made by taking a sorted set of bottles and running legal pours backwards, so there is always a way to sort it again. The game also checks every level with its own solver.' },
+      { q: 'What does a hint do?', a: 'A hint costs 30 coins. It works out a solution from the position on the table and glows the bottle to pour from and the bottle to pour into. If no solution is left, it tells you so, and costs nothing.' },
+      { q: 'What does the extra bottle do?', a: 'It adds one empty bottle to the level for 100 coins, up to two per level. It is the way out when you have run out of moves.' },
+      { q: 'How do I earn coins?', a: 'Every level you clear for the first time pays coins, and a level cleared without hints pays a bonus. Spend coins on hints and extra bottles, or on new bottle styles and backgrounds in the settings.' },
+      { q: 'Can I play without telling colours apart by sight?', a: 'Yes. Turn on colour symbols in the settings and every layer shows a small shape. Each bottle is also read out in full by screen readers.' },
+      { q: 'How do I play with a keyboard?', a: 'Use the left and right arrow keys to move between bottles, Enter or Space to pick one up and to pour, and Escape to put it down. U undoes, H gives a hint and R restarts the level.' },
+      { q: 'Is my progress saved?', a: 'Yes. Your level, coins, unlocked styles and the level you are in the middle of are saved in your browser, so you can close the tab and carry on.' },
     ],
   },
 }

@@ -17,6 +17,7 @@ const meta = {
   minesweeper: { difficulty: 'Hard', isNew: true },
   blocky: { difficulty: 'Medium', isNew: true },
   bubbles: { difficulty: 'Medium', isNew: true },
+  family: { difficulty: 'Easy', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}

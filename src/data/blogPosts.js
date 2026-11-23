@@ -17,6 +17,7 @@ import { blogImages } from './blogImages'
 import { seoBlogPosts } from './seoBlogPosts'
 import { seoBlogPostsMore } from './seoBlogPostsMore'
 import { seoBlogPostsThird } from './seoBlogPostsThird'
+import { seoBlogPostsNews } from './seoBlogPostsNews.js'
 
 export const blogPosts = [
   {
@@ -1099,6 +1100,7 @@ export const blogPosts = [
   ...seoBlogPosts,
   ...seoBlogPostsMore,
   ...seoBlogPostsThird,
+  ...seoBlogPostsNews,
 ];
 
 export const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
