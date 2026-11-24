@@ -18,6 +18,7 @@ const meta = {
   blocky: { difficulty: 'Medium', isNew: true },
   bubbles: { difficulty: 'Medium', isNew: true },
   family: { difficulty: 'Easy', isNew: true },
+  hideseek: { difficulty: 'Medium', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}

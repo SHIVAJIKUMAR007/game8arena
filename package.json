@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "build:spa": "vite build",
+    "server": "node server/index.js",
+    "host": "vite build && node server/index.js",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run"

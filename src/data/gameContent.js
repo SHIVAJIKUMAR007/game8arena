@@ -18,6 +18,7 @@ import { config as solitaire } from '../games/solitaire/config'
 import { config as blocky } from '../games/blockyBlitz/config'
 import { config as bubbles } from '../games/bubbleSurge/config'
 import { config as family } from '../games/familySort/config'
+import { config as hideseek } from '../games/hideSeek/config'
 
 export const gameContent = {
   arrow: {
@@ -439,6 +440,36 @@ export const gameContent = {
       { q: 'Can I play without telling colours apart by sight?', a: 'Yes. Turn on colour symbols in the settings and every layer shows a small shape. Each bottle is also read out in full by screen readers.' },
       { q: 'How do I play with a keyboard?', a: 'Use the left and right arrow keys to move between bottles, Enter or Space to pick one up and to pour, and Escape to put it down. U undoes, H gives a hint and R restarts the level.' },
       { q: 'Is my progress saved?', a: 'Yes. Your level, coins, unlocked styles and the level you are in the middle of are saved in your browser, so you can close the tab and carry on.' },
+    ],
+  },
+  hideseek: {
+    config: hideseek,
+    metaTitle: 'Mafia Hunt: Multiplayer Hide and Seek Game',
+    metaDescription:
+      'Play Mafia Hunt with friends on the same Wi-Fi. One player is the mafia with a gun, everyone else hides and survives until the timer runs out.',
+    tagline: 'One mafia with a gun. Everyone else hides.',
+    genres: ['Multiplayer', 'Hide and seek', 'Party game'],
+    intro: [
+      'Mafia Hunt is a multiplayer hide and seek game for friends in the same room. One computer on your Wi-Fi hosts the game, and everyone else opens its address on a phone or laptop, joins with a four letter room code and plays together. There is no account and nothing to install on the other devices.',
+      'When the round starts, one random player becomes the mafia and gets a gun. Everyone else is a villager and has 15 seconds to hide on one of five maps, from crates and houses to a maze and a forest. You can only see a short way around you, and walls block your view and the bullets. The mafia wins by shooting every villager before the timer runs out. If anyone is still alive at the end, the villagers win. The host chooses the map and how long a round lasts, from one to five minutes.',
+    ],
+    tips: [
+      'As a villager, break the mafia’s line of sight. Keep a wall between you and them, and move when they look the other way.',
+      'The maps are big. Use the small map in the corner to see where the walls are before you pick a hiding place.',
+      'Listen for the shot. A shot lights up the line it travelled, which shows the mafia where you are not, and shows you where they are.',
+      'As the mafia, check the corners of houses and sweep the edges of the map. Villagers like to hide in the corners.',
+      'The gun needs a moment to reload. Do not fire at a gap, wait until you can see someone.',
+    ],
+    faq: [
+      { q: 'How do I host a game?', a: 'On one computer run npm run host in the project folder. It builds the site and starts the game server, then prints the address on your Wi-Fi. Open Mafia Hunt, create a room and share the code.' },
+      { q: 'How do my friends join?', a: 'They open the Wi-Fi address on their own phone or laptop, choose Mafia Hunt and type the four letter room code. They must be on the same Wi-Fi as the host.' },
+      { q: 'How many people can play?', a: 'From two to nine players. One is the mafia and the rest are villagers.' },
+      { q: 'Who is the mafia?', a: 'The game picks one player at random when the host starts it. Everyone is told who the mafia is, so the game is about hiding, not guessing.' },
+      { q: 'Why is the screen dark?', a: 'Each player can only see a circle around them. The server only sends you the players you can see, so nobody can look through walls.' },
+      { q: 'How do I control it?', a: 'Move with WASD or the arrow keys, aim with the mouse, and click or press Space to shoot. On a phone use the on-screen stick to move and tap where you want to shoot.' },
+      { q: 'What maps are there?', a: 'Five: Crates, Town, Maze, Plaza and Forest. The host picks one in the lobby, or leaves it on Random and the game picks for you.' },
+      { q: 'How long does a round last?', a: 'The host chooses one, two, three or five minutes in the lobby. The mafia is held back for the first 15 seconds so the villagers can hide.' },
+      { q: 'Why does it say it cannot reach a game server?', a: 'Mafia Hunt needs the host computer running npm run host. Open the address that command prints, not the website, and make sure you are on the same Wi-Fi.' },
     ],
   },
 }
