@@ -10,7 +10,7 @@ import { CONNECT_TIMEOUT_MS, createP2PSocket } from './p2p'
 const tick = () => new Promise(r => setTimeout(r, 0))
 const settle = async () => { for (let i = 0; i < 8; i++) await tick() }
 
-function internet({ down = false } = {}) {
+function internet({ down = false, eagerOpen = false } = {}) {
   const rooms = new Map()
   const roomFor = code => {
     if (!rooms.has(code)) {
@@ -80,6 +80,7 @@ function internet({ down = false } = {}) {
         const mine = makeChannel()
         link(guest.local, mine)
         queueMicrotask(() => {
+          if (eagerOpen) mine.readyState = 'open' // some browsers deliver the channel already open, then fire its open event too
           this.ondatachannel?.({ channel: mine })
           mine.readyState = 'open'
           mine.onopen?.()
@@ -111,7 +112,7 @@ function internet({ down = false } = {}) {
   }
   function link(a, b) { a.peer = b; b.peer = a }
 
-  return { WebSocketImpl: FakeWebSocket, RTCPeerConnectionImpl: FakePC, loadHub: async () => ({ createHub: () => createHub({ tickHz: 5 }) }) }
+  return { loadIceServers: async () => null, WebSocketImpl: FakeWebSocket, RTCPeerConnectionImpl: FakePC, loadHub: async () => ({ createHub: () => createHub({ tickHz: 5 }) }) }
 }
 
 function client(net) {
@@ -147,6 +148,36 @@ describe('browser-hosted rooms', () => {
     expect(friend.last('room').players.map(p => p.name)).toEqual(['Ann', 'Bob'])
     expect(host.last('room').players.map(p => p.name)).toEqual(['Ann', 'Bob'])
     expect(friend.last('room').hostId).toBe(host.last('joined').id)
+  })
+
+  it('adds a friend once even when the browser reports their channel open twice', async () => {
+    const net = internet({ eagerOpen: true })
+    const host = make(net), friend = make(net)
+    await settle()
+    host.say({ t: 'create', name: 'Ann', game: 'hideseek' })
+    await settle()
+    friend.say({ t: 'join', code: host.last('joined').code, name: 'Bob', game: 'hideseek' })
+    await settle()
+    expect(host.last('room').players.map(p => p.name)).toEqual(['Ann', 'Bob'])
+    expect(friend.got.filter(m => m.t === 'joined')).toHaveLength(1)
+  })
+
+  it('uses the relay servers the Worker hands out, falling back to STUN when there are none', async () => {
+    const seen = []
+    const net = internet()
+    const Base = net.RTCPeerConnectionImpl
+    net.RTCPeerConnectionImpl = class extends Base { constructor(cfg) { super(cfg); seen.push(cfg.iceServers) } }
+    const relay = [{ urls: ['turn:relay.example:3478'], username: 'u', credential: 'c' }]
+    const host = make({ ...net, loadIceServers: async () => relay })
+    const friend = make({ ...net, loadIceServers: async () => { throw new Error('offline') } })
+    await settle()
+    host.say({ t: 'create', name: 'Ann', game: 'hideseek' })
+    await settle()
+    friend.say({ t: 'join', code: host.last('joined').code, name: 'Bob', game: 'hideseek' })
+    await settle()
+    expect(seen).toContainEqual(relay)
+    expect(seen.some(list => list[0].urls.startsWith('stun:'))).toBe(true)
+    expect(friend.last('joined')).toBeTruthy()
   })
 
   it('shows an error for an unknown code and lets the player try another one', async () => {

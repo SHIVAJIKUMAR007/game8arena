@@ -16,6 +16,8 @@ const REJOIN_TRIES = 5
 
 const defaults = () => ({
   signalBase: '',
+  /** Relay (TURN) servers from the Worker, for players whose networks block direct connections. null = use STUN only. */
+  loadIceServers: null,
   WebSocketImpl: globalThis.WebSocket,
   RTCPeerConnectionImpl: globalThis.RTCPeerConnection,
   loadHub: () => import('../../../server/hub.js'),
@@ -27,6 +29,17 @@ const parse = text => {
     return v && typeof v === 'object' ? v : null
   } catch {
     return null
+  }
+}
+
+async function fetchIceServers(signalBase) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 4000)
+  try {
+    const res = await fetch(`${signalBase.replace(/^ws/, 'http')}/turn`, { signal: controller.signal })
+    return res.ok ? (await res.json()).iceServers : null
+  } finally {
+    clearTimeout(timer)
   }
 }
 
@@ -59,6 +72,14 @@ function makeConn(write, end) {
  */
 export function createP2PSocket(deps = {}) {
   const d = { ...defaults(), ...deps }
+  let icePromise = null
+  /** STUN servers plus, when the Worker is set up for it, a TURN relay. Asked for once, only when a room is made or joined. */
+  const getIce = () => {
+    icePromise ??= (d.loadIceServers ?? (() => fetchIceServers(d.signalBase)))()
+      .then(list => (Array.isArray(list) && list.length ? list : ICE_SERVERS))
+      .catch(() => ICE_SERVERS)
+    return icePromise
+  }
   /** @type {{ send(text: string): void, stop(): void } | null} */
   let session = null
   let joined = false
@@ -121,6 +142,7 @@ export function createP2PSocket(deps = {}) {
     const queue = [JSON.stringify(first)]
     let hub = null
     let own = null
+    let ice = ICE_SERVERS
     let signal = null
     let keepAlive = null
     let code = ''
@@ -203,7 +225,7 @@ export function createP2PSocket(deps = {}) {
     }
 
     function addPeer(id) {
-      const pc = new d.RTCPeerConnectionImpl({ iceServers: ICE_SERVERS })
+      const pc = new d.RTCPeerConnectionImpl({ iceServers: ice })
       const peer = { pc, channel: null, pending: [], remoteSet: false, link: null }
       peers.set(id, peer)
       pc.onicecandidate = e => e.candidate && sendSignal(id, { candidate: e.candidate })
@@ -215,8 +237,15 @@ export function createP2PSocket(deps = {}) {
         peer.channel = channel
         const link = makeConn(text => channel.readyState === 'open' && channel.send(text), () => channel.close())
         peer.link = link
-        channel.onopen = () => hub?.handleConnection(link.conn)
-        if (channel.readyState === 'open') channel.onopen()
+        // Some browsers hand over a channel that is already open and then still fire its open event: attach once.
+        let attached = false
+        const attach = () => {
+          if (attached) return
+          attached = true
+          hub?.handleConnection(link.conn)
+        }
+        channel.onopen = attach
+        if (channel.readyState === 'open') attach()
         channel.onmessage = ev => typeof ev.data === 'string' && link.receive(ev.data)
         channel.onclose = () => {
           link.drop()
@@ -255,6 +284,8 @@ export function createP2PSocket(deps = {}) {
         if (!stopped) emit({ t: 'error', message: 'Could not start the game room. Reload the page and try again.' })
         return
       }
+      if (stopped) return
+      ice = await getIce()
       if (stopped) return
       hub = mod.createHub()
       let held = null // messages from the hub while the code is still being claimed
@@ -340,61 +371,64 @@ export function createP2PSocket(deps = {}) {
       return { send() {}, stop }
     }
 
-    try {
-      ws = new d.WebSocketImpl(`${d.signalBase}/signal/${code}?role=guest`)
-      pc = new d.RTCPeerConnectionImpl({ iceServers: ICE_SERVERS })
-    } catch {
-      Promise.resolve().then(() => fail('This browser cannot join online rooms.'))
-      return { send() {}, stop }
-    }
     timer = setTimeout(() => fail('Could not connect to the host. Check the code, or try the same Wi-Fi as the host.'), CONNECT_TIMEOUT_MS)
-
-    channel = pc.createDataChannel('g8')
-    channel.onopen = () => {
-      open = true
-      clearTimeout(timer)
-      try { ws.close() } catch { /* already closed */ }
-      while (queue.length) channel.send(queue.shift())
-    }
-    channel.onmessage = e => {
-      if (typeof e.data !== 'string') return
-      const m = parse(e.data)
-      if (m) emit(m)
-    }
-    channel.onclose = () => {
-      if (!stopped) lost()
-    }
-    pc.onicecandidate = e => e.candidate && ws.readyState === 1 && ws.send(JSON.stringify({ t: 'signal', data: { candidate: e.candidate } }))
-    pc.onconnectionstatechange = () => {
-      if (pc.connectionState === 'failed') (open ? lost : () => fail('Could not connect to the host. Try the same Wi-Fi as the host.'))()
-    }
-
-    ws.onmessage = async e => {
-      const m = parse(e.data)
-      if (!m || stopped) return
+    const begin = iceServers => {
       try {
-        if (m.t === 'nohost') fail('Room not found. Check the code.')
-        else if (m.t === 'full') fail('That room is full.')
-        else if (m.t === 'hello') {
-          const offer = await pc.createOffer()
-          await pc.setLocalDescription(offer)
-          ws.send(JSON.stringify({ t: 'signal', data: { sdp: pc.localDescription } }))
-        } else if (m.t === 'signal' && m.data?.sdp) {
-          await pc.setRemoteDescription(m.data.sdp)
-          remoteSet = true
-          for (const c of pending.splice(0)) await pc.addIceCandidate(c)
-        } else if (m.t === 'signal' && m.data?.candidate) {
-          if (remoteSet) await pc.addIceCandidate(m.data.candidate)
-          else pending.push(m.data.candidate)
-        }
+        ws = new d.WebSocketImpl(`${d.signalBase}/signal/${code}?role=guest`)
+        pc = new d.RTCPeerConnectionImpl({ iceServers })
       } catch {
-        fail('Could not connect to the host.')
+        fail('This browser cannot join online rooms.')
+        return
       }
+
+      channel = pc.createDataChannel('g8')
+      channel.onopen = () => {
+        open = true
+        clearTimeout(timer)
+        try { ws.close() } catch { /* already closed */ }
+        while (queue.length) channel.send(queue.shift())
+      }
+      channel.onmessage = e => {
+        if (typeof e.data !== 'string') return
+        const m = parse(e.data)
+        if (m) emit(m)
+      }
+      channel.onclose = () => {
+        if (!stopped) lost()
+      }
+      pc.onicecandidate = e => e.candidate && ws.readyState === 1 && ws.send(JSON.stringify({ t: 'signal', data: { candidate: e.candidate } }))
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed') (open ? lost : () => fail('Could not connect to the host. Try the same Wi-Fi as the host.'))()
+      }
+
+      ws.onmessage = async e => {
+        const m = parse(e.data)
+        if (!m || stopped) return
+        try {
+          if (m.t === 'nohost') fail('Room not found. Check the code.')
+          else if (m.t === 'full') fail('That room is full.')
+          else if (m.t === 'hello') {
+            const offer = await pc.createOffer()
+            await pc.setLocalDescription(offer)
+            ws.send(JSON.stringify({ t: 'signal', data: { sdp: pc.localDescription } }))
+          } else if (m.t === 'signal' && m.data?.sdp) {
+            await pc.setRemoteDescription(m.data.sdp)
+            remoteSet = true
+            for (const c of pending.splice(0)) await pc.addIceCandidate(c)
+          } else if (m.t === 'signal' && m.data?.candidate) {
+            if (remoteSet) await pc.addIceCandidate(m.data.candidate)
+            else pending.push(m.data.candidate)
+          }
+        } catch {
+          fail('Could not connect to the host.')
+        }
+      }
+      ws.onclose = () => {
+        if (!open && !stopped) fail('Could not reach the matchmaking service. Check your internet connection and try again.')
+      }
+      ws.onerror = () => {}
     }
-    ws.onclose = () => {
-      if (!open && !stopped) fail('Could not reach the matchmaking service. Check your internet connection and try again.')
-    }
-    ws.onerror = () => {}
+    getIce().then(ice => !stopped && begin(ice))
 
     return {
       send(text) {

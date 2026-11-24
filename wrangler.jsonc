@@ -8,7 +8,7 @@
     "directory": "./dist",
     "not_found_handling": "404-page",
     "binding": "ASSETS",
-    "run_worker_first": ["/signal/*"]
+    "run_worker_first": ["/signal/*", "/turn"]
   },
   // Browser-hosted multiplayer rooms: one Durable Object per room code relays the WebRTC set-up messages.
   "durable_objects": {
