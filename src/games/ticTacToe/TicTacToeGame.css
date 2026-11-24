@@ -1,0 +1,29 @@
+/* Tic Tac Toe: the match screen. Menus and the lobby use platform/multiplayer/multiplayer.css. */
+.ttt-root { align-items: start; }
+.ttt-match { width: min(100%, 420px); margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
+.ttt-head { display: flex; justify-content: space-between; align-items: center; font-size: .9rem; color: #b6c9bd; }
+.ttt-head b { color: #fff; }
+.ttt-score { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ttt-score div { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: rgba(255, 255, 255, .07); font-size: .85rem; }
+.ttt-score div.turn { outline: 2px solid #ffe08a; background: rgba(255, 224, 138, .14); }
+.ttt-score b { font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.ttt-status { margin: 0; text-align: center; min-height: 1.4em; font-weight: 700; color: #ffe08a; }
+.ttt-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; aspect-ratio: 1; width: 100%; }
+.ttt-cell {
+  font: inherit; font-size: clamp(2.4rem, 14vw, 4.4rem); font-weight: 900; line-height: 1; border-radius: 14px; cursor: pointer;
+  border: 2px solid #3d7a58; background: linear-gradient(#1b4430, #12301f); color: #fff; touch-action: manipulation;
+}
+.ttt-cell[aria-disabled='true'] { cursor: default; }
+.ttt-cell:not([aria-disabled='true']):hover { background: linear-gradient(#245c3d, #173d29); }
+.ttt-cell.x { color: #ff7675; }
+.ttt-cell.o { color: #74b9ff; }
+.ttt-cell.win { background: rgba(255, 224, 138, .25); border-color: #ffe08a; }
+.ttt-cell:focus-visible { outline: 3px solid #ffe08a; outline-offset: 2px; }
+.ttt-final { font-weight: 700; }
+
+.ttt-overlay { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 12px; background: rgba(0, 0, 0, .65); }
+.ttt-over { width: min(100%, 380px); max-height: 92vh; overflow: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; padding: 18px; border-radius: 18px; background: #10241a; border: 3px solid #5da57a; }
+.ttt-over.won { border-color: #ffe08a; }
+.ttt-over.lost { border-color: #d63031; }
+.ttt-over h2 { margin: 0; font-size: 1.6rem; }
+.ttt-over p { margin: 0; }

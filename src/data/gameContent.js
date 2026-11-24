@@ -20,6 +20,7 @@ import { config as bubbles } from '../games/bubbleSurge/config'
 import { config as family } from '../games/familySort/config'
 import { config as hideseek } from '../games/hideSeek/config'
 import { config as undercover } from '../games/undercover/config'
+import { config as tictactoe } from '../games/ticTacToe/config'
 
 export const gameContent = {
   arrow: {
@@ -500,6 +501,33 @@ export const gameContent = {
       { q: 'When does the game end?', a: 'Civilians win when every Undercover and Mr. White is out. The infiltrators win when the civilians are no more than them, or you can switch the lobby setting so they only win when one civilian is left. Mr. White also wins by guessing the word.' },
       { q: 'Can I say my own word?', a: 'No. The game rejects a clue that contains your own word. Mr. White has no word, so there is nothing to reject.' },
       { q: 'How do I host a game?', a: 'Open Undercover, enter your name and choose Create a room. Your browser becomes the host, so keep that page open. Share the 4-letter code and friends join from their own browsers. Nothing to install.' },
+    ],
+  },
+  tictactoe: {
+    config: tictactoe,
+    metaTitle: 'Tic Tac Toe Online: Play a Friend',
+    metaDescription:
+      'Play Tic Tac Toe online with a friend. Create a room, share the 4-letter code and play a best-of-three match in your browser. No sign-up or install.',
+    tagline: 'Create a room, share the code, win the match.',
+    genres: ['Multiplayer', 'Classic', 'Two player'],
+    intro: [
+      'Tic Tac Toe Online is the classic three-in-a-row game for two players, each on their own phone or computer. One player creates a room and shares a four letter code, and the other joins with it. There is nothing to install and no account to make.',
+      'You take turns placing X and O on a three by three board. The first to line up three marks in a row, column or diagonal wins the game. The host chooses a single game or a best of three or five match, and the marks swap every game so both players get to start.',
+    ],
+    tips: [
+      'Take the centre square when you can. It sits on four of the eight winning lines.',
+      'If you start with a corner, answer a centre reply with the opposite corner to keep the pressure on.',
+      'Always check for a line your opponent is one move from finishing before you make your own plan.',
+      'Look for a fork: a move that makes two threats at once so your opponent can only block one.',
+      'Against a strong player a draw is a good result. In a longer match, small mistakes decide the winner.',
+    ],
+    faq: [
+      { q: 'How many players are there?', a: 'Exactly two. One player creates the room and the other joins with the code.' },
+      { q: 'How do I play with a friend?', a: 'Open Tic Tac Toe, enter your name and choose Create a room. Share the 4-letter code and your friend joins from their own browser. Keep your page open while you play, because your browser is the host.' },
+      { q: 'Who goes first?', a: 'The host can pick themselves, their friend or a random player for the first game. After that the marks swap each game, so the other player starts.' },
+      { q: 'How is the match scored?', a: 'The host picks a single game, best of three or best of five. The first player to win most of the games takes the match. A draw gives nobody a point.' },
+      { q: 'What happens if someone leaves?', a: 'The player who stays wins the match. The host can start a new match when another player joins.' },
+      { q: 'Why did my room close?', a: 'The host closed their page or lost their connection, so the room ended. Start a new room and share the new code.' },
     ],
   },
 }

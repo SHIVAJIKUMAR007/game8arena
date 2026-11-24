@@ -3,17 +3,23 @@
 //   client -> server   create {name, game} | join {code, name, game} | settings {...} | start | lobby (host, after a game) | leave
 //                      hideseek:   input {dx,dy,aim,fire}
 //                      undercover: uc {a: 'ready' | 'clue' | 'vote' | 'guess', ...}
+//                      tictactoe:  ttt {a: 'move', cell: 0-8}
 //   server -> client   joined {code, id, game} | room {code, game, hostId, players, settings, phase, ...} | error {message}
 //                      hideseek:   start {...} | state {...} | over {winner, mafiaId}
 //                      undercover: ustate {...}  (a private view for each player)
+//                      tictactoe:  tstate {...}  (the board, from each player's side)
 import { MAX_PLAYERS as HIDE_MAX, createSim } from './hideSeekSim.js'
 import { MAPS, MAP_IDS, getMap } from './maps.js'
 import {
   CLUE_SECONDS, END_RULES, MAX_PLAYERS as UNDERCOVER_MAX, MIN_PLAYERS as UNDERCOVER_MIN, createUndercover, defaultSettings, validateSettings,
 } from './undercover.js'
+import {
+  BEST_OF, FIRST_MOVES, MAX_PLAYERS as TTT_MAX, MIN_PLAYERS as TTT_MIN, createTicTacToe, defaultSettings as tttSettings,
+} from './tictactoe.js'
 
 export const DURATIONS = [60, 120, 180, 300]
-export const GAME_TYPES = ['hideseek', 'undercover']
+export const GAME_TYPES = ['hideseek', 'undercover', 'tictactoe']
+const GAME_NAMES = { hideseek: 'Mafia Hunt', undercover: 'Undercover', tictactoe: 'Tic Tac Toe' }
 const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ' // no I or O: easy to misread
 const MAX_MESSAGE = 2048
 
@@ -32,7 +38,8 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
 
   const send = (player, msg) => player.conn.send(JSON.stringify(msg))
   const error = (player, message) => send(player, { t: 'error', message })
-  const capacity = type => (type === 'undercover' ? UNDERCOVER_MAX : HIDE_MAX)
+  const capacity = type => (type === 'undercover' ? UNDERCOVER_MAX : type === 'tictactoe' ? TTT_MAX : HIDE_MAX)
+  const minimum = type => (type === 'undercover' ? UNDERCOVER_MIN : type === 'tictactoe' ? TTT_MIN : 2)
 
   function newCode() {
     for (let tries = 0; tries < 200; tries++) {
@@ -49,6 +56,7 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
       players: [...room.players.values()].map(p => ({ id: p.id, name: p.name })),
     }
     if (room.type === 'hideseek') msg.maps = MAPS.map(m => ({ id: m.id, name: m.name }))
+    else if (room.type === 'tictactoe') msg.limits = { bestOf: BEST_OF, first: FIRST_MOVES }
     else msg.limits = { min: UNDERCOVER_MIN, max: UNDERCOVER_MAX, clueSeconds: CLUE_SECONDS, endRules: END_RULES }
     for (const p of room.players.values()) send(p, msg)
   }
@@ -127,6 +135,32 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     return undefined
   }
 
+  // ---- tic tac toe ----
+
+  function flushTicTacToe(room) {
+    const tt = room.tt
+    if (!tt.dirty) return
+    tt.clearDirty()
+    for (const p of room.players.values()) send(p, tt.view(p.id, now()))
+    if (tt.phase === 'over' && room.phase === 'game') {
+      stopGame(room)
+      room.phase = 'over'
+      broadcastRoom(room)
+    }
+  }
+
+  function startTicTacToe(room) {
+    room.tt = createTicTacToe({ players: [...room.players.values()].map(p => ({ id: p.id, name: p.name })), settings: { ...room.settings }, random, now: now() })
+    room.phase = 'game'
+    broadcastRoom(room)
+    flushTicTacToe(room)
+    room.timer = setInterval(() => {
+      room.tt.tick(now())
+      flushTicTacToe(room)
+    }, 250)
+    room.timer.unref?.()
+  }
+
   // ---- rooms ----
 
   function leave(player) {
@@ -143,6 +177,10 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     if (room.hostId === player.id) room.hostId = room.players.keys().next().value
     if (room.type === 'hideseek' && room.phase === 'game' && room.players.size < 2) {
       room.sim.finish(room.sim.players.get(room.sim.mafiaId).alive ? 'mafia' : 'villagers')
+    }
+    if (room.type === 'tictactoe' && room.phase === 'game') {
+      room.tt.leave(player.id, now())
+      flushTicTacToe(room)
     }
     if (room.type === 'undercover' && room.phase === 'game') {
       room.ug.leave(player.id, now())
@@ -163,7 +201,10 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
 
   function applySettings(room, msg) {
     const s = room.settings
-    if (room.type === 'hideseek') {
+    if (room.type === 'tictactoe') {
+      if (BEST_OF.includes(msg.bestOf)) s.bestOf = msg.bestOf
+      if (FIRST_MOVES.includes(msg.first)) s.first = msg.first
+    } else if (room.type === 'hideseek') {
       if (DURATIONS.includes(msg.duration)) s.duration = msg.duration
       if (msg.map === 'random' || MAP_IDS.includes(msg.map)) s.map = msg.map
     } else {
@@ -190,8 +231,8 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         const code = newCode()
         if (!code) return error(player, 'Could not make a room code.')
         player.name = cleanName(msg.name, `Player ${player.id}`)
-        const settings = type === 'hideseek' ? { duration: 180, map: 'random' } : defaultSettings()
-        const created = { code, type, hostId: player.id, players: new Map(), settings, phase: 'lobby', sim: null, ug: null, timer: null, lastTick: 0 }
+        const settings = type === 'hideseek' ? { duration: 180, map: 'random' } : type === 'tictactoe' ? tttSettings() : defaultSettings()
+        const created = { code, type, hostId: player.id, players: new Map(), settings, phase: 'lobby', sim: null, ug: null, tt: null, timer: null, lastTick: 0 }
         rooms.set(code, created)
         enter(player, created)
         break
@@ -201,7 +242,7 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         const target = rooms.get(String(msg.code ?? '').toUpperCase().trim())
         if (!target) return error(player, 'Room not found. Check the code.')
         if (msg.game && msg.game !== target.type) {
-          return error(player, `That room is for ${target.type === 'undercover' ? 'Undercover' : 'Mafia Hunt'}. Open that game to join it.`)
+          return error(player, `That room is for ${GAME_NAMES[target.type]}. Open that game to join it.`)
         }
         if (target.phase !== 'lobby') return error(player, 'That game has already started.')
         if (target.players.size >= capacity(target.type)) return error(player, `The room is full (${capacity(target.type)} players).`)
@@ -220,10 +261,9 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         break
       case 'start':
         if (!room || room.hostId !== player.id || room.phase !== 'lobby') return
-        if (room.players.size < (room.type === 'undercover' ? UNDERCOVER_MIN : 2)) {
-          return error(player, `You need at least ${room.type === 'undercover' ? UNDERCOVER_MIN : 2} players.`)
-        }
+        if (room.players.size < minimum(room.type)) return error(player, `You need ${room.type === 'tictactoe' ? 'another player' : `at least ${minimum(room.type)} players`}.`)
         if (room.type === 'undercover') startUndercover(room, player)
+        else if (room.type === 'tictactoe') startTicTacToe(room)
         else startHide(room)
         break
       case 'input':
@@ -236,11 +276,19 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
           flushUndercover(room)
         }
         break
+      case 'ttt':
+        if (room?.type === 'tictactoe' && room.phase === 'game') {
+          const res = room.tt.act(player.id, msg, now())
+          if (res?.error) error(player, res.error)
+          flushTicTacToe(room)
+        }
+        break
       case 'lobby':
         if (!room || room.hostId !== player.id || room.phase !== 'over') return
         room.phase = 'lobby'
         room.sim = null
         room.ug = null
+        room.tt = null
         broadcastRoom(room)
         break
       case 'leave':
