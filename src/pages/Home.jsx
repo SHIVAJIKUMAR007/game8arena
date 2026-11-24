@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import GameCard from "../components/GameCard";
 import DailyBanner from "../components/DailyBanner";
@@ -9,11 +9,29 @@ import { SITE_DESCRIPTION, landingPath } from "../seo/site";
 
 const categories = ["All", ...new Set(games.map((g) => g.category))];
 
+const PAGE_SIZE = 20;
+
 export default function Home() {
   const [cat, setCat] = useState("All");
   const [query, setQuery] = useState("");
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  // The prerendered HTML keeps the fixed order; a visitor's browser shuffles it once after loading, so hydration still matches.
+  const [order, setOrder] = useState(games);
+  useEffect(() => {
+    const a = [...games];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    setOrder(a);
+  }, []);
 
-  const shown = games.filter((g) => (cat === "All" || g.category === cat) && g.title.toLowerCase().includes(query.toLowerCase()));
+  const matches = order.filter((g) => (cat === "All" || g.category === cat) && g.title.toLowerCase().includes(query.toLowerCase()));
+  const shown = matches.slice(0, visible);
+  const changeCat = (c) => {
+    setCat(c);
+    setVisible(PAGE_SIZE);
+  };
 
   return (
     <>
@@ -38,12 +56,15 @@ export default function Home() {
           <section className="toolbar">
             <div className="chips">
               {categories.map((c) => (
-                <button key={c} className={c === cat ? "chip active" : "chip"} aria-pressed={c === cat} onClick={() => setCat(c)}>
+                <button key={c} className={c === cat ? "chip active" : "chip"} aria-pressed={c === cat} onClick={() => changeCat(c)}>
                   {c}
                 </button>
               ))}
             </div>
-            <input type="search" aria-label="Search games" placeholder="Search games…" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <input type="search" aria-label="Search games" placeholder="Search games…" value={query} onChange={(e) => {
+                setQuery(e.target.value);
+                setVisible(PAGE_SIZE);
+              }} />
           </section>
 
           <section className="grid" aria-label="Games">
@@ -52,6 +73,13 @@ export default function Home() {
             ))}
             {shown.length === 0 && <p className="empty">No games found.</p>}
           </section>
+          {matches.length > visible && (
+            <div className="load-more">
+              <button type="button" className="chip" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
+                Load more games ({matches.length - visible} left)
+              </button>
+            </div>
+          )}
         </div>
 
         <aside className="home-side">

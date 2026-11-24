@@ -1502,3 +1502,13 @@ main {
   display: inline-block;
   margin-bottom: 0;
 }
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 8px;
+}
+.load-more .chip {
+  padding: 10px 24px;
+  font-size: 1rem;
+}
