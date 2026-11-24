@@ -21,6 +21,7 @@ const meta = {
   hideseek: { difficulty: 'Medium', isNew: true },
   undercover: { difficulty: 'Medium', isNew: true },
   tictactoe: { difficulty: 'Easy', isNew: true },
+  bingo: { difficulty: 'Easy', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}

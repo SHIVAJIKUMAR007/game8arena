@@ -21,6 +21,7 @@ import { config as family } from '../games/familySort/config'
 import { config as hideseek } from '../games/hideSeek/config'
 import { config as undercover } from '../games/undercover/config'
 import { config as tictactoe } from '../games/ticTacToe/config'
+import { config as bingo } from '../games/bingoRoyale/config'
 
 export const gameContent = {
   arrow: {
@@ -527,6 +528,35 @@ export const gameContent = {
       { q: 'Who goes first?', a: 'The host can pick themselves, their friend or a random player for the first game. After that the marks swap each game, so the other player starts.' },
       { q: 'How is the match scored?', a: 'The host picks a single game, best of three or best of five. The first player to win most of the games takes the match. A draw gives nobody a point.' },
       { q: 'What happens if someone leaves?', a: 'The player who stays wins the match. The host can start a new match when another player joins.' },
+      { q: 'Why did my room close?', a: 'The host closed their page or lost their connection, so the room ended. Start a new room and share the new code.' },
+    ],
+  },
+  bingo: {
+    config: bingo,
+    metaTitle: 'Bingo Royale: Multiplayer Number Bingo',
+    metaDescription:
+      'Play Bingo Royale with 2 to 8 friends. Arrange 1 to 25 on your own board, take turns announcing numbers and be the first to complete 5 lines.',
+    tagline: 'Your board, your numbers, first to five lines.',
+    genres: ['Multiplayer', 'Party game', 'Number game'],
+    intro: [
+      'Bingo Royale is a multiplayer twist on Bingo for two to eight friends, each on their own phone or computer. One player creates a room and shares a four letter code, and everyone else joins with it. Nothing to install and no account to make.',
+      'There is no number machine. Every player fills their own five by five board with the numbers 1 to 25 in any order, then players take turns, clockwise, to announce one number that nobody has used. An announced number is marked on every board at once. The first player to complete five lines wins, where a line is any row, column or one of the two diagonals.',
+    ],
+    tips: [
+      'Spread your numbers out. A board where the middle numbers share many lines can complete several at once.',
+      'Watch the other boards. If someone is one number from a fifth line, do not announce it.',
+      'The centre square sits on four lines, so the number you put there matters most.',
+      'Announce numbers that sit on lines you are close to finishing, but that are scattered on other boards.',
+      'Every number is on every board, but in different places. Pick numbers that move you forward and help the others least.',
+    ],
+    faq: [
+      { q: 'How many players can play?', a: 'Two to eight in one room. The host starts the game once everyone has confirmed their board.' },
+      { q: 'How do I win?', a: 'Complete five lines on your own board. A line is a row, a column or a diagonal, and it counts once all five of its numbers have been announced. There are twelve possible lines.' },
+      { q: 'Is this the same as normal Bingo?', a: 'No. Nothing is drawn at random. Players pick the numbers themselves, one at a time and in clockwise order, from the numbers that are still unused.' },
+      { q: 'What if two players reach five lines on the same number?', a: 'The one with more lines wins. If they have the same number of lines, they share the win.' },
+      { q: 'What if I take too long?', a: 'The host sets a time for each turn in the lobby, or turns the limit off. When time runs out a random unused number is announced for you.' },
+      { q: 'What happens if a player leaves?', a: 'Their turn is skipped and their board stays on screen. If everyone else leaves, the last player wins.' },
+      { q: 'Can I change my board after the game starts?', a: 'No. Boards lock when the host starts. Before that you can rearrange, shuffle or edit your board as often as you like.' },
       { q: 'Why did my room close?', a: 'The host closed their page or lost their connection, so the room ended. Start a new room and share the new code.' },
     ],
   },

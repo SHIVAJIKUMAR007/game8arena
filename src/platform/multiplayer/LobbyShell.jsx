@@ -6,7 +6,7 @@ import './multiplayer.css'
  * The waiting room: room code, the Wi-Fi address to share, who is here, the game's own settings (children, only
  * the host can change them), and Start / Leave. `minPlayers` is how many are needed before the host can start.
  */
-export default function LobbyShell({ rt, minPlayers = 2, startNote, canStart = true, children, footer }) {
+export default function LobbyShell({ rt, minPlayers = 2, startNote, canStart = true, children, footer, prefix }) {
   const { room, me } = rt
   const isHost = room.hostId === me?.id
   const [addresses, setAddresses] = useState([])
@@ -38,10 +38,13 @@ export default function LobbyShell({ rt, minPlayers = 2, startNote, canStart = t
         </p>
       )}
       <ul className="mp-players" aria-label="Players">
-        {room.players.map(p => (
+        {room.players.map((p, i) => (
           <li key={p.id}>
-            <span>{p.name}{p.id === me?.id ? ' (you)' : ''}</span>
-            {p.id === room.hostId && <em>host</em>}
+            <span>{prefix?.(p, i)}{p.name}{p.id === me?.id ? ' (you)' : ''}</span>
+            <span className="mp-tags">
+              {p.ready !== undefined && <em className={p.ready ? 'ready' : 'wait'}>{p.ready ? 'ready' : 'setting up'}</em>}
+              {p.id === room.hostId && <em>host</em>}
+            </span>
           </li>
         ))}
       </ul>

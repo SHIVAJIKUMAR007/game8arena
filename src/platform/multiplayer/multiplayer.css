@@ -38,3 +38,8 @@
 .mp-how { font-size: .85rem; color: #b6c9bd; }
 .mp-how summary { cursor: pointer; font-weight: 700; }
 .mp-how p { margin: 8px 0 0; }
+
+.mp-players li > span:first-child { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mp-tags { display: flex; gap: 6px; }
+.mp-players em.ready { background: #4fbf7a; color: #06210f; }
+.mp-players em.wait { background: rgba(255, 255, 255, .18); color: #dfe9e2; }

@@ -4,22 +4,28 @@
 //                      hideseek:   input {dx,dy,aim,fire}
 //                      undercover: uc {a: 'ready' | 'clue' | 'vote' | 'guess', ...}
 //                      tictactoe:  ttt {a: 'move', cell: 0-8}
+//                      bingo:      bingo {a: 'board', cells: [25 numbers]} | {a: 'edit'} (lobby) | {a: 'call', n} (game)
+//                      lobby (host, after a game) may carry {keep: true} to keep the Bingo boards
 //   server -> client   joined {code, id, game} | room {code, game, hostId, players, settings, phase, ...} | error {message}
 //                      hideseek:   start {...} | state {...} | over {winner, mafiaId}
 //                      undercover: ustate {...}  (a private view for each player)
 //                      tictactoe:  tstate {...}  (the board, from each player's side)
+//                      bingo:      bstate {...}  (every board and the announced numbers)
 import { MAX_PLAYERS as HIDE_MAX, createSim } from './hideSeekSim.js'
 import { MAPS, MAP_IDS, getMap } from './maps.js'
 import {
   CLUE_SECONDS, END_RULES, MAX_PLAYERS as UNDERCOVER_MAX, MIN_PLAYERS as UNDERCOVER_MIN, createUndercover, defaultSettings, validateSettings,
 } from './undercover.js'
 import {
+  MAX_PLAYERS as BINGO_MAX, MIN_PLAYERS as BINGO_MIN, TURN_SECONDS, createBingo, defaultSettings as bingoSettings, isValidBoard,
+} from './bingo.js'
+import {
   BEST_OF, FIRST_MOVES, MAX_PLAYERS as TTT_MAX, MIN_PLAYERS as TTT_MIN, createTicTacToe, defaultSettings as tttSettings,
 } from './tictactoe.js'
 
 export const DURATIONS = [60, 120, 180, 300]
-export const GAME_TYPES = ['hideseek', 'undercover', 'tictactoe']
-const GAME_NAMES = { hideseek: 'Mafia Hunt', undercover: 'Undercover', tictactoe: 'Tic Tac Toe' }
+export const GAME_TYPES = ['hideseek', 'undercover', 'tictactoe', 'bingo']
+const GAME_NAMES = { hideseek: 'Mafia Hunt', undercover: 'Undercover', tictactoe: 'Tic Tac Toe', bingo: 'Bingo Royale' }
 const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ' // no I or O: easy to misread
 const MAX_MESSAGE = 2048
 
@@ -38,8 +44,10 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
 
   const send = (player, msg) => player.conn.send(JSON.stringify(msg))
   const error = (player, message) => send(player, { t: 'error', message })
-  const capacity = type => (type === 'undercover' ? UNDERCOVER_MAX : type === 'tictactoe' ? TTT_MAX : HIDE_MAX)
-  const minimum = type => (type === 'undercover' ? UNDERCOVER_MIN : type === 'tictactoe' ? TTT_MIN : 2)
+  const CAPACITY = { undercover: UNDERCOVER_MAX, tictactoe: TTT_MAX, bingo: BINGO_MAX }
+  const MINIMUM = { undercover: UNDERCOVER_MIN, tictactoe: TTT_MIN, bingo: BINGO_MIN }
+  const capacity = type => CAPACITY[type] ?? HIDE_MAX
+  const minimum = type => MINIMUM[type] ?? 2
 
   function newCode() {
     for (let tries = 0; tries < 200; tries++) {
@@ -53,10 +61,11 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
   function broadcastRoom(room) {
     const msg = {
       t: 'room', code: room.code, game: room.type, hostId: room.hostId, phase: room.phase, settings: room.settings,
-      players: [...room.players.values()].map(p => ({ id: p.id, name: p.name })),
+      players: [...room.players.values()].map(p => (room.type === 'bingo' ? { id: p.id, name: p.name, ready: room.boards.has(p.id) } : { id: p.id, name: p.name })),
     }
     if (room.type === 'hideseek') msg.maps = MAPS.map(m => ({ id: m.id, name: m.name }))
     else if (room.type === 'tictactoe') msg.limits = { bestOf: BEST_OF, first: FIRST_MOVES }
+    else if (room.type === 'bingo') msg.limits = { turnSeconds: TURN_SECONDS }
     else msg.limits = { min: UNDERCOVER_MIN, max: UNDERCOVER_MAX, clueSeconds: CLUE_SECONDS, endRules: END_RULES }
     for (const p of room.players.values()) send(p, msg)
   }
@@ -161,6 +170,36 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     room.timer.unref?.()
   }
 
+  // ---- bingo ----
+
+  function flushBingo(room) {
+    const bg = room.bg
+    if (!bg.dirty) return
+    bg.clearDirty()
+    const t = now()
+    for (const p of room.players.values()) send(p, bg.view(p.id, t))
+    if (bg.phase === 'over' && room.phase === 'game') {
+      stopGame(room)
+      room.phase = 'over'
+      broadcastRoom(room)
+    }
+  }
+
+  function startBingo(room, host) {
+    const list = [...room.players.values()]
+    if (!list.every(p => room.boards.has(p.id))) return error(host, 'Everyone must confirm their board first.')
+    room.bg = createBingo({ players: list.map(p => ({ id: p.id, name: p.name, board: room.boards.get(p.id) })), settings: { ...room.settings }, random, now: now() })
+    room.phase = 'game'
+    broadcastRoom(room)
+    flushBingo(room)
+    room.timer = setInterval(() => {
+      room.bg.tick(now())
+      flushBingo(room)
+    }, 500)
+    room.timer.unref?.()
+    return undefined
+  }
+
   // ---- rooms ----
 
   function leave(player) {
@@ -177,6 +216,11 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     if (room.hostId === player.id) room.hostId = room.players.keys().next().value
     if (room.type === 'hideseek' && room.phase === 'game' && room.players.size < 2) {
       room.sim.finish(room.sim.players.get(room.sim.mafiaId).alive ? 'mafia' : 'villagers')
+    }
+    room.boards.delete(player.id)
+    if (room.type === 'bingo' && room.phase === 'game') {
+      room.bg.leave(player.id, now())
+      flushBingo(room)
     }
     if (room.type === 'tictactoe' && room.phase === 'game') {
       room.tt.leave(player.id, now())
@@ -201,7 +245,9 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
 
   function applySettings(room, msg) {
     const s = room.settings
-    if (room.type === 'tictactoe') {
+    if (room.type === 'bingo') {
+      if (TURN_SECONDS.includes(msg.turnSeconds)) s.turnSeconds = msg.turnSeconds
+    } else if (room.type === 'tictactoe') {
       if (BEST_OF.includes(msg.bestOf)) s.bestOf = msg.bestOf
       if (FIRST_MOVES.includes(msg.first)) s.first = msg.first
     } else if (room.type === 'hideseek') {
@@ -231,8 +277,8 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         const code = newCode()
         if (!code) return error(player, 'Could not make a room code.')
         player.name = cleanName(msg.name, `Player ${player.id}`)
-        const settings = type === 'hideseek' ? { duration: 180, map: 'random' } : type === 'tictactoe' ? tttSettings() : defaultSettings()
-        const created = { code, type, hostId: player.id, players: new Map(), settings, phase: 'lobby', sim: null, ug: null, tt: null, timer: null, lastTick: 0 }
+        const settings = type === 'hideseek' ? { duration: 180, map: 'random' } : type === 'tictactoe' ? tttSettings() : type === 'bingo' ? bingoSettings() : defaultSettings()
+        const created = { code, type, hostId: player.id, players: new Map(), settings, phase: 'lobby', sim: null, ug: null, tt: null, bg: null, boards: new Map(), timer: null, lastTick: 0 }
         rooms.set(code, created)
         enter(player, created)
         break
@@ -262,7 +308,8 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
       case 'start':
         if (!room || room.hostId !== player.id || room.phase !== 'lobby') return
         if (room.players.size < minimum(room.type)) return error(player, `You need ${room.type === 'tictactoe' ? 'another player' : `at least ${minimum(room.type)} players`}.`)
-        if (room.type === 'undercover') startUndercover(room, player)
+        if (room.type === 'bingo') startBingo(room, player)
+        else if (room.type === 'undercover') startUndercover(room, player)
         else if (room.type === 'tictactoe') startTicTacToe(room)
         else startHide(room)
         break
@@ -274,6 +321,21 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
           const res = room.ug.act(player.id, msg, now())
           if (res?.error) error(player, res.error)
           flushUndercover(room)
+        }
+        break
+      case 'bingo':
+        if (room?.type !== 'bingo') return undefined
+        if (room.phase === 'lobby' && msg.a === 'board') {
+          if (!isValidBoard(msg.cells)) return error(player, 'Use each number from 1 to 25 exactly once.')
+          room.boards.set(player.id, msg.cells.slice())
+          broadcastRoom(room)
+        } else if (room.phase === 'lobby' && msg.a === 'edit') {
+          room.boards.delete(player.id)
+          broadcastRoom(room)
+        } else if (room.phase === 'game' && msg.a === 'call') {
+          const res = room.bg.act(player.id, msg, now())
+          if (res?.error) error(player, res.error)
+          flushBingo(room)
         }
         break
       case 'ttt':
@@ -289,6 +351,8 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         room.sim = null
         room.ug = null
         room.tt = null
+        room.bg = null
+        if (!msg.keep) room.boards.clear() // "play again" keeps everyone's boards; "return to lobby" starts the set-up afresh
         broadcastRoom(room)
         break
       case 'leave':
