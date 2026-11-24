@@ -51,8 +51,10 @@ export function startServer({ port = 8787, distDir = resolve(fileURLToPath(new U
       res.end('The site is not built yet. Run: npm run build:spa')
       return
     }
-    res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' })
-    res.end(readFileSync(file))
+    const type = TYPES[extname(file)] || 'application/octet-stream'
+    res.writeHead(200, { 'content-type': type })
+    // Pages served from here talk to this server (not to a browser host): tell the app so.
+    res.end(extname(file) === '.html' ? readFileSync(file, 'utf8').replace('<head>', `<head><script>window.__G8_LAN__=true</script>`) : readFileSync(file))
   })
   attachWebSocket(server, conn => hub.handleConnection(conn))
   return new Promise((resolveStart, reject) => {

@@ -462,7 +462,7 @@ export const gameContent = {
       'The gun needs a moment to reload. Do not fire at a gap, wait until you can see someone.',
     ],
     faq: [
-      { q: 'How do I host a game?', a: 'On one computer run npm run host in the project folder. It builds the site and starts the game server, then prints the address on your Wi-Fi. Open Mafia Hunt, create a room and share the code.' },
+      { q: 'How do I host a game?', a: 'Open Mafia Hunt, enter your name and choose Create a room. Your browser becomes the host, so keep that page open. Share the 4-letter code and friends join from their own browsers. Nothing to install.' },
       { q: 'How do my friends join?', a: 'They open the Wi-Fi address on their own phone or laptop, choose Mafia Hunt and type the four letter room code. They must be on the same Wi-Fi as the host.' },
       { q: 'How many people can play?', a: 'From two to nine players. One is the mafia and the rest are villagers.' },
       { q: 'Who is the mafia?', a: 'The game picks one player at random when the host starts it. Everyone is told who the mafia is, so the game is about hiding, not guessing.' },
@@ -470,7 +470,7 @@ export const gameContent = {
       { q: 'How do I control it?', a: 'Move with WASD or the arrow keys, aim with the mouse, and click or press Space to shoot. On a phone use the on-screen stick to move and tap where you want to shoot.' },
       { q: 'What maps are there?', a: 'Five: Crates, Town, Maze, Plaza and Forest. The host picks one in the lobby, or leaves it on Random and the game picks for you.' },
       { q: 'How long does a round last?', a: 'The host chooses one, two, three or five minutes in the lobby. The mafia is held back for the first 15 seconds so the villagers can hide.' },
-      { q: 'Why does it say it cannot reach a game server?', a: 'Mafia Hunt needs the host computer running npm run host. Open the address that command prints, not the website, and make sure you are on the same Wi-Fi.' },
+      { q: 'Why did my room close?', a: 'The host closed their page or lost their connection, so the room ended. Start a new room and share the new code. The host must keep the game page open while everyone plays.' },
     ],
   },
   undercover: {
@@ -499,7 +499,7 @@ export const gameContent = {
       { q: 'What does Mr. White do when they are voted out?', a: 'They get one chance to type the civilians’ word. If it matches, ignoring case and spaces, Mr. White wins at once. If not, the game goes on.' },
       { q: 'When does the game end?', a: 'Civilians win when every Undercover and Mr. White is out. The infiltrators win when the civilians are no more than them, or you can switch the lobby setting so they only win when one civilian is left. Mr. White also wins by guessing the word.' },
       { q: 'Can I say my own word?', a: 'No. The game rejects a clue that contains your own word. Mr. White has no word, so there is nothing to reject.' },
-      { q: 'How do I host a game?', a: 'On one computer run npm run host in the project folder. It prints the address on your Wi-Fi. Open Undercover, create a room and share the code. Everyone must be on the same Wi-Fi.' },
+      { q: 'How do I host a game?', a: 'Open Undercover, enter your name and choose Create a room. Your browser becomes the host, so keep that page open. Share the 4-letter code and friends join from their own browsers. Nothing to install.' },
     ],
   },
 }

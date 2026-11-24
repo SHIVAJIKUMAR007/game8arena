@@ -15,13 +15,24 @@ export default function RoomMenu({ rt, title, intro, nameKey }) {
     <div className="mp-panel">
       <h2>{title}</h2>
       <p className="mp-sub">{intro}</p>
-      {rt.conn === 'connecting' && <p className="mp-note">Connecting to the game server…</p>}
+      {rt.conn === 'connecting' && <p className="mp-note">{rt.mode === 'p2p' ? 'Getting ready…' : 'Connecting to the game server…'}</p>}
       {rt.conn === 'closed' && (
         <div className="mp-note warn" role="alert">
-          <b>Can’t reach a game server.</b> This game runs on one computer on your Wi-Fi. On that computer run <code>npm run host</code>, then
-          everyone opens the address it prints.
-          <div><button type="button" className="mp-btn small" onClick={rt.retry}>Try again</button></div>
+          {rt.mode === 'p2p' ? (
+            <>
+              <b>The room closed.</b> The host left or lost their connection. Start a new room, or ask the host for a new code.
+            </>
+          ) : (
+            <>
+              <b>Can’t reach a game server.</b> This game runs on one computer on your Wi-Fi. On that computer run <code>npm run host</code>, then
+              everyone opens the address it prints.
+            </>
+          )}
+          <div><button type="button" className="mp-btn small" onClick={rt.retry}>{rt.mode === 'p2p' ? 'Back to start' : 'Try again'}</button></div>
         </div>
+      )}
+      {rt.conn === 'open' && rt.mode === 'p2p' && (
+        <p className="mp-note">One player creates a room and keeps this page open. Everyone else joins with the 4-letter code. Nothing to install.</p>
       )}
       <label className="mp-field">
         <span>Your name</span>

@@ -1,15 +1,18 @@
-// The part of a multiplayer game every game shares: the connection to the LAN server, the room you are in and its lobby.
+// The part of a multiplayer game every game shares: the connection to the room host (a browser tab, or a LAN server),
+// the room you are in and its lobby.
 // A game passes `onMessage` to react to its own messages (the game state, the result...) and gets back what the
 // lobby needs. Messages the hook handles itself: joined, room, error. Everything is also passed on to onMessage,
 // plus { t: 'closed' } when the connection drops.
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { serverUrl } from './net'
+import { serverUrl, signalBase, transportMode } from './net'
+import { createP2PSocket } from './p2p'
 
 /**
  * @param {{ game: string, onMessage?: (msg: object) => void }} opts
  */
 export function useRoomSocket({ game, onMessage }) {
   const [conn, setConn] = useState('connecting') // 'connecting' | 'open' | 'closed'
+  const [mode, setMode] = useState('p2p') // 'p2p' (a browser hosts the room) | 'ws' (a Node game server does)
   const [attempt, setAttempt] = useState(0)
   const [me, setMe] = useState(null) // { id, code }
   const [room, setRoom] = useState(null)
@@ -24,7 +27,9 @@ export function useRoomSocket({ game, onMessage }) {
     let socket
     let dead = false
     try {
-      socket = new WebSocket(serverUrl())
+      const chosen = transportMode()
+      setMode(chosen) // eslint-disable-line react-hooks/set-state-in-effect
+      socket = chosen === 'p2p' ? createP2PSocket({ signalBase: signalBase() }) : new WebSocket(serverUrl())
     } catch {
       setConn('closed') // eslint-disable-line react-hooks/set-state-in-effect
       return undefined
@@ -61,7 +66,7 @@ export function useRoomSocket({ game, onMessage }) {
   }, [])
 
   return {
-    conn, me, room, error, send,
+    conn, mode, me, room, error, send,
     retry: () => {
       setConn('connecting')
       setError('')

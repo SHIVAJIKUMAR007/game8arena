@@ -10,19 +10,28 @@ export default function LobbyShell({ rt, minPlayers = 2, startNote, canStart = t
   const { room, me } = rt
   const isHost = room.hostId === me?.id
   const [addresses, setAddresses] = useState([])
+  const online = rt.mode === 'p2p'
   useEffect(() => {
+    if (online) return undefined
     let off = false
     fetch(infoUrl())
       .then(r => r.json())
       .then(info => !off && setAddresses((info.ips || []).map(ip => `http://${ip}:${info.port}`)))
       .catch(() => {})
     return () => { off = true }
-  }, [])
+  }, [online])
   const enough = room.players.length >= minPlayers
   return (
     <div className="mp-panel">
       <p className="mp-sub">Room code</p>
       <div className="mp-code" aria-label={`Room code ${room.code.split('').join(' ')}`}>{room.code}</div>
+      {online && (
+        <p className="mp-note">
+          {isHost
+            ? 'Friends open game8arena.com, choose this game and join with this code. Keep this page open and visible while you play: you are the host.'
+            : 'You are connected straight to the host. If the host closes their page, the room ends.'}
+        </p>
+      )}
       {addresses.length > 0 && (
         <p className="mp-note">
           Friends on this Wi-Fi: open {addresses.map(a => <b key={a}>{a}</b>)} then choose this game and join with the code.

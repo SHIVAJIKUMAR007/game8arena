@@ -17,7 +17,9 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Multiplayer (Mafia Hunt and Undercover)
 
-The multiplayer games (Mafia Hunt and Undercover) need a small game server, in `server/` (plain Node, no extra packages). On one computer on your Wi-Fi:
+On the deployed site (Cloudflare) the host's **browser tab is the server**. "Create a room" runs the room logic (`server/hub.js`) in that tab, and friends connect to it over WebRTC (`src/platform/multiplayer/p2p.js`). The Worker in `worker/` only relays the connection set-up for a room code (one Durable Object per code); no game traffic goes through it. `npm run build` then `npx wrangler deploy` ships both the site and the Worker. To try it locally: `npm run build`, `npx wrangler dev`, and open the printed address in two browsers (or `npm run dev` with `?p2p=1&signal=localhost:8787`).
+
+The same games can also run from a Node server, in `server/` (plain Node, no extra packages), for offline play on one Wi-Fi. On one computer:
 
 ```
 npm run host      # builds the site and starts the server on port 8787 (PORT=8800 npm run host to change it)
