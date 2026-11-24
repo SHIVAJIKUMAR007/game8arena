@@ -19,6 +19,7 @@ import { config as blocky } from '../games/blockyBlitz/config'
 import { config as bubbles } from '../games/bubbleSurge/config'
 import { config as family } from '../games/familySort/config'
 import { config as hideseek } from '../games/hideSeek/config'
+import { config as undercover } from '../games/undercover/config'
 
 export const gameContent = {
   arrow: {
@@ -470,6 +471,35 @@ export const gameContent = {
       { q: 'What maps are there?', a: 'Five: Crates, Town, Maze, Plaza and Forest. The host picks one in the lobby, or leaves it on Random and the game picks for you.' },
       { q: 'How long does a round last?', a: 'The host chooses one, two, three or five minutes in the lobby. The mafia is held back for the first 15 seconds so the villagers can hide.' },
       { q: 'Why does it say it cannot reach a game server?', a: 'Mafia Hunt needs the host computer running npm run host. Open the address that command prints, not the website, and make sure you are on the same Wi-Fi.' },
+    ],
+  },
+  undercover: {
+    config: undercover,
+    metaTitle: 'Undercover: Multiplayer Word Party Game',
+    metaDescription:
+      'Play Undercover with friends on the same Wi-Fi. Give clues about a secret word, spot who has a different one, and vote out the Undercover and Mr. White.',
+    tagline: 'Everyone has a word. Someone has a different one.',
+    genres: ['Multiplayer', 'Word game', 'Party game'],
+    intro: [
+      'Undercover is a word deduction party game for three or more players on the same Wi-Fi. One computer hosts the game, and everyone else opens its address on a phone or laptop and joins with a four letter room code. Each player secretly gets a word, and nobody knows what anyone else was given.',
+      'Civilians all get the same word. The Undercover get a similar word, so they think they are civilians. Mr. White gets no word and has to bluff. Each round everyone gives a short clue in turn, then the group votes one player out. If Mr. White is voted out, they get one guess at the civilians’ word, and a right guess wins the game. The host chooses how many Undercover and Mr. White there are, as long as together they are at most half of the players.',
+    ],
+    tips: [
+      'As a civilian, give a clue that is true for your word but not too obvious. A clue that points straight at the word also helps the Undercover.',
+      'As the Undercover, listen to the first clues before you give yours. Once you see the group’s word, stay close to it.',
+      'As Mr. White, repeat the mood of earlier clues and stay short. If you are voted out, use the clues to guess the word.',
+      'Watch for clues that fit nothing so far. A vague clue and a very specific clue can both be a bluff.',
+      'Use the vote list at the end of each round. Who voted for whom tells you a lot about who is protecting whom.',
+    ],
+    faq: [
+      { q: 'How many players do I need?', a: 'At least three. The game works with up to twenty players in one room.' },
+      { q: 'How many Undercover and Mr. White can there be?', a: 'The host picks both numbers in the lobby. Together they must be at most half of the players, rounded down, and there must be at least one of them. With nine players that is up to four.' },
+      { q: 'Does the Undercover know they are the Undercover?', a: 'No. They get a word that looks normal and have to work out from the clues that it is different. Mr. White knows because there is no word on the screen.' },
+      { q: 'What happens if the vote is tied?', a: 'The tied players go to a second vote. If that is tied too, nobody is out and the next round starts.' },
+      { q: 'What does Mr. White do when they are voted out?', a: 'They get one chance to type the civilians’ word. If it matches, ignoring case and spaces, Mr. White wins at once. If not, the game goes on.' },
+      { q: 'When does the game end?', a: 'Civilians win when every Undercover and Mr. White is out. The infiltrators win when the civilians are no more than them, or you can switch the lobby setting so they only win when one civilian is left. Mr. White also wins by guessing the word.' },
+      { q: 'Can I say my own word?', a: 'No. The game rejects a clue that contains your own word. Mr. White has no word, so there is nothing to reject.' },
+      { q: 'How do I host a game?', a: 'On one computer run npm run host in the project folder. It prints the address on your Wi-Fi. Open Undercover, create a room and share the code. Everyone must be on the same Wi-Fi.' },
     ],
   },
 }

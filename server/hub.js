@@ -1,13 +1,19 @@
-// Rooms and lobbies. A hub takes connections ({ on, send, close }) and speaks one small JSON protocol:
+// Rooms and lobbies for every game. A hub takes connections ({ on, send, close }) and speaks one small JSON protocol:
 //
-//   client -> server   create {name} | join {code, name} | settings {duration?, map?} | start | input {dx,dy,aim,fire}
-//                      | lobby (host, after a game) | leave
-//   server -> client   joined {code, id} | room {code, hostId, players, settings, phase} | start {...}
-//                      | state {...} | over {winner, mafiaId} | error {message}
-import { MAX_PLAYERS, createSim } from './hideSeekSim.js'
+//   client -> server   create {name, game} | join {code, name, game} | settings {...} | start | lobby (host, after a game) | leave
+//                      hideseek:   input {dx,dy,aim,fire}
+//                      undercover: uc {a: 'ready' | 'clue' | 'vote' | 'guess', ...}
+//   server -> client   joined {code, id, game} | room {code, game, hostId, players, settings, phase, ...} | error {message}
+//                      hideseek:   start {...} | state {...} | over {winner, mafiaId}
+//                      undercover: ustate {...}  (a private view for each player)
+import { MAX_PLAYERS as HIDE_MAX, createSim } from './hideSeekSim.js'
 import { MAPS, MAP_IDS, getMap } from './maps.js'
+import {
+  CLUE_SECONDS, END_RULES, MAX_PLAYERS as UNDERCOVER_MAX, MIN_PLAYERS as UNDERCOVER_MIN, createUndercover, defaultSettings, validateSettings,
+} from './undercover.js'
 
 export const DURATIONS = [60, 120, 180, 300]
+export const GAME_TYPES = ['hideseek', 'undercover']
 const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ' // no I or O: easy to misread
 const MAX_MESSAGE = 2048
 
@@ -18,14 +24,15 @@ export function cleanName(raw, fallback) {
 }
 
 /**
- * @param {{ tickHz?: number, hideSeconds?: number, random?: () => number, maxRooms?: number }} [opts]
+ * @param {{ tickHz?: number, hideSeconds?: number, random?: () => number, maxRooms?: number, now?: () => number }} [opts]
  */
-export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random, maxRooms = 50 } = {}) {
+export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random, maxRooms = 50, now = () => Date.now() } = {}) {
   const rooms = new Map()
   let nextId = 1
 
   const send = (player, msg) => player.conn.send(JSON.stringify(msg))
   const error = (player, message) => send(player, { t: 'error', message })
+  const capacity = type => (type === 'undercover' ? UNDERCOVER_MAX : HIDE_MAX)
 
   function newCode() {
     for (let tries = 0; tries < 200; tries++) {
@@ -38,10 +45,11 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
 
   function broadcastRoom(room) {
     const msg = {
-      t: 'room', code: room.code, hostId: room.hostId, phase: room.phase, settings: room.settings,
-      maps: MAPS.map(m => ({ id: m.id, name: m.name })),
+      t: 'room', code: room.code, game: room.type, hostId: room.hostId, phase: room.phase, settings: room.settings,
       players: [...room.players.values()].map(p => ({ id: p.id, name: p.name })),
     }
+    if (room.type === 'hideseek') msg.maps = MAPS.map(m => ({ id: m.id, name: m.name }))
+    else msg.limits = { min: UNDERCOVER_MIN, max: UNDERCOVER_MAX, clueSeconds: CLUE_SECONDS, endRules: END_RULES }
     for (const p of room.players.values()) send(p, msg)
   }
 
@@ -50,10 +58,12 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     room.timer = null
   }
 
-  function tick(room) {
-    const now = performance.now()
-    const dt = Math.min(0.1, (now - room.lastTick) / 1000)
-    room.lastTick = now
+  // ---- hide and seek ----
+
+  function tickHide(room) {
+    const t = performance.now()
+    const dt = Math.min(0.1, (t - room.lastTick) / 1000)
+    room.lastTick = t
     const sim = room.sim
     sim.step(dt)
     for (const p of room.players.values()) send(p, { t: 'state', ...sim.snapshotFor(p.id) })
@@ -65,7 +75,7 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     }
   }
 
-  function startGame(room) {
+  function startHide(room) {
     const list = [...room.players.values()]
     const mafia = list[Math.floor(random() * list.length)]
     const map = room.settings.map === 'random' ? MAPS[Math.floor(random() * MAPS.length)] : getMap(room.settings.map)
@@ -75,15 +85,49 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     room.phase = 'game'
     for (const p of list) {
       send(p, {
-        t: 'start', you: p.id, mafiaId: mafia.id, map: map.id, mapName: map.name, world: map.world, walls: map.walls, duration: room.settings.duration, hide: hideSeconds,
-        players: list.map(q => ({ id: q.id, name: q.name })),
+        t: 'start', you: p.id, mafiaId: mafia.id, map: map.id, mapName: map.name, world: map.world, walls: map.walls, duration: room.settings.duration,
+        hide: hideSeconds, players: list.map(q => ({ id: q.id, name: q.name })),
       })
     }
     broadcastRoom(room)
     room.lastTick = performance.now()
-    room.timer = setInterval(() => tick(room), 1000 / tickHz)
+    room.timer = setInterval(() => tickHide(room), 1000 / tickHz)
     room.timer.unref?.()
   }
+
+  // ---- undercover ----
+
+  /** Sends every player their own view, if anything changed, and wraps up when the game is over. */
+  function flushUndercover(room) {
+    const ug = room.ug
+    if (!ug.dirty) return
+    ug.clearDirty()
+    const t = now()
+    for (const p of room.players.values()) send(p, ug.view(p.id, t))
+    if (ug.phase === 'over' && room.phase === 'game') {
+      stopGame(room)
+      room.phase = 'over'
+      broadcastRoom(room)
+    }
+  }
+
+  function startUndercover(room, host) {
+    const list = [...room.players.values()]
+    const check = validateSettings(list.length, room.settings)
+    if (!check.ok) return error(host, check.error)
+    room.ug = createUndercover({ players: list.map(p => ({ id: p.id, name: p.name })), settings: { ...room.settings }, random, now: now() })
+    room.phase = 'game'
+    broadcastRoom(room)
+    flushUndercover(room)
+    room.timer = setInterval(() => {
+      room.ug.tick(now())
+      flushUndercover(room)
+    }, 250)
+    room.timer.unref?.()
+    return undefined
+  }
+
+  // ---- rooms ----
 
   function leave(player) {
     const room = player.room
@@ -97,8 +141,13 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
       return
     }
     if (room.hostId === player.id) room.hostId = room.players.keys().next().value
-    if (room.phase === 'game' && room.players.size < 2) {
+    if (room.type === 'hideseek' && room.phase === 'game' && room.players.size < 2) {
       room.sim.finish(room.sim.players.get(room.sim.mafiaId).alive ? 'mafia' : 'villagers')
+    }
+    if (room.type === 'undercover' && room.phase === 'game') {
+      room.ug.leave(player.id, now())
+      if (room.players.size < 2) room.ug.abort()
+      flushUndercover(room)
     }
     broadcastRoom(room)
   }
@@ -106,8 +155,23 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
   function enter(player, room) {
     player.room = room
     room.players.set(player.id, player)
-    send(player, { t: 'joined', code: room.code, id: player.id })
+    send(player, { t: 'joined', code: room.code, id: player.id, game: room.type })
     broadcastRoom(room)
+  }
+
+  const int = (v, lo, hi) => (Number.isInteger(v) && v >= lo && v <= hi ? v : undefined)
+
+  function applySettings(room, msg) {
+    const s = room.settings
+    if (room.type === 'hideseek') {
+      if (DURATIONS.includes(msg.duration)) s.duration = msg.duration
+      if (msg.map === 'random' || MAP_IDS.includes(msg.map)) s.map = msg.map
+    } else {
+      s.undercover = int(msg.undercover, 0, UNDERCOVER_MAX) ?? s.undercover
+      s.mrwhite = int(msg.mrwhite, 0, UNDERCOVER_MAX) ?? s.mrwhite
+      if (CLUE_SECONDS.includes(msg.clueSeconds)) s.clueSeconds = msg.clueSeconds
+      if (END_RULES.includes(msg.endRule)) s.endRule = msg.endRule
+    }
   }
 
   function onMessage(player, raw) {
@@ -120,11 +184,14 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
     switch (msg.t) {
       case 'create': {
         if (room) return error(player, 'You are already in a room.')
+        const type = msg.game ?? 'hideseek'
+        if (!GAME_TYPES.includes(type)) return error(player, 'Unknown game.')
         if (rooms.size >= maxRooms) return error(player, 'The server is full. Try again later.')
         const code = newCode()
         if (!code) return error(player, 'Could not make a room code.')
         player.name = cleanName(msg.name, `Player ${player.id}`)
-        const created = { code, hostId: player.id, players: new Map(), settings: { duration: 180, map: 'random' }, phase: 'lobby', sim: null, timer: null, lastTick: 0 }
+        const settings = type === 'hideseek' ? { duration: 180, map: 'random' } : defaultSettings()
+        const created = { code, type, hostId: player.id, players: new Map(), settings, phase: 'lobby', sim: null, ug: null, timer: null, lastTick: 0 }
         rooms.set(code, created)
         enter(player, created)
         break
@@ -133,8 +200,11 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
         if (room) return error(player, 'You are already in a room.')
         const target = rooms.get(String(msg.code ?? '').toUpperCase().trim())
         if (!target) return error(player, 'Room not found. Check the code.')
+        if (msg.game && msg.game !== target.type) {
+          return error(player, `That room is for ${target.type === 'undercover' ? 'Undercover' : 'Mafia Hunt'}. Open that game to join it.`)
+        }
         if (target.phase !== 'lobby') return error(player, 'That game has already started.')
-        if (target.players.size >= MAX_PLAYERS) return error(player, `The room is full (${MAX_PLAYERS} players).`)
+        if (target.players.size >= capacity(target.type)) return error(player, `The room is full (${capacity(target.type)} players).`)
         player.name = cleanName(msg.name, `Player ${player.id}`)
         const taken = new Set([...target.players.values()].map(p => p.name))
         let name = player.name
@@ -145,22 +215,32 @@ export function createHub({ tickHz = 30, hideSeconds = 15, random = Math.random,
       }
       case 'settings':
         if (!room || room.hostId !== player.id || room.phase !== 'lobby') return
-        if (DURATIONS.includes(msg.duration)) room.settings.duration = msg.duration
-        if (msg.map === 'random' || MAP_IDS.includes(msg.map)) room.settings.map = msg.map
+        applySettings(room, msg)
         broadcastRoom(room)
         break
       case 'start':
         if (!room || room.hostId !== player.id || room.phase !== 'lobby') return
-        if (room.players.size < 2) return error(player, 'You need at least 2 players.')
-        startGame(room)
+        if (room.players.size < (room.type === 'undercover' ? UNDERCOVER_MIN : 2)) {
+          return error(player, `You need at least ${room.type === 'undercover' ? UNDERCOVER_MIN : 2} players.`)
+        }
+        if (room.type === 'undercover') startUndercover(room, player)
+        else startHide(room)
         break
       case 'input':
-        if (room?.phase === 'game') room.sim.setInput(player.id, msg)
+        if (room?.type === 'hideseek' && room.phase === 'game') room.sim.setInput(player.id, msg)
+        break
+      case 'uc':
+        if (room?.type === 'undercover' && room.phase === 'game') {
+          const res = room.ug.act(player.id, msg, now())
+          if (res?.error) error(player, res.error)
+          flushUndercover(room)
+        }
         break
       case 'lobby':
         if (!room || room.hostId !== player.id || room.phase !== 'over') return
         room.phase = 'lobby'
         room.sim = null
+        room.ug = null
         broadcastRoom(room)
         break
       case 'leave':

@@ -1,43 +1,4 @@
-/* Mafia Hunt: menu and lobby panels on a dark night backdrop, then the full-screen canvas arena. */
-.hs-root {
-  position: relative; width: 100%; height: 100%; min-height: 0; overflow: auto; color: #eef3f7;
-  background: radial-gradient(circle at 30% 20%, #1f3b2b, #0d1a14 70%); display: grid; place-items: center; padding: 12px; box-sizing: border-box;
-}
-.hs-panel {
-  width: min(100%, 400px); display: flex; flex-direction: column; gap: 8px; padding: 14px 18px; border-radius: 16px;
-  background: rgba(10, 22, 17, .82); border: 2px solid #2f5d44; box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
-}
-.hs-panel h2 { margin: 0; font-size: 1.6rem; }
-.hs-sub { margin: 0; color: #b6c9bd; font-size: .92rem; }
-.hs-note { margin: 0; font-size: .88rem; color: #b6c9bd; }
-.hs-note b { display: block; color: #ffe08a; word-break: break-all; }
-.hs-note.warn { color: #ffd0d0; background: rgba(214, 48, 49, .18); border: 1px solid #d63031; border-radius: 10px; padding: 8px 10px; }
-.hs-note code { background: rgba(255, 255, 255, .12); padding: 1px 6px; border-radius: 5px; }
-.hs-field { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .92rem; }
-.hs-field input, .hs-field select, .hs-join input {
-  padding: 9px 12px; border-radius: 10px; border: 2px solid #3f7255; background: #0d1a14; color: #fff; font: inherit; min-width: 0;
-}
-.hs-field input { flex: 1; max-width: 220px; }
-.hs-join { display: flex; gap: 8px; }
-.hs-join input { flex: 1; text-align: center; letter-spacing: .3em; font-weight: 800; text-transform: uppercase; }
-.hs-or { text-align: center; color: #8ea597; font-size: .8rem; }
-.hs-btn {
-  padding: 9px 18px; border-radius: 999px; border: 2px solid #5da57a; background: transparent; color: #eef3f7; font: 800 1rem system-ui, sans-serif; cursor: pointer;
-}
-.hs-btn.primary { background: linear-gradient(#e44d4d, #b02222); border-color: #7e1212; color: #fff; }
-.hs-btn.ghost { border-color: transparent; color: #9fb8a9; }
-.hs-btn.small { padding: 5px 14px; font-size: .85rem; margin-top: 6px; }
-.hs-btn:disabled { opacity: .45; cursor: not-allowed; }
-.hs-btn:focus-visible, .hs-root input:focus-visible, .hs-root select:focus-visible { outline: 3px solid #ffe08a; outline-offset: 2px; }
-.hs-code { text-align: center; font-size: 2.4rem; line-height: 1.1; font-weight: 900; letter-spacing: .25em; padding-left: .25em; color: #ffe08a; }
-.hs-players { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.hs-players li { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 10px; background: rgba(255, 255, 255, .07); }
-.hs-players em { font-style: normal; font-size: .72rem; font-weight: 800; background: #ffe08a; color: #3a2a00; padding: 2px 8px; border-radius: 999px; }
-.hs-how { font-size: .85rem; color: #b6c9bd; }
-.hs-how summary { cursor: pointer; font-weight: 700; }
-.hs-how p { margin: 8px 0 0; }
-
-/* Match */
+/* Mafia Hunt: the full-screen canvas arena, HUD and result. Menus and lobby use platform/multiplayer/multiplayer.css. */
 .hs-match { position: absolute; inset: 0; display: flex; flex-direction: column; background: #0d1a14; }
 .hs-hud {
   position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px;

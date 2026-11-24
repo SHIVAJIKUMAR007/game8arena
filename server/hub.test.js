@@ -211,3 +211,126 @@ describe('playing', () => {
     expect(sim.players.get(id).input).toMatchObject({ dx: 1, aim: 1.5 })
   })
 })
+
+describe('undercover rooms', () => {
+  let clock = 1000
+  const setup = n => {
+    fresh({ now: () => clock })
+    const host = client(hub)
+    host.say({ t: 'create', name: 'Host', game: 'undercover' })
+    const code = host.last('joined').code
+    const guests = Array.from({ length: n - 1 }, (_, i) => {
+      const c = client(hub)
+      c.say({ t: 'join', code, name: `G${i}`, game: 'undercover' })
+      return c
+    })
+    return { host, guests, all: [host, ...guests], code }
+  }
+
+  it('creates a room of that game type with default role counts and limits', () => {
+    const { host } = setup(1)
+    expect(host.last('joined').game).toBe('undercover')
+    expect(host.last('room')).toMatchObject({
+      game: 'undercover', settings: { undercover: 1, mrwhite: 0, clueSeconds: 30, endRule: 'parity' }, limits: { min: 3, max: 20 },
+    })
+  })
+
+  it('keeps the two games apart: a code only joins its own game', () => {
+    const { code } = setup(2)
+    const wrong = client(hub)
+    wrong.say({ t: 'join', code, name: 'X', game: 'hideseek' })
+    expect(wrong.last('error').message).toMatch(/Undercover/)
+    const bad = client(hub)
+    bad.say({ t: 'create', name: 'X', game: 'chess' })
+    expect(bad.last('error').message).toMatch(/Unknown game/)
+  })
+
+  it('takes any number of players up to 20', () => {
+    const { host, code } = setup(20)
+    expect(host.last('room').players).toHaveLength(20)
+    const extra = client(hub)
+    extra.say({ t: 'join', code, name: 'late', game: 'undercover' })
+    expect(extra.last('error').message).toMatch(/full \(20/)
+  })
+
+  it('lets only the host change role counts, rejecting junk', () => {
+    const { host, guests } = setup(6)
+    host.say({ t: 'settings', undercover: 2, mrwhite: 1, clueSeconds: 45, endRule: 'last' })
+    expect(guests[0].last('room').settings).toEqual({ undercover: 2, mrwhite: 1, clueSeconds: 45, endRule: 'last' })
+    guests[0].say({ t: 'settings', undercover: 0 })
+    host.say({ t: 'settings', undercover: 'many', mrwhite: -3, clueSeconds: 5, endRule: 'x' })
+    expect(host.last('room').settings).toEqual({ undercover: 2, mrwhite: 1, clueSeconds: 45, endRule: 'last' })
+  })
+
+  it('refuses to start with too few players or too many infiltrators for the group', () => {
+    const { host } = setup(2)
+    host.say({ t: 'start' })
+    expect(host.last('error').message).toMatch(/at least 3/)
+    const g = setup(6)
+    g.host.say({ t: 'settings', undercover: 3, mrwhite: 1 })
+    g.host.say({ t: 'start' })
+    expect(g.host.last('error').message).toMatch(/at most 3/)
+    expect(g.host.last('ustate')).toBeUndefined()
+  })
+
+  it('starts the game and gives each player a private view', () => {
+    const { all } = setup(6)
+    all[0].say({ t: 'settings', undercover: 2, mrwhite: 1 })
+    all[0].say({ t: 'start' })
+    const views = all.map(c => c.last('ustate'))
+    expect(views.every(v => v.phase === 'reveal')).toBe(true)
+    expect(views.filter(v => v.you.mrWhite)).toHaveLength(1)
+    expect(views.filter(v => v.you.word).length).toBe(5)
+    expect(views[0].counts).toEqual({ civilian: 3, undercover: 2, mrwhite: 1 })
+    expect(new Set(views.map(v => v.you.id)).size).toBe(6)
+  })
+
+  it('plays through the actions, reports illegal ones only to the sender, and ends the room when won', async () => {
+    const { host, guests, all } = setup(3)
+    host.say({ t: 'start' })
+    all.forEach(c => c.say({ t: 'uc', a: 'ready' }))
+    expect(host.last('ustate').phase).toBe('clue')
+    const turn = host.last('ustate').turnId
+    const notTurn = all.find(c => c.last('joined').id !== turn)
+    notTurn.say({ t: 'uc', a: 'clue', text: 'hello' })
+    expect(notTurn.last('error').message).toMatch(/not your turn/)
+    expect(host.last('error')).toBeUndefined()
+    // every clue in turn, then everyone votes for the same player
+    for (let i = 0; i < 3; i++) {
+      const id = host.last('ustate').turnId
+      all.find(c => c.last('joined').id === id).say({ t: 'uc', a: 'clue', text: `w${i}` })
+    }
+    expect(host.last('ustate').phase).toBe('vote')
+    const ids = all.map(c => c.last('joined').id)
+    const victim = ids[2]
+    all.forEach(c => c.say({ t: 'uc', a: 'vote', target: c.last('joined').id === victim ? ids[0] : victim }))
+    const after = host.last('ustate')
+    expect(['result', 'over', 'guess']).toContain(after.phase)
+    expect(after.result.eliminated.id).toBe(victim)
+    if (after.phase === 'over') {
+      expect(host.last('room').phase).toBe('over')
+      host.say({ t: 'lobby' })
+      expect(guests[0].last('room').phase).toBe('lobby')
+    }
+  })
+
+  it('drops a player who leaves mid-game and ends the game when only one is left', () => {
+    const { host, guests, all } = setup(3)
+    host.say({ t: 'start' })
+    guests[0].drop()
+    expect(host.last('ustate').players.filter(p => !p.alive).length).toBeGreaterThanOrEqual(1)
+    guests[1].drop()
+    expect(host.last('ustate').phase).toBe('over')
+    expect(['none', 'civilians', 'undercover']).toContain(host.last('ustate').winner)
+    expect(all).toHaveLength(3)
+  })
+
+  it('moves on by itself when the timer runs out', async () => {
+    const { host, all } = setup(3)
+    host.say({ t: 'start' })
+    clock += 31000
+    await wait(600) // the room checks its timers four times a second
+    expect(host.last('ustate').phase).toBe('clue')
+    expect(all.length).toBe(3)
+  })
+})

@@ -1,0 +1,50 @@
+/* Undercover: the match screen. Menus and the lobby use platform/multiplayer/multiplayer.css. */
+.uc-root { align-items: start; }
+.uc-match { width: min(100%, 560px); margin: 0 auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
+.uc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .9rem; color: #b6c9bd; }
+.uc-head b { color: #fff; font-size: 1.05rem; }
+.uc-timer { min-width: 3em; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; color: #ffe08a; }
+.uc-counts { margin: 0; font-size: .8rem; color: #8ea597; text-align: center; }
+
+.uc-card { position: relative; text-align: center; padding: 14px 16px; border-radius: 14px; background: linear-gradient(#245c3d, #173d29); border: 2px solid #5da57a; }
+.uc-card.white { background: linear-gradient(#e9eef2, #b9c3cc); border-color: #fff; color: #1b2a33; }
+.uc-card-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; opacity: .8; }
+.uc-card-word { font-size: 2rem; font-weight: 900; line-height: 1.2; word-break: break-word; }
+.uc-card-hint { font-size: .85rem; margin-top: 2px; }
+.uc-peek { position: absolute; top: 8px; right: 10px; background: rgba(0, 0, 0, .25); color: inherit; border: 0; border-radius: 999px; padding: 3px 10px; font-size: .75rem; cursor: pointer; }
+
+.uc-action { padding: 10px 12px; border-radius: 12px; background: rgba(255, 224, 138, .12); border: 1px solid rgba(255, 224, 138, .5); display: flex; flex-direction: column; gap: 8px; }
+.uc-action p { margin: 0; font-size: .92rem; }
+.uc-form { display: flex; gap: 8px; }
+.uc-form .mp-text { flex: 1; }
+.uc-result { padding: 10px 12px; border-radius: 12px; background: rgba(214, 48, 49, .16); border: 1px solid #d63031; font-size: .92rem; }
+.uc-result p { margin: 0 0 4px; }
+.uc-result summary { cursor: pointer; font-size: .82rem; color: #ffd0d0; }
+.uc-result ul { margin: 6px 0 0; padding-left: 18px; font-size: .82rem; }
+
+.uc-players { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.uc-players li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 12px; border-radius: 10px; background: rgba(255, 255, 255, .07); }
+.uc-players li.turn { outline: 2px solid #ffe08a; background: rgba(255, 224, 138, .14); }
+.uc-players li.out { opacity: .6; }
+.uc-name { flex: 1; min-width: 0; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.uc-clue { font-style: italic; color: #ffe08a; }
+.uc-tag { font-style: normal; font-size: .68rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(255, 255, 255, .15); color: #dfe9e2; }
+.uc-tag.turn { background: #ffe08a; color: #3a2a00; }
+.uc-tag.civilian { background: #2f7d52; color: #fff; }
+.uc-tag.undercover { background: #b02222; color: #fff; }
+.uc-tag.mrwhite { background: #dfe6ea; color: #1b2a33; }
+
+.uc-clues { font-size: .85rem; }
+.uc-clues h3 { margin: 6px 0 4px; font-size: .85rem; color: #8ea597; }
+.uc-clues ul { margin: 0; padding-left: 18px; }
+.uc-clues li b { color: #ffe08a; margin-right: 4px; }
+
+.uc-overlay { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 12px; background: rgba(0, 0, 0, .65); }
+.uc-over { width: min(100%, 380px); max-height: 92vh; overflow: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; padding: 18px; border-radius: 18px; background: #10241a; border: 3px solid #5da57a; }
+.uc-over.won { border-color: #ffe08a; }
+.uc-over.lost { border-color: #d63031; }
+.uc-over h2 { margin: 0; font-size: 1.6rem; }
+.uc-over p { margin: 0; }
+.uc-words { font-size: .9rem; color: #b6c9bd; }
+.uc-roles { list-style: none; margin: 0; padding: 0; width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.uc-roles li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-radius: 8px; background: rgba(255, 255, 255, .07); font-size: .88rem; }
