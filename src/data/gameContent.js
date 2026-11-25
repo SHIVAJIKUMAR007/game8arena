@@ -23,6 +23,7 @@ import { config as undercover } from '../games/undercover/config'
 import { config as tictactoe } from '../games/ticTacToe/config'
 import { config as tambola } from '../games/tambola/config'
 import { config as bingo } from '../games/bingoRoyale/config'
+import { config as stickman } from '../games/stickmanFight/config'
 
 export const gameContent = {
   arrow: {
@@ -586,6 +587,34 @@ export const gameContent = {
       { q: 'What happens if I mark a number that has not been called?', a: 'You lose a life. Wait until the number is announced, then tap it. A wrong claim also costs a life.' },
       { q: 'Can I play with friends?', a: 'This version is single player. You race computer players that claim as soon as their own ticket is complete. For a game with friends, try Bingo Royale.' },
       { q: 'Does the game save my progress?', a: 'Yes. Your level, stars, best score and fastest times are saved in your browser, so you carry on where you left off next time.' },
+    ],
+  },
+  stickman: {
+    config: stickman,
+    metaTitle: 'Stickman Fight: Free Online 2 Player Fighting Game',
+    metaDescription:
+      'Play Stickman Fight free online. Beat computer stickmen across 30 levels or battle a friend on one keyboard. Eight weapons, six arenas, specials, no download.',
+    tagline: 'Swing, block, smash and knock them off the platform.',
+    genres: ['Action', 'Fighting', '2 Player'],
+    intro: [
+      'Stickman Fight is a 2D platform brawler in your browser. You and an opponent stand on floating platforms with a weapon in hand. Hit them, block their hits, and knock them into the pit or the lava. Health is 100, and the first fighter to run out loses.',
+      'Play alone against the computer, starting with a slow Rookie and a plain sword, and work up through 30 levels of faster, tougher opponents with new weapons and bosses on every fifth level. After level 30 the fights keep coming at full strength. Or share a keyboard with a friend: both players move, jump, block and use specials at the same time.',
+    ],
+    tips: [
+      'Block with S when an attack is coming from the front, then hit back while your opponent recovers. Blocking does nothing against hits from behind, and a blocked hit still drains your guard.',
+      'Hits knock people back further the lower their health is. Fight near the edge of a platform and a hit can end the round without damage mattering at all.',
+      'Learn the special that goes with your weapon. Jump the Ground Smash, walk out of the lightning column before it lands, and use Iron Guard to take no damage for three seconds.',
+      'You get a double jump. Use it to get back onto a platform when you are knocked off, but save it, because there is no third jump.',
+      'Arenas have hazards: thorns, icicles, grave spikes, fire jets and moving platforms. Ice makes you slide, so stop early near an edge.',
+    ],
+    faq: [
+      { q: 'How do I play 2 player?', a: 'Choose 2 Player on the main menu, pick weapons and colours, and press Start Fight. Player 1 uses A, D, W, S, F and G. Player 2 uses the arrow keys, K and L. Both can press keys at the same time. There is a Rematch button at the end.' },
+      { q: 'Can I play on my phone?', a: 'Yes. Single player has on-screen buttons for move, jump, attack, block and special. Two player on one phone is cramped but works, with player 1 on the left and player 2 on the right.' },
+      { q: 'What do coins do?', a: 'You earn coins for beating computer opponents. Spend them on weapons, skins, body colours, effects and weapon designs in the Weapon Selection and Skin Selection screens. Replaying a level pays less than the first win.' },
+      { q: 'What are the eight weapons?', a: 'Sword, Dual Swords, Axe, Spear, Hammer, Bow and Arrow, Katana and Giant Sword. Each has its own damage, range, speed and special attack. The sword is free, and the rest are unlocked with coins.' },
+      { q: 'What happens if I fall off the platforms?', a: 'You lose 25 health, or 35 in the lava arena, then respawn on your starting platform with a couple of seconds of protection. If that takes your last health you are out.' },
+      { q: 'Does the game save my progress?', a: 'Yes. Coins, unlocked items, your level, stars and settings are saved in your browser, so you carry on where you left off. You can erase it from Settings.' },
+      { q: 'Is there a time limit?', a: 'Each fight lasts two minutes. If nobody has been knocked out, the fighter with the most health left wins.' },
     ],
   },
 }
