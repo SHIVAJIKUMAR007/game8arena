@@ -22,6 +22,7 @@ const meta = {
   undercover: { difficulty: 'Medium', isNew: true },
   tictactoe: { difficulty: 'Easy', isNew: true },
   bingo: { difficulty: 'Easy', isNew: true },
+  tambola: { difficulty: 'Easy', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}

@@ -1,0 +1,50 @@
+/* Tambola: tickets on the theme panel. Everything uses the shared --g-* tokens. */
+.tb-root { height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 8px 12px 16px; box-sizing: border-box; }
+.tb-root > * { width: min(100%, 460px); flex: none; }
+
+.tb-caller { display: flex; align-items: center; gap: 12px; }
+.tb-ball {
+  flex: none; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 32% 28%, #fff 0 18%, var(--g-warn) 19% 100%); color: #1a1a1a;
+  font-size: 2.2rem; font-weight: 900; font-variant-numeric: tabular-nums; box-shadow: 0 3px 0 color-mix(in srgb, var(--g-ink) 35%, transparent);
+}
+.tb-caller-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.tb-goal { margin: 0; font-size: .85rem; color: var(--g-ink); }
+.tb-goal span { color: var(--g-muted); }
+.tb-recent { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; min-height: 26px; }
+.tb-recent li { min-width: 26px; padding: 2px 6px; text-align: center; border-radius: 999px; font-size: .82rem; font-weight: 700; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--g-ink) 12%, transparent); color: var(--g-ink); }
+.tb-recent li.now { background: var(--g-accent); color: var(--g-on-accent); }
+.tb-bar { height: 6px; border-radius: 3px; overflow: hidden; background: color-mix(in srgb, var(--g-ink) 12%, transparent); }
+.tb-bar span { display: block; height: 100%; width: 100%; background: var(--g-accent); transform-origin: left; animation: tb-wait linear forwards; }
+@keyframes tb-wait { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.tb-rivals { margin: 0; font-size: .78rem; color: var(--g-muted); }
+.tb-msg { margin: 0; min-height: 1.3em; text-align: center; font-size: .85rem; color: var(--g-ink); }
+
+.tb-tickets { display: flex; flex-direction: column; gap: 10px; }
+.tb-ticket {
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; padding: 6px; border-radius: 10px;
+  background: var(--g-panel); border: 2px solid var(--g-ink);
+}
+.tb-blank { aspect-ratio: 1; border-radius: 6px; background: color-mix(in srgb, var(--g-ink) 10%, transparent); }
+.tb-cell {
+  aspect-ratio: 1; min-width: 0; padding: 0; display: grid; place-items: center; border-radius: 6px; cursor: pointer; touch-action: manipulation;
+  font: inherit; font-size: clamp(.8rem, 3.6vw, 1.15rem); font-weight: 800; font-variant-numeric: tabular-nums;
+  background: var(--g-bg); color: var(--g-ink); border: 2px solid color-mix(in srgb, var(--g-ink) 45%, transparent);
+}
+.tb-cell:hover { border-color: var(--g-accent); }
+.tb-cell.on { background: var(--g-accent); border-color: var(--g-accent); color: var(--g-on-accent); }
+.tb-cell.hint { outline: 3px solid var(--g-warn); outline-offset: 1px; animation: tb-pulse .7s ease-in-out infinite alternate; }
+.tb-cell.wrong { background: var(--g-bad); border-color: var(--g-bad); color: #fff; }
+@keyframes tb-pulse { to { transform: scale(1.1); } }
+
+.tb-claim { align-self: center; }
+.tb-claim kbd { margin-left: 8px; padding: 0 6px; border-radius: 4px; font-size: .75rem; background: color-mix(in srgb, var(--g-on-accent) 25%, transparent); }
+.tb-claim.hint { animation: tb-pulse .7s ease-in-out infinite alternate; outline: 3px solid var(--g-warn); }
+
+.tb-numbers { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; }
+.tb-num { padding: 2px 0; text-align: center; border-radius: 4px; font-size: .68rem; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--g-ink) 45%, transparent); background: color-mix(in srgb, var(--g-ink) 7%, transparent); }
+.tb-num.out { color: var(--g-ink); font-weight: 800; background: color-mix(in srgb, var(--g-accent) 28%, transparent); }
+.tb-num.now { background: var(--g-warn); color: #1a1a1a; }
+
+@media (prefers-reduced-motion: reduce) { .tb-cell.hint, .tb-claim.hint, .tb-bar span { animation: none; } }
+:root[data-reduced-motion='1'] .tb-cell.hint, :root[data-reduced-motion='1'] .tb-claim.hint, :root[data-reduced-motion='1'] .tb-bar span { animation: none; }

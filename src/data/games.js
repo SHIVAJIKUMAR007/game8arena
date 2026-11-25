@@ -24,5 +24,6 @@ import hideseek from "../games/hideSeek";
 import undercover from "../games/undercover";
 import tictactoe from "../games/ticTacToe";
 import bingo from "../games/bingoRoyale";
+import tambola from "../games/tambola";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky, bubbles, family, hideseek, undercover, tictactoe, bingo];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky, bubbles, family, hideseek, undercover, tictactoe, bingo, tambola];

@@ -21,6 +21,7 @@ import { config as family } from '../games/familySort/config'
 import { config as hideseek } from '../games/hideSeek/config'
 import { config as undercover } from '../games/undercover/config'
 import { config as tictactoe } from '../games/ticTacToe/config'
+import { config as tambola } from '../games/tambola/config'
 import { config as bingo } from '../games/bingoRoyale/config'
 
 export const gameContent = {
@@ -558,6 +559,33 @@ export const gameContent = {
       { q: 'What happens if a player leaves?', a: 'Their turn is skipped and their board stays on screen. If everyone else leaves, the last player wins.' },
       { q: 'Can I change my board after the game starts?', a: 'No. Boards lock when the host starts. Before that you can rearrange, shuffle or edit your board as often as you like.' },
       { q: 'Why did my room close?', a: 'The host closed their page or lost their connection, so the room ended. Start a new room and share the new code.' },
+    ],
+  },
+  tambola: {
+    config: tambola,
+    metaTitle: 'Tambola Online: Play Housie for Free',
+    metaDescription:
+      'Play Tambola (Housie) free online. Mark called numbers on your tickets and claim Early Five, a Line or a Full House before the computer players do.',
+    tagline: 'Mark the numbers, claim the pattern, beat the other players.',
+    genres: ['Casual', 'Number', 'Classic'],
+    intro: [
+      'Tambola, also called Housie or Indian Bingo, is a number-calling game. A caller announces numbers from 1 to 90, and you mark them on your ticket. Each ticket has 3 rows and 9 columns, with 5 numbers and 4 blanks in every row, so 15 numbers in all.',
+      'In this version you play solo against a computer caller and computer players. The first levels are slow, with one ticket and no rivals, and you only need Early Five. As you clear levels the caller speeds up, you get more tickets, rivals appear, and the goal grows to a Line and then a Full House.',
+    ],
+    tips: [
+      'Watch the caller first and your ticket second. Say each number to yourself, then scan the matching column: numbers 1 to 9 are in the first column, 10 to 19 in the second, and so on.',
+      'With more than one ticket, scan the same column on each ticket for every number you hear.',
+      'Only mark a number once it has been called. The number board at the bottom shows everything that is out, so check it if you are unsure.',
+      'Press Claim the moment your pattern is complete. Rivals claim as soon as theirs is done.',
+      'Use the C key to claim on a computer, so you do not have to move the mouse.',
+    ],
+    faq: [
+      { q: 'What is Tambola?', a: 'Tambola, also known as Housie or Indian Bingo, is a game where players mark numbers from 1 to 90 on a ticket as a caller announces them. The first to complete a pattern wins.' },
+      { q: 'What does a Tambola ticket look like?', a: 'A ticket has 3 rows and 9 columns. Every row has exactly 5 numbers and 4 blanks, so a ticket holds 15 numbers. Numbers rise from left to right in each row, and each column uses its own range of ten numbers.' },
+      { q: 'What are Early Five, Line and Full House?', a: 'Early Five is any 5 numbers marked on one ticket. A Line is all 5 numbers in one row. A Full House is all 15 numbers on a ticket. Early levels ask for Early Five, then Line, then Full House.' },
+      { q: 'What happens if I mark a number that has not been called?', a: 'You lose a life. Wait until the number is announced, then tap it. A wrong claim also costs a life.' },
+      { q: 'Can I play with friends?', a: 'This version is single player. You race computer players that claim as soon as their own ticket is complete. For a game with friends, try Bingo Royale.' },
+      { q: 'Does the game save my progress?', a: 'Yes. Your level, stars, best score and fastest times are saved in your browser, so you carry on where you left off next time.' },
     ],
   },
 }
