@@ -26,14 +26,14 @@ const tick = ms => act(() => { vi.advanceTimersByTime(ms) })
 const callNext = () => tick(lv.interval)
 
 function start() {
-  render(<TambolaGame />)
+  render(<TambolaGame initialMode="solo" />)
   fireEvent.click(screen.getByRole('button', { name: /Play/ }))
   tick(1300) // the first number is called
 }
 
 describe('Tambola end to end (level 1)', () => {
   it('shows the menu, then a ticket with 15 numbers and the goal', () => {
-    render(<TambolaGame />)
+    render(<TambolaGame initialMode="solo" />)
     expect(screen.getByRole('button', { name: /Play/ })).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: /Play/ }))
     const ticket = screen.getByRole('group', { name: 'Ticket 1' })
@@ -137,7 +137,7 @@ describe('Tambola against rivals', () => {
     progressStore('tambola').set(s => ({ ...s, level }))
     const rival = generateLevel(`tambola:L${level}`, { level })
     expect(rival.bots.length).toBeGreaterThan(0)
-    render(<TambolaGame />)
+    render(<TambolaGame initialMode="solo" />)
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     const first = rival.bots.reduce((a, b) => (a.claimAt <= b.claimAt ? a : b))
     tick(1300)
