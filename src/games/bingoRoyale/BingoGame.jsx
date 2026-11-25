@@ -4,7 +4,7 @@ import RoomMenu from '../../platform/multiplayer/RoomMenu'
 import '../../platform/multiplayer/multiplayer.css'
 import { shareResult } from '../../platform/share'
 import {
-  avatarAt, cellsInLines, clearCell, isComplete, lineNames, nextEmpty, placeNumber, shuffledBoard, unusedNumbers,
+  avatarAt, cellsInLines, clearCell, isComplete, lineNames, placeNumber, shuffledBoard, unusedNumbers,
 } from './boardSetup'
 import { useBingo } from './useBingo'
 import './BingoGame.css'
@@ -38,29 +38,23 @@ function Confetti() {
 
 function BoardSetup({ rt, ready }) {
   const { draft, setDraft } = rt
-  const [cell, setCell] = useState(-1) // the square waiting for a number
   const [num, setNum] = useState(0) // the number waiting for a square
   const tray = useMemo(() => unusedNumbers(draft), [draft])
   const complete = isComplete(draft)
 
-  // Square first, then number: move on to the next empty square, so a board fills with a tap per number.
-  const put = (index, n, advance) => {
-    const next = placeNumber(draft, index, n)
-    setDraft(next)
-    setNum(0)
-    setCell(advance ? nextEmpty(next, index) : -1)
-  }
+  // Tap an empty square to drop in the next unused number. Tap a filled square to empty it again.
+  // Or pick a number from the tray first, then the square it should go in.
   const tapCell = i => {
     if (ready) return
-    if (num) put(i, num, false)
-    else if (cell === i && draft[i]) {
-      setDraft(clearCell(draft, i))
-    } else setCell(i)
+    if (num) {
+      setDraft(placeNumber(draft, i, num))
+      setNum(0)
+    } else if (draft[i]) setDraft(clearCell(draft, i))
+    else if (tray.length) setDraft(placeNumber(draft, i, tray[0]))
   }
   const tapNumber = n => {
     if (ready) return
-    if (cell >= 0) put(cell, n, true)
-    else setNum(num === n ? 0 : n)
+    setNum(num === n ? 0 : n)
   }
 
   return (
@@ -68,12 +62,12 @@ function BoardSetup({ rt, ready }) {
       <p className="mp-note">
         {ready
           ? 'Your board is locked in. Waiting for the others.'
-          : 'Tap a square, then a number. Or pick a number first, then a square. Tap a filled square twice to empty it.'}
+          : 'Tap a square to fill it with the next number. Tap a filled square to empty it. Or pick a number below first, then a square.'}
       </p>
       <div className="br-grid" role="group" aria-label="Your board">
         {draft.map((n, i) => (
           <button
-            key={i} type="button" className={`br-cell ${n ? '' : 'empty'} ${cell === i ? 'picked' : ''}`}
+            key={i} type="button" className={`br-cell ${n ? '' : 'empty'}`}
             aria-label={`Square ${i + 1}, ${n ? n : 'empty'}`} aria-disabled={ready} onClick={() => tapCell(i)}
           >
             {n || ''}
@@ -88,8 +82,8 @@ function BoardSetup({ rt, ready }) {
             ))}
           </div>
           <div className="br-row">
-            <button type="button" className="mp-btn" onClick={() => { setDraft(shuffledBoard(Math.random)); setCell(-1); setNum(0) }}>🔀 Shuffle</button>
-            <button type="button" className="mp-btn ghost" onClick={() => { setDraft(Array(25).fill(null)); setCell(0); setNum(0) }}>Clear</button>
+            <button type="button" className="mp-btn" onClick={() => { setDraft(shuffledBoard(Math.random)); setNum(0) }}>🔀 Shuffle</button>
+            <button type="button" className="mp-btn ghost" onClick={() => { setDraft(Array(25).fill(null)); setNum(0) }}>Clear</button>
           </div>
         </>
       )}
@@ -156,7 +150,7 @@ function useCountdown(view, receivedAt) {
 }
 
 /** One player's board, with announced numbers marked and completed lines lit up. */
-function BoardView({ player, called, lastCalled, small = false }) {
+function BoardView({ player, called, lastCalled, small = false, picked = 0, onPick = null }) {
   const inLines = cellsInLines(player.lines)
   return (
     <div className={`br-grid ${small ? 'small' : ''}`} role="group" aria-label={`${player.name}'s board`}>
@@ -164,8 +158,9 @@ function BoardView({ player, called, lastCalled, small = false }) {
         const marked = called.has(n)
         return (
           <div
-            key={i} className={`br-cell static ${marked ? 'marked' : ''} ${inLines.has(i) ? 'line' : ''} ${n === lastCalled ? 'fresh' : ''}`}
-            aria-label={`${n}${marked ? ', announced' : ''}${inLines.has(i) ? ', in a completed line' : ''}`}
+            key={i} className={`br-cell static ${marked ? 'marked' : ''} ${inLines.has(i) ? 'line' : ''} ${n === lastCalled ? 'fresh' : ''} ${picked === n ? 'picked' : ''}`}
+            aria-label={`${n}${marked ? ', announced' : ''}${inLines.has(i) ? ', in a completed line' : ''}${picked === n ? ', selected' : ''}`}
+            {...(onPick && !marked ? { role: 'button', tabIndex: 0, onClick: () => onPick(n), onKeyDown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(n) } } } : {})}
           >
             {n}
           </div>
@@ -184,20 +179,11 @@ function Progress({ count }) {
   )
 }
 
-function Picker({ rt, view }) {
-  const [pick, setPick] = useState(0)
-  const calledSet = new Set(view.called.map(c => c.n))
-  const left = Array.from({ length: 25 }, (_, i) => i + 1).filter(n => !calledSet.has(n))
-  const chosen = left.includes(pick) ? pick : 0
+function Picker({ rt, chosen, clear }) {
   return (
-    <section className="br-picker" aria-label="Choose a number to announce">
-      <div className="br-numbers">
-        {left.map(n => (
-          <button key={n} type="button" className={`br-chip ${chosen === n ? 'picked' : ''}`} aria-label={`Number ${n}`} onClick={() => setPick(n)}>{n}</button>
-        ))}
-      </div>
-      <button type="button" className="br-announce" disabled={!chosen} onClick={() => { rt.call(chosen); setPick(0) }}>
-        {chosen ? `📣 Announce ${chosen}` : 'Pick a number'}
+    <section className="br-picker" aria-label="Announce a number">
+      <button type="button" className="br-announce" disabled={!chosen} onClick={() => { rt.call(chosen); clear() }}>
+        {chosen ? `📣 Announce ${chosen}` : 'Tap a number on your board'}
       </button>
     </section>
   )
@@ -257,6 +243,8 @@ function Match({ rt }) {
   const me = view.players[meIndex]
   const nameOf = id => view.players.find(p => p.id === id)?.name ?? '?'
   const myTurn = view.turnId === view.you && view.phase === 'play'
+  const [pick, setPick] = useState(0)
+  const chosen = myTurn && !calledSet.has(pick) ? pick : 0
   return (
     <div className="br-match">
       <div className={`br-turn ${myTurn ? 'mine' : ''}`} role="status">
@@ -296,12 +284,12 @@ function Match({ rt }) {
       {me && (
         <section className="br-mine" aria-label="Your board">
           <Progress count={me.count} />
-          <BoardView player={me} called={calledSet} lastCalled={last?.n} />
+          <BoardView player={me} called={calledSet} lastCalled={last?.n} picked={chosen} onPick={myTurn ? setPick : null} />
           {me.lines.length > 0 && <p className="br-lines-won">{lineNames(me.lines).join(' · ')}</p>}
         </section>
       )}
 
-      {myTurn ? <Picker rt={rt} view={view} /> : view.phase === 'play' && <p className="mp-note br-wait">Wait for your turn. Numbers are marked on your board as they are announced.</p>}
+      {myTurn ? <Picker rt={rt} chosen={chosen} clear={() => setPick(0)} /> : view.phase === 'play' && <p className="mp-note br-wait">Wait for your turn. Numbers are marked on your board as they are announced.</p>}
 
       {view.phase === 'over' && <Over view={view} rt={rt} />}
     </div>

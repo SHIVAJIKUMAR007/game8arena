@@ -68,23 +68,21 @@ describe('Bingo Royale board setup', () => {
     expect(socket().sent).toContainEqual({ t: 'create', name: 'Ann', game: 'bingo' })
   })
 
-  it('fills a square by tapping it and then a number, and moves on to the next empty square', () => {
+  it('fills an empty square with the next unused number when it is tapped', () => {
     enter()
     expect(screen.getByRole('button', { name: /Place 25 more numbers/ }).hasAttribute('disabled')).toBe(true)
-    fireEvent.click(screen.getByRole('button', { name: 'Square 1, empty' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Number 7' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Number 3' })) // goes to square 2 without tapping it
-    expect(screen.getByRole('button', { name: 'Square 1, 7' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Square 2, 3' })).toBeTruthy()
-    expect(screen.queryByRole('button', { name: 'Number 7' })).toBeNull() // used numbers leave the tray
+    fireEvent.click(screen.getByRole('button', { name: 'Square 4, empty' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Square 2, empty' }))
+    expect(screen.getByRole('button', { name: 'Square 4, 1' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Square 2, 2' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Number 1' })).toBeNull() // used numbers leave the tray
   })
 
-  it('fills a square by picking a number first, and empties a square with a second tap', () => {
+  it('fills a square by picking a number first, and empties a filled square when it is tapped', () => {
     enter()
     fireEvent.click(screen.getByRole('button', { name: 'Number 12' }))
     fireEvent.click(screen.getByRole('button', { name: 'Square 5, empty' }))
     expect(screen.getByRole('button', { name: 'Square 5, 12' })).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: 'Square 5, 12' }))
     fireEvent.click(screen.getByRole('button', { name: 'Square 5, 12' }))
     expect(screen.getByRole('button', { name: 'Square 5, empty' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Number 12' })).toBeTruthy()
@@ -133,10 +131,11 @@ describe('Bingo Royale match', () => {
     enter()
     startMatch(view({ called: [{ n: 5, by: '2', auto: false }] }))
     expect(screen.getByRole('status').textContent).toMatch(/Your turn/)
-    expect(screen.queryByRole('button', { name: 'Number 5' })).toBeNull() // already announced: not offered
-    const announce = screen.getByRole('button', { name: 'Pick a number' })
+    expect(screen.queryByRole('button', { name: 'Number 9' })).toBeNull() // no list of numbers to pick from
+    expect(screen.queryByRole('button', { name: '5, announced' })).toBeNull() // announced cells can't be picked
+    const announce = screen.getByRole('button', { name: 'Tap a number on your board' })
     expect(announce.hasAttribute('disabled')).toBe(true)
-    fireEvent.click(screen.getByRole('button', { name: 'Number 9' }))
+    fireEvent.click(screen.getByRole('button', { name: '9' }))
     fireEvent.click(screen.getByRole('button', { name: /Announce 9/ }))
     expect(socket().sent).toContainEqual({ t: 'bingo', a: 'call', n: 9 })
   })
@@ -149,15 +148,14 @@ describe('Bingo Royale match', () => {
     expect(screen.queryByRole('button', { name: /Announce/ })).toBeNull()
   })
 
-  it('marks announced numbers on every board and shows the latest announcement and history', () => {
+  it('marks announced numbers on my board only and shows the latest announcement and history', () => {
     enter()
     startMatch(view({ turnId: '2', called: [{ n: 3, by: '1', auto: false }, { n: 20, by: '2', auto: true }] }))
     const mine = screen.getByRole('group', { name: 'Ann\'s board' })
     expect(within(mine).getByLabelText('3, announced')).toBeTruthy()
     expect(within(mine).getByLabelText('20, announced')).toBeTruthy()
     expect(within(mine).getByLabelText('4')).toBeTruthy() // not announced
-    const theirs = screen.getByRole('group', { name: 'Bob\'s board' })
-    expect(within(theirs).getByLabelText('3, announced')).toBeTruthy()
+    expect(screen.queryByRole('group', { name: /Bob/ })).toBeNull()
     expect(screen.getByText('Bob ran out of time')).toBeTruthy()
     expect(within(screen.getByRole('list', { name: 'Announced numbers' })).getAllByRole('listitem').map(li => li.textContent)).toEqual(['3', '20'])
   })
