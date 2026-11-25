@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { gameCategories } from '../data/gameCategories'
 import { gameMeta } from '../data/gameMeta'
 import { usePlays } from '../platform/plays'
 import { totalStars, useProgress } from '../platform/progress'
@@ -20,7 +21,7 @@ export default function GameCard({ game, index = 0 }) {
         </div>
         <div className="card-body">
           <div className="tags">
-            <span className="tag">{game.category}</span>
+            {gameCategories(game).map(c => <span className="tag" key={c}>{c}</span>)}
             {difficulty && (
               <span className={`diff diff-${difficulty.toLowerCase()}`}>
                 <span className="diff-dots" aria-hidden="true"><i /><i /><i /></span>

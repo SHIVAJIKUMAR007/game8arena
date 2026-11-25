@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import GameCard from "../components/GameCard";
 import DailyBanner from "../components/DailyBanner";
 import { games } from "../data/games";
+import { allCategories, inCategory } from "../data/gameCategories";
 import Seo from "../seo/Seo";
 import { gameListSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import { SITE_DESCRIPTION, landingPath } from "../seo/site";
 
-const categories = ["All", ...new Set(games.map((g) => g.category))];
+const categories = ["All", ...allCategories(games)];
 
 const PAGE_SIZE = 20;
 
@@ -26,7 +27,7 @@ export default function Home() {
     setOrder(a);
   }, []);
 
-  const matches = order.filter((g) => (cat === "All" || g.category === cat) && g.title.toLowerCase().includes(query.toLowerCase()));
+  const matches = order.filter((g) => (inCategory(g, cat)) && g.title.toLowerCase().includes(query.toLowerCase()));
   const shown = matches.slice(0, visible);
   const changeCat = (c) => {
     setCat(c);

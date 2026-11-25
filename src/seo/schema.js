@@ -1,4 +1,5 @@
 // schema.org structured data builders (rendered as JSON-LD).
+import { gameCategories } from '../data/gameCategories'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absUrl, landingPath, playPath } from './site'
 
 export const websiteSchema = () => ({
@@ -68,11 +69,11 @@ export const videoGameSchema =(game, content) => ({
   name: game.title,
   url: absUrl(landingPath(game.id)),
   description: content.metaDescription,
-  genre: [game.category, ...(content.genres || [])],
+  genre: [...gameCategories(game), ...(content.genres || [])],
   gamePlatform: ['Web browser', 'Mobile', 'Desktop'],
   applicationCategory: 'Game',
   operatingSystem: 'Any',
-  playMode: 'SinglePlayer',
+  playMode: gameCategories(game).includes('Multiplayer') ? ['SinglePlayer', 'MultiPlayer'] : 'SinglePlayer',
   inLanguage: 'en',
   isAccessibleForFree: true,
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },

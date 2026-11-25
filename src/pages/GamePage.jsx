@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { games } from '../data/games'
+import { gameCategories } from '../data/gameCategories'
 import ErrorBoundary from '../platform/ui/ErrorBoundary'
 import { totalStars, useProgress } from '../platform/progress'
 import { pickDaily } from '../platform/daily'
@@ -47,7 +48,7 @@ export default function GamePage() {
         </div>
         <aside className="side">
           <h2>{game.title}</h2>
-          <span className="tag">{game.category}</span>
+          {gameCategories(game).map(c => <span className="tag" key={c}>{c}</span>)}
           <p>{game.description}</p>
           {game.controls && <><h4>Controls</h4><p>{game.controls}</p></>}
           <h4>Your progress</h4>

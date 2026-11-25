@@ -2,6 +2,7 @@
 // Everything here is plain content (no game code), so it prerenders to static HTML that Google can read.
 import { Link, useParams } from 'react-router-dom'
 import { games } from '../data/games'
+import { gameCategories } from '../data/gameCategories'
 import { commonFeatures, gameContent } from '../data/gameContent'
 import { blogPath, postsForGame } from '../data/blogPosts'
 import Seo from '../seo/Seo'
@@ -45,7 +46,7 @@ export default function GameLanding() {
       <header className="landing-hero">
         <div className="landing-art" aria-hidden="true">{game.emoji}</div>
         <div className="landing-intro">
-          <span className="tag">{game.category} game · free online</span>
+          <span className="tag">{gameCategories(game).join(" / ")} game · free online</span>
           <h1>{game.title}</h1>
           <p className="landing-tagline">{content.tagline}</p>
           <div className="landing-cta">
