@@ -224,7 +224,7 @@ function Over({ view, rt }) {
         {first && (
           <>
             <p className="br-lines-won">{lineNames(first.lines).join(' · ')}</p>
-            <BoardView player={first} called={calledSet} lastCalled={view.called.at(-1)?.n} small />
+            {first.id === view.you && <BoardView player={first} called={calledSet} lastCalled={view.called.at(-1)?.n} small />}
           </>
         )}
         <ol className="br-standings" aria-label="Final scores">
@@ -257,7 +257,6 @@ function Match({ rt }) {
   const me = view.players[meIndex]
   const nameOf = id => view.players.find(p => p.id === id)?.name ?? '?'
   const myTurn = view.turnId === view.you && view.phase === 'play'
-  const others = view.players.filter(p => p.id !== view.you)
   return (
     <div className="br-match">
       <div className={`br-turn ${myTurn ? 'mine' : ''}`} role="status">
@@ -303,21 +302,6 @@ function Match({ rt }) {
       )}
 
       {myTurn ? <Picker rt={rt} view={view} /> : view.phase === 'play' && <p className="mp-note br-wait">Wait for your turn. Numbers are marked on your board as they are announced.</p>}
-
-      {others.length > 0 && (
-        <section className="br-others" aria-label="Other players' boards">
-          {others.map(p => (
-            <div key={p.id} className={`br-other ${p.active ? '' : 'gone'} ${p.id === view.turnId ? 'turn' : ''}`}>
-              <div className="br-other-head">
-                <Avatar index={view.players.findIndex(q => q.id === p.id)} size={22} />
-                <span>{p.name}{p.active ? '' : ' (left)'}</span>
-                <b>{p.count}/{NEED}</b>
-              </div>
-              <BoardView player={p} called={calledSet} lastCalled={last?.n} small />
-            </div>
-          ))}
-        </section>
-      )}
 
       {view.phase === 'over' && <Over view={view} rt={rt} />}
     </div>
