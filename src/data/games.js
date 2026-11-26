@@ -26,5 +26,6 @@ import tictactoe from "../games/ticTacToe";
 import bingo from "../games/bingoRoyale";
 import tambola from "../games/tambola";
 import stickman from "../games/stickmanFight";
+import multiverse from "../games/multiverseFighter";
 
-export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky, bubbles, family, hideseek, undercover, tictactoe, bingo, tambola, stickman];
+export const games = [arrow, merge, findGod, boxEscape, trafficEscape, memorySequence, colorConnect, pipeConnect, codeBreaker, sudoku, wordGuess, minesweeper, solitaire, blocky, bubbles, family, hideseek, undercover, tictactoe, bingo, tambola, stickman, multiverse];

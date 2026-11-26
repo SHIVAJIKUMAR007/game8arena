@@ -24,6 +24,7 @@ const meta = {
   bingo: { difficulty: 'Easy', isNew: true },
   tambola: { difficulty: 'Easy', isNew: true },
   stickman: { difficulty: 'Medium', isNew: true },
+  multiverse: { difficulty: 'Medium', isNew: true },
 }
 
 export const gameMeta = id => meta[id] || {}

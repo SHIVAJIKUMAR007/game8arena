@@ -24,6 +24,7 @@ import { config as tictactoe } from '../games/ticTacToe/config'
 import { config as tambola } from '../games/tambola/config'
 import { config as bingo } from '../games/bingoRoyale/config'
 import { config as stickman } from '../games/stickmanFight/config'
+import { config as multiverse } from '../games/multiverseFighter/config'
 
 export const gameContent = {
   arrow: {
@@ -618,6 +619,33 @@ export const gameContent = {
       { q: 'What happens if I fall off the platforms?', a: 'You lose 25 health, or 35 in the lava arena, then respawn on your starting platform with a couple of seconds of protection. If that takes your last health you are out.' },
       { q: 'Does the game save my progress?', a: 'Yes. Coins, unlocked items, your level, stars and settings are saved in your browser, so you carry on where you left off. You can erase it from Settings.' },
       { q: 'Is there a time limit?', a: 'Each fight lasts two minutes. If nobody has been knocked out, the fighter with the most health left wins.' },
+    ],
+  },
+  multiverse: {
+    config: multiverse,
+    metaTitle: 'Multiverse Fighter: Free Online Fighting Game',
+    metaDescription:
+      'Play Multiverse Fighter free online. Pick from twelve fighters, beat the computer, or battle a friend online with a five-letter room code. No download.',
+    tagline: 'Twelve fighters, one arena, and a friend on the other end.',
+    genres: ['Action', 'Fighting', 'Online'],
+    intro: [
+      'Multiverse Fighter is a one-on-one brawler in your browser. Pick a fighter, walk into the arena and win two rounds out of three. Every fighter has different power, health and speed, and its own special attack that unlocks when the cyan energy bar fills.',
+      'Play the computer to earn coins and climb through belts, or open an online room and send a friend the five-letter code. Online matches use base stats for both players, so the better fighter wins, not the bigger wallet.',
+    ],
+    tips: [
+      'Hold S to guard when an attack is coming from the front. A guarded hit does a fraction of its damage, and your opponent is stuck in recovery while you act.',
+      'Heavy punches hit hard but start slowly. Use them after a block or a knockdown, not as an opener.',
+      'Hitting and being hit both charge your special bar. A full bar is a threat even when you are losing a round.',
+      'Learn your special. Some travel and bounce back, some hit in a column where you stand, and some only work up close.',
+      'Spend early coins on Power or Health for the fighter you play most. Upgrades apply against the computer only, not online.',
+    ],
+    faq: [
+      { q: 'How do I play online?', a: 'Choose Play, then Online. Select Create room to get a five-character code and send it to a friend, or choose Join room and type their code. Both players pick a fighter and press Ready, and the match starts.' },
+      { q: 'Does online play need a server?', a: 'Players connect directly to each other. A free matchmaking service only introduces the two browsers. The room stays open for as long as the host keeps the page open.' },
+      { q: 'Can I play on my phone?', a: 'Yes. There is a circular move pad on the left and four attack buttons on the right, plus a special button. You can hold several buttons at once. Turn the phone sideways for a bigger arena.' },
+      { q: 'How do I unlock fighters?', a: 'Captain America and Paul Atreides are free. Win fights and claim the daily reward to earn coins, then buy the others on the Fighters screen. Online, every fighter is open.' },
+      { q: 'What happens if my opponent leaves a match?', a: 'You see a message and a ten-second countdown in case they reconnect. If they do not, you win the match and get the usual reward.' },
+      { q: 'Is my progress saved?', a: 'Yes. Coins, level, unlocked fighters, upgrades and your daily reward timer are saved in your browser.' },
     ],
   },
 }
