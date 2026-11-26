@@ -78,6 +78,18 @@ Persist player state cleanly across sessions:
 
 - Strictly follow the project's existing **naming conventions, folder structure, design system, and JavaScript coding standards** (e.g., ESLint/Prettier rules, `.js`/`.jsx` extensions).
 
+### 11. Game Schema (schema.org structured data) — required for every new game
+
+Every game must publish `VideoGame` JSON-LD (a schema.org `Game` subtype) on its landing page `/games/:id`. The builder is `videoGameSchema` in `src/seo/schema.js`, and `src/pages/GameLanding.jsx` renders it together with `BreadcrumbList` and `FAQPage` for every entry in `src/data/games.js`. Do not hand-write JSON-LD per game or add a second builder.
+
+When you add a game, in the same change:
+
+1. **Register it fully.** Add the game to `src/data/games.js`, add a `gameContent` entry in `src/data/gameContent.js` (`metaTitle` up to 60 characters, `metaDescription` 70–160 characters, `genres`, `faq`), and add `gameMeta` in `src/data/gameMeta.js`. The schema reads its `name`, `description`, `genre`, `image`, play URL and FAQ from these.
+2. **Set `players: { min, max }`** in the game's `index.js` if more than one person can play, using the limits the game really enforces (check the server or room code, not a guess). Leave it out for solo games, which default to 1 player. This feeds `numberOfPlayers` and `playMode`. A game in the `Multiplayer` category must have `players.max > 1`, and a solo game must not.
+3. **Only mark up what the page shows.** Do not add `aggregateRating`, `review`, `award`, download links, or release dates unless the real data exists and is visible on the page. Never invent ratings or counts.
+4. **Keep it valid.** `src/seo/seo.test.jsx` checks every registered game for complete Game schema and a player range that matches its category. Run `npm test`, and after `npm run build` spot-check the prerendered `dist/games/<id>.html` for the `application/ld+json` script. Validate a deployed page with Google's Rich Results Test or validator.schema.org.
+5. **Report it.** List the game's schema fields in the final summary of files created or modified.
+
 ---
 
 ## Execution Rules & Workflow
@@ -88,3 +100,7 @@ Persist player state cleanly across sessions:
 4. **Plan First:** Before writing code, explain the architecture you intend to use and how it fits into the existing codebase.
 5. **Verify:** Run the project's build and test suites after implementation to ensure zero regressions or errors.
 6. **Report:** Provide a clear summary of all files created or modified upon completion.
+
+## Blog SEO and game conversions
+
+When creating or updating blog content, follow the [Game8Arena blog SEO skill](.agents/skills/game8arena-blog-seo/SKILL.md). It documents the current blog data pipeline, keyword research standards, article structure, internal play links, and CTA behavior. Do not promise Google rankings or present unverified keyword metrics as facts.

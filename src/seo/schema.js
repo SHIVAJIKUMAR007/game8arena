@@ -1,6 +1,6 @@
 // schema.org structured data builders (rendered as JSON-LD).
 import { gameCategories } from '../data/gameCategories'
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absUrl, landingPath, playPath } from './site'
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absUrl, landingPath, playPath } from './site'
 
 export const websiteSchema = () => ({
   '@context': 'https://schema.org',
@@ -63,20 +63,38 @@ export const blogListSchema = posts => ({
   blogPost: posts.map(p => ({ '@type': 'BlogPosting', headline: p.title, url: blogUrl(p.slug), datePublished: p.date })),
 })
 
-export const videoGameSchema =(game, content) => ({
-  '@context': 'https://schema.org',
-  '@type': 'VideoGame',
-  name: game.title,
-  url: absUrl(landingPath(game.id)),
-  description: content.metaDescription,
-  genre: [...gameCategories(game), ...(content.genres || [])],
-  gamePlatform: ['Web browser', 'Mobile', 'Desktop'],
-  applicationCategory: 'Game',
-  operatingSystem: 'Any',
-  playMode: gameCategories(game).includes('Multiplayer') ? ['SinglePlayer', 'MultiPlayer'] : 'SinglePlayer',
-  inLanguage: 'en',
-  isAccessibleForFree: true,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
-  publisher: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/` },
-  potentialAction: { '@type': 'PlayAction', target: absUrl(playPath(game.id)) },
-})
+/**
+ * Player range for a game: `game.players = { min, max }`, defaulting to a single player.
+ * Set it on every game that supports more than one player; the numbers must match what the game really allows.
+ */
+export const playerRange = game => {
+  const min = Number.isInteger(game.players?.min) && game.players.min >= 1 ? game.players.min : 1
+  const max = Number.isInteger(game.players?.max) && game.players.max >= min ? game.players.max : Math.max(min, 1)
+  return { min, max }
+}
+
+/** Game schema (a VideoGame, which is a schema.org Game) for one game's landing page. Built for every game in games.js. */
+export const videoGameSchema = (game, content) => {
+  const { min, max } = playerRange(game)
+  const playMode = [min === 1 && 'SinglePlayer', max > 1 && 'MultiPlayer'].filter(Boolean)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    '@id': `${absUrl(landingPath(game.id))}#game`,
+    name: game.title,
+    url: absUrl(landingPath(game.id)),
+    description: content.metaDescription,
+    image: absUrl(DEFAULT_OG_IMAGE || '/icon-512.png'),
+    genre: [...gameCategories(game), ...(content.genres || [])],
+    gamePlatform: ['Web browser', 'Mobile', 'Desktop'],
+    applicationCategory: 'Game',
+    operatingSystem: 'Any',
+    playMode: playMode.length === 1 ? playMode[0] : playMode,
+    numberOfPlayers: { '@type': 'QuantitativeValue', minValue: min, maxValue: max },
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/` },
+    potentialAction: { '@type': 'PlayAction', target: absUrl(playPath(game.id)) },
+  }
+}

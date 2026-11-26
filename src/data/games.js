@@ -1,5 +1,7 @@
 // Each game lives in its own folder under src/games/<name>/ and default-exports its definition:
-//   { id, title, emoji, category, color, description, controls?, daily?, component }
+//   { id, title, emoji, category, color, description, controls?, daily?, players?, component }
+// `players: { min, max }` feeds the game's schema.org markup (numberOfPlayers, playMode). Omit it for solo games;
+// set it on every game that can be played by more than one person, with the real limits.
 // `component` may be React.lazy(...) so every game ships as its own chunk.
 // For level-based games, build the game on top of src/platform/LevelGameShell.jsx
 // (menu, lives, hints, undo, stars, daily, achievements, saving…) — you only write the Board.

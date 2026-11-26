@@ -15,7 +15,9 @@ import { seoBlogPostsNews } from '../data/seoBlogPostsNews'
 import { seoBlogPostsNewGames } from '../data/seoBlogPostsNewGames'
 import { seoBlogPostsFreshGames } from '../data/seoBlogPostsFreshGames'
 import { seoBlogPostsTambolaOptions } from '../data/seoBlogPostsTambolaOptions'
+import { gameCategories } from '../data/gameCategories'
 import { buildHead } from './head'
+import { playerRange } from './schema'
 
 const landing = id =>
   render(
@@ -42,6 +44,42 @@ describe('SEO', () => {
     const descs = games.map(g => gameContent[g.id].metaDescription)
     expect(new Set(titles).size).toBe(titles.length)
     expect(new Set(descs).size).toBe(descs.length)
+  })
+
+  it.each(games.map(g => [g.id]))('game "%s" publishes complete, consistent Game schema', id => {
+    const game = games.find(g => g.id === id)
+    landing(id)
+    const ld = [...document.head.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent))
+    const schema = ld.find(item => item['@type'] === 'VideoGame')
+    expect(schema, `landing page for "${id}" has no VideoGame JSON-LD`).toBeTruthy()
+    expect(schema['@context']).toBe('https://schema.org')
+    expect(schema.name).toBe(game.title)
+    expect(schema.url).toMatch(new RegExp(`/games/${id}$`))
+    expect(schema['@id']).toBe(`${schema.url}#game`)
+    expect(schema.description).toBe(gameContent[id].metaDescription)
+    expect(schema.image).toMatch(/^https?:\/\//)
+    expect(schema.genre.length).toBeGreaterThan(0)
+    expect(schema.potentialAction.target).toMatch(new RegExp(`/play/${id}$`))
+    expect(schema.offers.price).toBe('0')
+
+    // The advertised player range must match the game's declared range, and agree with its category.
+    const { min, max } = playerRange(game)
+    expect(schema.numberOfPlayers).toEqual({ '@type': 'QuantitativeValue', minValue: min, maxValue: max })
+    expect(max).toBeGreaterThanOrEqual(min)
+    const multiplayer = gameCategories(game).includes('Multiplayer')
+    expect(max > 1, `"${id}": a Multiplayer game needs players.max > 1 (and a solo game must not set it)`).toBe(multiplayer)
+    const modes = [schema.playMode].flat()
+    expect(modes.includes('MultiPlayer')).toBe(max > 1)
+    expect(modes.includes('SinglePlayer')).toBe(min === 1)
+  })
+
+  it('playerRange defaults to one player and repairs bad values', () => {
+    expect(playerRange({})).toEqual({ min: 1, max: 1 })
+    expect(playerRange({ players: { min: 2, max: 8 } })).toEqual({ min: 2, max: 8 })
+    expect(playerRange({ players: { min: 3 } })).toEqual({ min: 3, max: 3 })
+    expect(playerRange({ players: { min: 0, max: 4 } })).toEqual({ min: 1, max: 4 })
+    expect(playerRange({ players: { min: 5, max: 2 } })).toEqual({ min: 5, max: 5 })
+    expect(playerRange({ players: { min: 'x', max: null } })).toEqual({ min: 1, max: 1 })
   })
 
   it('landing page renders an h1, play link, FAQ and updates <head>', () => {
