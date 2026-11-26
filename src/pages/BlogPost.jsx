@@ -109,6 +109,8 @@ export default function BlogPost() {
           <span>By the Game8Arena team</span>
         </p>
 
+        {game && post.ctaPlacement === 'top' && <PlayCta game={game} />}
+
         {cover ? <Figure block={cover} hero /> : <BlogCover post={post} eager />}
 
         {toc.length >= 3 && (
@@ -125,13 +127,13 @@ export default function BlogPost() {
           if (cover && b?.type === 'image' && b.url === cover.url) return null
           return (
             <Fragment key={i}>
-              {game && i === ctaAt && <PlayCta game={game} inline />}
+              {game && post.ctaPlacement !== 'top' && i === ctaAt && <PlayCta game={game} inline />}
               <Block block={b} id={ids[i]} lede={i === ledeAt} />
             </Fragment>
           )
         })}
 
-        {game ? (
+        {game ? post.ctaPlacement === 'top' ? null : (
           <PlayCta game={game} />
         ) : (
           <aside className="play-cta" aria-label="Play free games">

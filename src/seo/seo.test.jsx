@@ -13,6 +13,8 @@ import { seoBlogPostsMore } from '../data/seoBlogPostsMore'
 import { seoBlogPostsThird } from '../data/seoBlogPostsThird'
 import { seoBlogPostsNews } from '../data/seoBlogPostsNews'
 import { seoBlogPostsNewGames } from '../data/seoBlogPostsNewGames'
+import { seoBlogPostsFreshGames } from '../data/seoBlogPostsFreshGames'
+import { seoBlogPostsTambolaOptions } from '../data/seoBlogPostsTambolaOptions'
 import { buildHead } from './head'
 
 const landing = id =>
@@ -209,6 +211,49 @@ describe('Blog SEO', () => {
         expect(blogPosts.some(article => `/blogs/${article.slug}` === link), `${post.slug}: ${link}`).toBe(true)
       }
     }
+  })
+
+  it('fresh game guides and original concepts meet long-form SEO requirements', () => {
+    expect(seoBlogPostsFreshGames).toHaveLength(10)
+
+    for (const post of seoBlogPostsFreshGames) {
+      const bodyText = post.body
+        .flatMap(block => Array.isArray(block) ? block : typeof block === 'string' ? [block] : [])
+        .join(' ')
+      const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
+      expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThanOrEqual(1000)
+      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
+      expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
+      expect(post.faq.length, post.slug).toBeGreaterThanOrEqual(3)
+      expect(post.metaDescription.length, post.slug).toBeGreaterThanOrEqual(140)
+      expect(post.metaDescription.length, post.slug).toBeLessThanOrEqual(160)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeGreaterThanOrEqual(50)
+      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeLessThanOrEqual(60)
+      expect(post.body.some(block => typeof block === 'string' && block.startsWith('## ')), post.slug).toBe(true)
+      expect(blogPosts.filter(article => article.slug === post.slug), post.slug).toHaveLength(1)
+      for (const link of post.suggestedRelatedArticles) {
+        expect(blogPosts.some(article => `/blogs/${article.slug}` === link), `${post.slug}: ${link}`).toBe(true)
+      }
+    }
+  })
+
+  it('Tambola game options meets its word-count target and renders the play CTA first', () => {
+    const post = seoBlogPostsTambolaOptions[0]
+    const bodyText = post.body.filter(block => typeof block === 'string').join(' ')
+    const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
+    expect(post.title).toBe('Tambola game options')
+    expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length).toBeGreaterThanOrEqual(800)
+    expect(post.targetKeywordDifficulty).toBe(19)
+
+    at(`/blogs/${post.slug}`)
+    const playLink = screen.getByRole('link', { name: 'Play Tambola' })
+    expect(playLink.getAttribute('href')).toBe('/play/tambola')
+    expect(screen.getAllByRole('link', { name: 'Play Tambola' })).toHaveLength(1)
+    const intro = screen.getByText(/Tambola game options on Game8Arena give you two ways to play/)
+    expect(playLink.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it.each(blogPosts.map(p => [p.slug]))('post "%s" has meta copy that fits Google’s limits', slug => {
