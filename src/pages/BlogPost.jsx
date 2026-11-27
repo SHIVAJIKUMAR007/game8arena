@@ -106,7 +106,7 @@ export default function BlogPost() {
           <time dateTime={post.date}>{formatDate(post.date)}</time>
           {post.updated !== post.date && <span>Updated <time dateTime={post.updated}>{formatDate(post.updated)}</time></span>}
           <span>{readingMinutes(post)} min read</span>
-          <span>By the Game8Arena team</span>
+          <span>By <Link to="/about">Shivaji Kumar</Link>, creator of Game8Arena and writer of its game guides</span>
         </p>
 
         {game && post.ctaPlacement === 'top' && <PlayCta game={game} />}

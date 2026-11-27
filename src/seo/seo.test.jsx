@@ -7,17 +7,18 @@ import { gameContent } from '../data/gameContent'
 import GameLanding from '../pages/GameLanding'
 import Blogs from '../pages/Blogs'
 import BlogPost from '../pages/BlogPost'
+import About from '../pages/About'
 import { blogPosts } from '../data/blogPosts'
 import { seoBlogPosts } from '../data/seoBlogPosts'
 import { seoBlogPostsMore } from '../data/seoBlogPostsMore'
 import { seoBlogPostsThird } from '../data/seoBlogPostsThird'
-import { seoBlogPostsNews } from '../data/seoBlogPostsNews'
 import { seoBlogPostsNewGames } from '../data/seoBlogPostsNewGames'
 import { seoBlogPostsFreshGames } from '../data/seoBlogPostsFreshGames'
 import { seoBlogPostsTambolaOptions } from '../data/seoBlogPostsTambolaOptions'
 import { gameCategories } from '../data/gameCategories'
 import { buildHead } from './head'
 import { playerRange } from './schema'
+import vercelConfig from '../../vercel.json'
 
 const landing = id =>
   render(
@@ -27,6 +28,29 @@ const landing = id =>
   )
 
 afterEach(cleanup)
+
+const retiredBlogSlugs = [
+  'gta-6-first-day-sales',
+  'marvel-rivals-season-11-18v18',
+  'pubg-mobile-bentley-collaboration',
+  'bilibili-gaming-worlds-2026-win',
+  'steam-machine-price-availability',
+  'zenless-zone-zero-version-3-4',
+  'ubisoft-motherbrain-ai-games',
+  'xbox-game-pass-november-additions',
+  'roblox-avatar-moments',
+  'cs2-blast-rivals-fall-2026',
+  'brawl-stars-world-finals-navi',
+  'splatoon-3-update-12-0-0',
+  'pubg-mobile-flash-launch',
+  'gaming-news-november-2026',
+  'gta-6-release-date-platforms',
+  'cosmic-arena-brawler-game-concept',
+  'city-defense-browser-game-concept',
+  'robot-arena-duel-game-concept',
+  'skyline-rescue-strategy-game-concept',
+  'team-shield-survival-game-concept',
+]
 
 describe('SEO', () => {
   it.each(games.map(g => [g.id]))('game "%s" has landing-page copy that fits Google’s limits', id => {
@@ -185,38 +209,33 @@ describe('Blog SEO', () => {
     }
   })
 
-  it('verified gaming news posts meet long-form and metadata requirements', () => {
-    expect(seoBlogPostsNews).toHaveLength(13)
-    expect(new Set(seoBlogPostsNews.map(post => post.keyword.toLowerCase())).size).toBe(13)
-
-    for (const post of seoBlogPostsNews) {
-      const bodyText = post.body
-        .flatMap(block => Array.isArray(block) ? block : typeof block === 'string' ? [block] : [])
-        .join(' ')
-      const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
-      expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThan(900)
-      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
-      expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
-      expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
-      expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.faq.length, post.slug).toBeGreaterThanOrEqual(3)
-      expect(post.sources.length, post.slug).toBeGreaterThan(0)
-      expect(post.sources.every(source => /^https:\/\//.test(source.url)), post.slug).toBe(true)
-      expect(post.metaDescription.length, post.slug).toBeGreaterThanOrEqual(140)
-      expect(post.metaDescription.length, post.slug).toBeLessThanOrEqual(160)
-      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeGreaterThanOrEqual(50)
-      expect((post.metaTitle + ' | Game8Arena').length, post.slug).toBeLessThanOrEqual(60)
-      expect(post.body.some(block => typeof block === 'string' && block.startsWith('### ')), post.slug).toBe(true)
-      expect(blogPosts.filter(article => article.slug === post.slug), post.slug).toHaveLength(1)
-      for (const link of post.internalLinkOpportunities) {
-        if (link.startsWith('/games/')) expect(games.some(game => `/games/${game.id}` === link), `${post.slug}: ${link}`).toBe(true)
-        if (link.startsWith('/play/')) expect(games.some(game => `/play/${game.id}` === link), `${post.slug}: ${link}`).toBe(true)
-      }
-      for (const link of post.suggestedRelatedArticles) {
-        expect(blogPosts.some(article => `/blogs/${article.slug}` === link), `${post.slug}: ${link}`).toBe(true)
-      }
+  it('retired news and concept posts are absent from retained content', () => {
+    expect(blogPosts.some(post => post.category === 'News' || post.category === 'Gaming News')).toBe(false)
+    const retainedContent = JSON.stringify(blogPosts)
+    for (const slug of retiredBlogSlugs) {
+      expect(blogPosts.some(post => post.slug === slug), slug).toBe(false)
+      expect(retainedContent, slug).not.toContain(slug)
     }
+  })
+
+  it('permanently redirects retired article URLs to the blog index', () => {
+    for (const slug of retiredBlogSlugs) {
+      expect(vercelConfig.redirects).toContainEqual({
+        source: `/blogs/${slug}`,
+        destination: '/blogs',
+        statusCode: 301,
+      })
+    }
+    expect(vercelConfig.redirects).toContainEqual({ source: '/blog', destination: '/blogs', statusCode: 301 })
+    expect(vercelConfig.redirects).toContainEqual({ source: '/blog/:path*', destination: '/blogs/:path*', statusCode: 301 })
+  })
+
+  it('about page identifies the operator and explains the site in at least 400 words', () => {
+    render(<MemoryRouter><About /></MemoryRouter>)
+    const article = document.querySelector('article')
+    expect(article.textContent.trim().split(/\s+/).length).toBeGreaterThanOrEqual(400)
+    expect(article.textContent).toContain('Shivaji Kumar')
+    expect(screen.getByRole('link', { name: 'game catalogue' })).toBeTruthy()
   })
 
   it('new multiplayer and Family Sort games meet 1,000-word SEO requirements', () => {
@@ -251,8 +270,10 @@ describe('Blog SEO', () => {
     }
   })
 
-  it('fresh game guides and original concepts meet long-form SEO requirements', () => {
-    expect(seoBlogPostsFreshGames).toHaveLength(10)
+  it('fresh game guides meet long-form SEO requirements', () => {
+    expect(seoBlogPostsFreshGames).toHaveLength(5)
+    expect(seoBlogPostsFreshGames.find(post => post.slug === 'original-browser-fighting-games').title)
+      .toBe('Stickman Fight vs Multiverse Fighter: Browser Fighting Games')
 
     for (const post of seoBlogPostsFreshGames) {
       const bodyText = post.body
@@ -326,19 +347,24 @@ describe('Blog SEO', () => {
 
   it('blog index lists every post', () => {
     at('/blogs')
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Gaming News and Puzzle Game Guides')
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Browser Game Guides and Tips')
     for (const p of blogPosts) expect(screen.getByRole('link', { name: p.title })).toBeTruthy()
   }, 15000)
 
   it('post page renders H1, internal links and article schema', () => {
-    at('/blogs/gta-6-release-date-platforms')
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/GTA 6/)
-    expect(screen.getByRole('link', { name: 'Traffic Escape' }).getAttribute('href')).toBe('/games/traffic')
-    const ld = [...document.head.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent)['@type'])
-    expect(ld).toContain('NewsArticle')
-    expect(ld).toContain('FAQPage')
-    expect(document.head.querySelector('meta[property="article:published_time"]').getAttribute('content')).toBe('2026-11-17')
-    expect(screen.getByRole('heading', { name: 'Is GTA 6 on PC?' })).toBeTruthy()
+    at('/blogs/original-browser-fighting-games')
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Stickman Fight vs Multiverse Fighter: Browser Fighting Games')
+    expect(screen.getByRole('link', { name: 'play Stickman Fight' }).getAttribute('href')).toBe('/play/stickman')
+    const ld = [...document.head.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent))
+    const article = ld.find(item => item['@type'] === 'BlogPosting')
+    expect(article.author).toEqual({
+      '@type': 'Person',
+      name: 'Shivaji Kumar',
+      url: expect.stringMatching(/\/about$/),
+      description: 'Creator of Game8Arena and writer of its game guides.',
+    })
+    expect(ld.map(item => item['@type'])).toContain('FAQPage')
+    expect(screen.getByRole('link', { name: 'Shivaji Kumar' }).parentElement.textContent).toContain('creator of Game8Arena')
   })
 
   it('new guide renders its images and nested headings', () => {

@@ -28,7 +28,7 @@ export function routes() {
     { path: '/', sitemap: true, priority: '1.0', changefreq: 'daily' },
     ...games.map(g => ({ path: landingPath(g.id), sitemap: true, priority: '0.9', changefreq: 'weekly' })),
     { path: '/blogs', sitemap: true, priority: '0.7', changefreq: 'weekly', lastmod: blogPosts.map(p => p.updated).sort().at(-1) },
-    ...blogPosts.map(p => ({ path: blogPath(p.slug), sitemap: true, priority: '0.6', changefreq: p.category === 'News' ? 'daily' : 'monthly', lastmod: p.updated })),
+    ...blogPosts.map(p => ({ path: blogPath(p.slug), sitemap: true, priority: '0.6', changefreq: 'monthly', lastmod: p.updated })),
     { path: '/about', sitemap: true, priority: '0.5', changefreq: 'monthly' },
     { path: '/contact', sitemap: true, priority: '0.4', changefreq: 'yearly' },
     { path: '/privacy', sitemap: true, priority: '0.3', changefreq: 'yearly' },

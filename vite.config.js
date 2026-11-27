@@ -26,10 +26,9 @@ function seoFilesDev() {
   };
 }
 
-// Google AdSense: reads VITE_ADSENSE_CLIENT (e.g. ca-pub-1234567890123456) from .env / .env.production / host env vars.
-// Injects the loader script into every page and emits /ads.txt. Does nothing if the variable is unset.
-function adsense(raw) {
-  const valid = /^(ca-)?pub-\d+$/.test(raw || "");
+// Ads stay disabled until a certified CMP is configured and VITE_ADSENSE_CMP_CONFIGURED is explicitly true.
+function adsense(raw, cmpConfigured) {
+  const valid = cmpConfigured === "true" && /^(ca-)?pub-\d+$/.test(raw || "");
   const client = valid ? raw.replace(/^(ca-)?/, "ca-") : "";
   return {
     name: "adsense",
@@ -50,6 +49,9 @@ function adsense(raw) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
-  plugins: [react(), seoFilesDev(), vibefix(), adsense(loadEnv(mode, process.cwd(), "VITE_").VITE_ADSENSE_CLIENT)],
-}));
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  return {
+    plugins: [react(), seoFilesDev(), vibefix(), adsense(env.VITE_ADSENSE_CLIENT, env.VITE_ADSENSE_CMP_CONFIGURED)],
+  };
+});

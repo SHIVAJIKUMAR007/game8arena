@@ -41,7 +41,7 @@ const blogUrl = slug => absUrl(`/blogs/${slug}`)
 
 export const blogPostingSchema = post => ({
   '@context': 'https://schema.org',
-  '@type': post.category === 'News' ? 'NewsArticle' : 'BlogPosting',
+  '@type': 'BlogPosting',
   headline: post.title,
   description: post.metaDescription,
   url: blogUrl(post.slug),
@@ -51,7 +51,12 @@ export const blogPostingSchema = post => ({
   image: post.images?.length ? post.images.map(image => absUrl(image.url)) : [absUrl('/icon-512.png')],
   keywords: post.tags.join(', '),
   inLanguage: 'en',
-  author: { '@type': 'Organization', name: `${SITE_NAME} team`, url: absUrl('/about') },
+  author: {
+    '@type': 'Person',
+    name: 'Shivaji Kumar',
+    url: absUrl('/about'),
+    description: 'Creator of Game8Arena and writer of its game guides.',
+  },
   publisher: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/`, logo: { '@type': 'ImageObject', url: absUrl('/icon-512.png') } },
 })
 

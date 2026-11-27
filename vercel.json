@@ -1,5 +1,29 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/blog", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blog/:path*", "destination": "/blogs/:path*", "statusCode": 301 },
+    { "source": "/blogs/gta-6-first-day-sales", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/marvel-rivals-season-11-18v18", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/pubg-mobile-bentley-collaboration", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/bilibili-gaming-worlds-2026-win", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/steam-machine-price-availability", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/zenless-zone-zero-version-3-4", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/ubisoft-motherbrain-ai-games", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/xbox-game-pass-november-additions", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/roblox-avatar-moments", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/cs2-blast-rivals-fall-2026", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/brawl-stars-world-finals-navi", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/splatoon-3-update-12-0-0", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/pubg-mobile-flash-launch", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/gaming-news-november-2026", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/gta-6-release-date-platforms", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/cosmic-arena-brawler-game-concept", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/city-defense-browser-game-concept", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/robot-arena-duel-game-concept", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/skyline-rescue-strategy-game-concept", "destination": "/blogs", "statusCode": 301 },
+    { "source": "/blogs/team-shield-survival-game-concept", "destination": "/blogs", "statusCode": 301 }
+  ]
 }

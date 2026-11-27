@@ -20,11 +20,10 @@ export default function Disclaimer() {
         health, and nothing on this site is medical advice.
       </p>
 
-      <h2>Articles and gaming news</h2>
+      <h2>Articles and game information</h2>
       <p>
-        Our blog posts are general information written in good faith. Gaming news changes quickly: release dates, prices and
-        platforms in a news post may be out of date or turn out to be wrong. Check the publisher’s official announcement before
-        you buy or pre-order anything.
+        Our blog posts offer general information about games and playing them. Game rules, platform availability and other details can change.
+        Check a publisher’s official information before making a purchase or relying on a time-sensitive claim.
       </p>
 
       <h2>Trademarks and affiliation</h2>
@@ -35,8 +34,7 @@ export default function Disclaimer() {
 
       <h2>Ads and affiliate links</h2>
       <p>
-        Ads on the site are chosen and served by Google AdSense, not by us, so an ad isn’t a recommendation from Game8Arena.
-        We don’t use affiliate links and aren’t paid to mention any game or product.
+        If ads appear on the site, Google AdSense provides them. An ad is not a recommendation from Game8Arena.
       </p>
 
       <h2>Links to other websites</h2>

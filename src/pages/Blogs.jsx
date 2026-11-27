@@ -25,9 +25,9 @@ export default function Blogs() {
   return (
     <div className="blog">
       <Seo
-        title="Game8Arena Blog: Gaming News, Guides and Puzzle Tips"
+        title="Game8Arena Blog: Browser Game Guides and Tips"
         fullTitle
-        description="Gaming news, GTA 6 updates, casual game guides and puzzle tips from Game8Arena. Short reads for players who like quick, smart games."
+        description="Practical guides to Game8Arena games, including rules, controls and strategies. Written by Game8Arena creator Shivaji Kumar."
         path="/blogs"
         jsonLd={[
           blogListSchema(posts),
@@ -45,10 +45,9 @@ export default function Blogs() {
           <li aria-current="page">Blog</li>
         </ol>
       </nav>
-      <h1>Gaming News and Puzzle Game Guides</h1>
+      <h1>Browser Game Guides and Tips</h1>
       <p className="blog-intro">
-        The Game8Arena blog: the latest gaming news, including GTA 6 updates, plus casual game guides and tips that help you solve puzzles faster. Every guide
-        links to free games you can play in your browser right away.
+        Read practical guides to the rules, controls and strategies in Game8Arena games. Each guide links to the game it covers so you can try it in your browser.
       </p>
 
       <Link to={blogPath(featured.slug)} className="blog-featured" aria-label={featured.title}>

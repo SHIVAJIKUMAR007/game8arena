@@ -12,12 +12,10 @@
 //   - `keyword` (the main search query) appears in the title, the H1 and the first paragraph
 //   - every post has an FAQ answering the follow-up questions people search for
 // Any game linked from a post\'s body gets a "From the blog" link back on that game\'s page.
-// News posts go stale: update `updated` and the text when facts change, and cite sources.
 import { blogImages } from './blogImages'
 import { seoBlogPosts } from './seoBlogPosts'
 import { seoBlogPostsMore } from './seoBlogPostsMore'
 import { seoBlogPostsThird } from './seoBlogPostsThird'
-import { seoBlogPostsNews } from './seoBlogPostsNews.js'
 import { seoBlogPostsNewGames } from './seoBlogPostsNewGames.js'
 import { seoBlogPostsFreshGames } from './seoBlogPostsFreshGames.js'
 import { seoBlogPostsTambolaOptions } from './seoBlogPostsTambolaOptions.js'
@@ -395,144 +393,6 @@ export const blogPosts = [
       {
         q: "Can I play online puzzle games on my phone?",
         a: "Yes. Most browser games work on phones as well as computers, though it is worth checking that a game supports your screen size.",
-      },
-    ],
-  },
-  {
-    slug: "gta-6-release-date-platforms",
-    keyword: "GTA 6 release date",
-    title: "GTA 6 Release Date, Platforms and Everything We Know",
-    metaTitle: "GTA 6 Release Date, Platforms & What We Know",
-    metaDescription:
-      "The GTA 6 release date is November 19, 2026, on PS5 and Xbox Series X|S. Delay history, PC and PS4 status, unlock time, setting and launch-day tips.",
-    date: "2026-11-17",
-    updated: "2026-11-17",
-    category: "News",
-    tags: ["GTA 6", "Grand Theft Auto VI", "Rockstar Games", "Release dates"],
-    excerpt: "The GTA 6 release date is November 19, 2026. Here is the date history, platforms, PC status, setting and what is still unknown.",
-    images: blogImages("gamenews"),
-    body: [
-      "The GTA 6 release date is Thursday, November 19, 2026, on PlayStation 5 and Xbox Series X|S. After two delays, Rockstar Games locked in that date a year ago and it has held. Below is everything confirmed as of November 17, 2026, plus the questions Rockstar has not answered yet.",
-      "## When does GTA 6 come out?",
-      'Grand Theft Auto VI launches on November 19, 2026. Rockstar announced that date in November 2025, when it moved the game back from May 26, 2026. The original target, announced with the first trailer in December 2023, was simply "2025".',
-      [
-        'December 2023: first trailer, release window "2025"',
-        "May 2025: delayed to May 26, 2026",
-        "November 2025: delayed again to November 19, 2026",
-        "November 2026: pre-loads open, launch date unchanged",
-      ],
-      "## What time does GTA 6 unlock?",
-      "Rockstar has not published a single worldwide unlock time. Reports point to digital copies unlocking at midnight local time in each region. Xbox says streaming through Xbox Cloud Gaming starts at 1 AM ET on November 19.",
-      "## Which platforms is GTA 6 on?",
-      "At launch, GTA 6 runs natively on PlayStation 5 and Xbox Series X|S only. There is no native PS4 or Xbox One version. Xbox has said the game will be playable through Xbox Cloud Gaming from day one, including on Xbox One consoles. Check Xbox's cloud gaming requirements before launch day if you plan to play that way.",
-      "## Is GTA 6 coming to PC?",
-      "No PC version has been announced. Rockstar usually brings its big games to PC later: GTA V reached PC about a year and a half after its console launch, and Red Dead Redemption 2 took about a year. A PC port is likely at some point, but with no date, it is too early to upgrade your graphics card for it.",
-      "## Where is GTA 6 set?",
-      "The game takes place in the fictional state of Leonida, Rockstar's take on Florida, with a modern-day Vice City at its centre. The trailers show beaches, swamps, small towns and highways, so the map looks like one big city surrounded by a lot of countryside.",
-      "## Who are the main characters?",
-      "For the first time in the main series, the story follows two lead characters from the start: Lucia Caminos and Jason Duval, a criminal couple. The trailers frame their story as a Bonnie-and-Clyde style run of heists that goes wrong.",
-      "## How big are GTA 6 pre-orders?",
-      "Both PlayStation and Xbox say GTA 6 is the most pre-ordered game ever on their stores, and market-research firm Sensor Tower estimated around 15 million pre-orders before launch.",
-      "## How to get ready for launch day",
-      [
-        "Pre-load the game as soon as your console offers it, so you are not downloading on launch night",
-        "Free up storage space on your console before the pre-load starts",
-        "Expect busy servers and slow store pages for the first few hours",
-        "If you plan to stream through Xbox Cloud Gaming, test your connection the day before",
-      ],
-      "## What we still do not know",
-      ["A PC release date", "When GTA Online for GTA 6 starts and how it works", "Post-launch story DLC plans"],
-      "We will update this page after launch. If you are waiting on a download, our [free online puzzle games](/) run in any browser with no install, including [Traffic Escape](/games/traffic).",
-    ],
-    faq: [
-      { q: "What is the GTA 6 release date?", a: "GTA 6 releases on Thursday, November 19, 2026, on PlayStation 5 and Xbox Series X|S." },
-      {
-        q: "Is GTA 6 on PC?",
-        a: "Not at launch. Rockstar has not announced a PC version or date. Its previous big games reached PC one to two years after the console release.",
-      },
-      {
-        q: "Is GTA 6 on PS4 or Xbox One?",
-        a: "There is no native PS4 or Xbox One version. Xbox One owners can stream it through Xbox Cloud Gaming from launch day.",
-      },
-      {
-        q: "Has GTA 6 been delayed again?",
-        a: "No. GTA 6 was delayed twice, first to May 26, 2026 and then to November 19, 2026. That date has held since November 2025.",
-      },
-      { q: "Where is GTA 6 set?", a: "In Leonida, a fictional version of Florida, centred on a modern-day Vice City." },
-    ],
-    sources: [
-      {
-        name: "Rockstar Games Newswire: GTA VI now set to launch November 19, 2026",
-        url: "https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026",
-      },
-      {
-        name: "Xbox Wire: GTA VI comes to Xbox Cloud Gaming on November 19",
-        url: "https://news.xbox.com/en-us/2026/11/10/grand-theft-auto-6-comes-to-xbox-cloud-gaming-november-19/",
-      },
-      {
-        name: "CNN: The biggest entertainment event of the year is GTA VI",
-        url: "https://www.cnn.com/2026/11/16/media/grand-theft-auto-gta-vi-entertainment-media",
-      },
-      { name: "CNBC: How GTA VI could reshape gaming and streaming", url: "https://www.cnbc.com/2026/11/14/gta-6-grand-theft-auto-launch.html" },
-    ],
-  },
-  {
-    slug: "gaming-news-november-2026",
-    keyword: "gaming news",
-    title: "Gaming News This Week: GTA VI Launch, Zelda Record and Wolfenstein 3",
-    metaTitle: "Gaming News: GTA VI, Zelda Sales, Wolfenstein 3",
-    metaDescription:
-      "Gaming news for November 17, 2026: GTA VI launches November 19, Ocarina of Time sells 5.2 million in four days, and Wolfenstein 3 enters production.",
-    date: "2026-11-17",
-    updated: "2026-11-17",
-    category: "News",
-    tags: ["Gaming news", "GTA 6", "Nintendo Switch 2", "Zelda", "Wolfenstein 3"],
-    excerpt: "GTA VI is days away, Nintendo sets a Switch 2 record with Ocarina of Time, and MachineGames confirms Wolfenstein 3.",
-    images: blogImages("gamenews", true),
-    body: [
-      "Three stories matter most in gaming news as of November 17, 2026: the GTA VI launch, a Switch 2 sales record for Ocarina of Time, and the confirmation of Wolfenstein 3.",
-      "## GTA VI launches on November 19",
-      "Rockstar's Grand Theft Auto VI arrives this Thursday on PS5 and Xbox Series X|S, after two delays. PlayStation and Xbox both say it is the most pre-ordered game in the history of their stores, and Xbox confirmed it will also stream through Xbox Cloud Gaming at launch, including on Xbox One. There is still no PC version announced.",
-      "If you have pre-ordered, pre-load now, and expect slow stores and busy servers on launch night. For the full date history, platforms, setting and open questions, read [GTA 6 release date, platforms and everything we know](/blogs/gta-6-release-date-platforms).",
-      "## Ocarina of Time remake breaks a Switch 2 record",
-      "Nintendo says The Legend of Zelda: Ocarina of Time for Nintendo Switch 2 sold more than 5.2 million copies worldwide in its first four days after launching on November 5. That makes it the fastest-selling Nintendo-published Switch 2 game so far, counting physical and digital copies, with about 810,000 of those sales in Japan.",
-      "For context, the original Nintendo 64 version sold about 7.6 million copies over its whole life, and the 3DS remake about 6.4 million. At this pace the Switch 2 version could pass both within weeks. Remakes of classics are clearly selling, so more may be on the way.",
-      "## Wolfenstein 3 is officially in production",
-      "MachineGames has confirmed that Wolfenstein 3 is in development, ending years of rumours since Wolfenstein II: The New Colossus in 2017. The announcement came during Xbox's 25th-anniversary celebrations, and the studio's own post read: \"His reputation precedes him. Wolfenstein 3 is in production.\"",
-      'There is no release date, platform list or gameplay footage yet. With not even a trailer to show, this looks like a "years, not months" project.',
-      "Need something quick between big releases? Try today's daily challenge in [Sudoku](/games/sudoku) or [Code Breaker](/games/code). Both are free and run in your browser.",
-    ],
-    faq: [
-      {
-        q: "What is the biggest gaming news this week?",
-        a: "The launch of Grand Theft Auto VI on November 19, 2026, the most pre-ordered game ever on PlayStation and Xbox stores.",
-      },
-      {
-        q: "How many copies has the Ocarina of Time remake sold?",
-        a: "Nintendo says it sold over 5.2 million copies worldwide in its first four days on Nintendo Switch 2.",
-      },
-      { q: "When does Wolfenstein 3 come out?", a: "There is no release date. MachineGames has only confirmed the game is in production." },
-    ],
-    sources: [
-      {
-        name: "Rockstar Games Newswire: GTA VI release date",
-        url: "https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026",
-      },
-      {
-        name: "Xbox Wire: GTA VI comes to Xbox Cloud Gaming on November 19",
-        url: "https://news.xbox.com/en-us/2026/11/10/grand-theft-auto-6-comes-to-xbox-cloud-gaming-november-19/",
-      },
-      {
-        name: "Game Informer: Ocarina of Time remake is Nintendo's fastest-selling Switch 2 game",
-        url: "https://gameinformer.com/2026/11/11/the-legend-of-zelda-ocarina-of-time-remake-is-nintendos-fastest-selling-switch-2-game",
-      },
-      {
-        name: "VGC: MachineGames confirms Wolfenstein 3 is in development",
-        url: "https://www.videogameschronicle.com/news/machinegames-has-finally-officially-confirmed-that-wolfenstein-3-is-in-development/",
-      },
-      {
-        name: "CNN: GTA VI is the biggest entertainment event of the year",
-        url: "https://www.cnn.com/2026/11/16/media/grand-theft-auto-gta-vi-entertainment-media",
       },
     ],
   },
@@ -1103,7 +963,6 @@ export const blogPosts = [
   ...seoBlogPosts,
   ...seoBlogPostsMore,
   ...seoBlogPostsThird,
-  ...seoBlogPostsNews,
   ...seoBlogPostsNewGames,
   ...seoBlogPostsFreshGames,
   ...seoBlogPostsTambolaOptions,

@@ -1,7 +1,7 @@
 import { postCover, postGame } from '../data/blogMeta'
 import GameArt from './GameArt'
 
-const FALLBACK = { News: { emoji: '📰', color: '#ff2e97' }, Guides: { emoji: '🧩', color: '#22d3ee' } }
+const FALLBACK = { Guides: { emoji: '🧩', color: '#22d3ee' } }
 
 // Decorative cover (the title sits right beside it, so alt is empty). Cover for a post: its topic photo when it has one, otherwise generated art tinted by the game it covers.
 export default function BlogCover({ post, eager = false }) {
