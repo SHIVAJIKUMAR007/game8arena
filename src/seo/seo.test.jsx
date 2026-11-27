@@ -65,6 +65,19 @@ describe('SEO', () => {
     expect(c.config.tutorial.length).toBeGreaterThan(0)
   })
 
+  // Pages that had under ~500 words of copy now carry a longer guide (src/data/gameGuides.js).
+  const guided = ['memory', 'connect', 'pipe', 'sudoku', 'god', 'box', 'merge', 'traffic', 'tictactoe', 'code', 'arrow', 'word', 'bingo', 'multiverse']
+
+  it.each(guided.map(id => [id]))('game "%s" landing page carries 700+ words of original copy', id => {
+    const { container } = landing(id)
+    const main = container.querySelector('main') || container
+    const words = (main.textContent.match(/\S+/g) || []).length
+    expect(words, id).toBeGreaterThanOrEqual(700)
+    expect(gameContent[id].guide.length, id).toBeGreaterThanOrEqual(3)
+    const prose = gameContent[id].guide.flatMap(s => [s.heading, ...s.body]).join(' ')
+    expect(prose, id).not.toMatch(/[—–]/)
+  })
+
   it('titles and descriptions are unique across games', () => {
     const titles = games.map(g => gameContent[g.id].metaTitle)
     const descs = games.map(g => gameContent[g.id].metaDescription)

@@ -25,6 +25,7 @@ import { config as tambola } from '../games/tambola/config'
 import { config as bingo } from '../games/bingoRoyale/config'
 import { config as stickman } from '../games/stickmanFight/config'
 import { config as multiverse } from '../games/multiverseFighter/config'
+import { gameGuides } from './gameGuides'
 
 export const gameContent = {
   arrow: {
@@ -649,6 +650,9 @@ export const gameContent = {
     ],
   },
 }
+
+// Longer sections for the games that have one (see gameGuides.js).
+for (const [id, guide] of Object.entries(gameGuides)) gameContent[id].guide = guide
 
 // Shared selling points shown on every landing page.
 export const commonFeatures = [

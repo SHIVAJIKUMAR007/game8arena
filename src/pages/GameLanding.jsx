@@ -80,6 +80,13 @@ export default function GameLanding() {
         <ul className="tips">{content.tips.map(t => <li key={t}>{t}</li>)}</ul>
       </section>
 
+      {content.guide?.map((section, i) => (
+        <section key={section.heading} className="landing-section" aria-labelledby={`guide-${i}`}>
+          <h2 id={`guide-${i}`}>{section.heading}</h2>
+          {section.body.map(p => <p key={p}>{p}</p>)}
+        </section>
+      ))}
+
       <section className="landing-section" aria-labelledby="feat-h">
         <h2 id="feat-h">Features</h2>
         <ul className="features">
