@@ -1,4 +1,6 @@
 // @vitest-environment jsdom
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { cleanup, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -161,7 +163,7 @@ describe('Blog SEO', () => {
       const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
       expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThan(900)
       expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.images.every(image => /^\/Game8ArenaGamesImages\/.+/.test(image.url) && image.alt && image.filename), post.slug).toBe(true)
       expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
       expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
       expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
@@ -188,7 +190,7 @@ describe('Blog SEO', () => {
       const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
       expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThan(900)
       expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.images.every(image => /^\/Game8ArenaGamesImages\/.+/.test(image.url) && image.alt && image.filename), post.slug).toBe(true)
       expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
       expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
       expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
@@ -249,7 +251,7 @@ describe('Blog SEO', () => {
       const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
       expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThanOrEqual(1000)
       expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.images.every(image => /^\/Game8ArenaGamesImages\/.+/.test(image.url) && image.alt && image.filename), post.slug).toBe(true)
       expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
       expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
       expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
@@ -282,7 +284,7 @@ describe('Blog SEO', () => {
       const faqText = post.faq.map(({ q, a }) => `${q} ${a}`).join(' ')
       expect(`${bodyText} ${faqText}`.trim().split(/\s+/).length, post.slug).toBeGreaterThanOrEqual(1000)
       expect(post.images.length, post.slug).toBeGreaterThanOrEqual(2)
-      expect(post.images.every(image => /^\/blog\/.+/.test(image.url) && image.alt && image.filename && image.sourceUrl), post.slug).toBe(true)
+      expect(post.images.every(image => /^\/Game8ArenaGamesImages\/.+/.test(image.url) && image.alt && image.filename), post.slug).toBe(true)
       expect(post.secondaryKeywords.length, post.slug).toBeGreaterThanOrEqual(5)
       expect(post.longTailKeywords.length, post.slug).toBeGreaterThanOrEqual(3)
       expect(post.internalLinkOpportunities.length, post.slug).toBeGreaterThanOrEqual(2)
@@ -369,16 +371,39 @@ describe('Blog SEO', () => {
 
   it('new guide renders its images and nested headings', () => {
     at('/blogs/how-to-play-arrow-escape')
-    expect(screen.getAllByRole('img')).toHaveLength(2)
+    const images = screen.getAllByRole('img')
+    expect(images).toHaveLength(1)
+    expect(images[0].getAttribute('src')).toBe('/Game8ArenaGamesImages/Arrow%20Escape.webp')
     expect(screen.getByRole('heading', { level: 3, name: 'Trace each arrow’s full flight line' })).toBeTruthy()
-    expect(screen.getAllByRole('link', { name: 'Photo source' })).toHaveLength(2)
+    expect(screen.queryByRole('link', { name: 'Photo source' })).toBeNull()
   })
 
   it('additional guide renders its images and nested headings', () => {
     at('/blogs/pipe-connect-bolted-pipes')
-    expect(screen.getAllByRole('img')).toHaveLength(2)
+    const images = screen.getAllByRole('img')
+    expect(images).toHaveLength(1)
+    expect(images[0].getAttribute('src')).toBe('/Game8ArenaGamesImages/Pipe%20Connect.webp')
     expect(screen.getByRole('heading', { level: 3, name: 'Fixed pieces narrow the route' })).toBeTruthy()
-    expect(screen.getAllByRole('link', { name: 'Photo source' })).toHaveLength(2)
+    expect(screen.queryByRole('link', { name: 'Photo source' })).toBeNull()
+  })
+
+  it('every blog image is a Game8Arena screenshot, never repeated in a post', () => {
+    for (const post of blogPosts) {
+      expect(post.images.length, post.slug).toBeGreaterThanOrEqual(1)
+      expect(post.images.every(image => image.url.startsWith('/Game8ArenaGamesImages/') && image.alt && image.filename && !image.sourceUrl), post.slug).toBe(true)
+      expect(new Set(post.images.map(image => image.url)).size, post.slug).toBe(post.images.length)
+      const inBody = post.body.filter(block => block?.type === 'image').map(block => block.url)
+      expect(new Set(inBody).size, post.slug).toBe(inBody.length)
+      expect(post.body.every(block => block != null), post.slug).toBe(true)
+    }
+  })
+
+  it('every file in public/Game8ArenaGamesImages is used by at least one post, and every referenced file exists', () => {
+    const dir = join(process.cwd(), 'public', 'Game8ArenaGamesImages')
+    const files = readdirSync(dir).filter(name => name.endsWith('.webp'))
+    const used = new Set(blogPosts.flatMap(post => post.images.map(image => image.filename)))
+    expect(files.filter(name => !used.has(name))).toEqual([])
+    expect([...used].filter(name => !files.includes(name))).toEqual([])
   })
 
   it('unknown post is a noindex 404', () => {

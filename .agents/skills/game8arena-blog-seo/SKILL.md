@@ -110,7 +110,7 @@ Keep blog content data-driven. Do not add a new route or duplicate the renderer 
 2. Import and spread that dataset into `src/data/blogPosts.js`.
 3. Use the existing post fields: `slug`, `keyword`, `title`, `metaTitle`, `metaDescription`, `date`, `updated`, `category`, `tags`, `excerpt`, `images`, `body`, `faq`, and, where applicable, `secondaryKeywords`, `longTailKeywords`, `internalLinkOpportunities`, `suggestedRelatedArticles`, and `sources`.
 4. `body` is an array of blocks. Use strings for paragraphs, `'## Heading'` / `'### Heading'` for headings, arrays for bullet lists, and the existing image block shape for in-article images. Internal links use `[label](/games/id)` or `[label](/play/id)`.
-5. Use `blogImages()` from `src/data/blogImages.js` where a relevant image pair exists. Preserve its source attribution and provide descriptive alt text. Do not hotlink images from search results or copy image URLs from an unverified brief.
+5. Blog images are Game8Arena's own screenshots in `public/Game8ArenaGamesImages`, mapped to posts in `src/data/blogImages.js` (`screenshotsForPost` matches a post's slug to its game). Add new screenshots there with accurate alt text, and map the new game's slug in `slugRules`. Do not use stock photos, hotlink images from search results, or copy image URLs from an unverified brief.
 6. Add FAQ entries only when they answer real follow-up questions. The page renderer supplies FAQ schema when `faq` is present.
 7. Add internal links to relevant game pages and existing articles. Check every linked slug and game ID. Avoid orphaning the new post.
 8. Do not duplicate SEO title, slug, or primary keyword intent already served by a landing page or blog post.

@@ -1,186 +1,154 @@
-# AdSense Compliance Audit — Game8Arena Blog
+# AdSense Compliance Audit — Game8Arena Blog (Re-audit)
 
-**Audited URL:** https://game8arena.com (all 103 blog posts at /blogs/*, plus the pages that support them)
-**Audit date:** 2026-11-27
-**Trigger:** AdSense Sites page shows `game8arena.com` → Approval status **Needs attention**, Status details **Low-value content**, ads.txt **Authorised**, last updated 27 Nov 2026.
+**Audited URL:** https://game8arena.com (all 83 remaining blog posts at /blogs/*, plus supporting pages)
+**Audit date:** 2026-11-27 (second pass, after the Immediate Fixes in commit bce3944)
+**Trigger:** AdSense Sites page showed `game8arena.com` → **Needs attention → Low-value content**.
 
-**Evidence base.** Blog content was measured from the source data (`src/data/*.js`, all 103 posts loaded and counted). Live pages were checked by fetching the home page, /blogs, /about, /contact, /privacy, /terms, /ads.txt, /robots.txt and /sitemap.xml. Not verified: how ads render in a browser, Search Console data, domain age, traffic sources, and the factual accuracy of the news posts (their sources were not re-fetched). Google's policy wording was cited from knowledge and **not re-confirmed against the live support pages** in this run.
+**Evidence base.** Posts were measured by loading `src/data/blogPosts.js` (83 posts). Live pages were fetched: /about, /contact, /blogs, /sitemap.xml, /ads.txt, one post, and the retired and /blog URLs. `npm test` passes (82 files, 1,223 tests). **Not verified:** ad rendering in a browser, Search Console data, domain age, traffic sources, `npm run build` output, the AdSense policy-centre message text, and current Google policy wording (not re-confirmed against live support pages).
 
 ---
 
 ## Executive Summary
 
-**Overall Score: 57 / 100 — Needs Significant Improvements**
-**Approval Probability (conservative): ~15–25% if resubmitted unchanged; ~55–65% after the Immediate and 30-Day fixes below.**
+**Overall Score: 68 / 100 — Needs Significant Improvements** (was 57)
+**Approval Probability (conservative): ~30–40% if resubmitted today; ~60–70% after the consolidation work below.**
 
-Scoring method: weighted average. Content Quality 35%, Policy Compliance 20%, Trust 15%, UX 15%, Monetization Readiness 15%.
+Method: weighted average. Content Quality 35%, Policy Compliance 20%, Trust 15%, UX 15%, Monetization Readiness 15%.
 
-| Dimension | Score | Note |
-|---|---|---|
-| Content Quality | 52 | Individually decent guides, but the site looks mass-produced and a fifth of it is off-topic |
-| Policy Compliance | 70 | No adult, hate or dangerous content found. Problems are scaled content, derivative news and consent |
-| Trust Signals | 55 | Core pages exist, but there is no named person behind the site |
-| UX Quality | 70 | Prerendered, mobile manifest, clean nav. Not tested in a browser |
-| Monetization Readiness | 40 | Google has already said "Low-value content" |
-| **Overall** | **57** | 0.35×52 + 0.20×70 + 0.15×55 + 0.15×70 + 0.15×40 |
+| Dimension | Was | Now | Why |
+|---|---|---|---|
+| Content Quality | 52 | **64** | 20 off-topic/derivative posts removed. Templated micro-topic posts remain |
+| Policy Compliance | 70 | **80** | News rewrites gone. Consent (CMP) still unresolved |
+| Trust Signals | 55 | **72** | Real operator, bylines, 550+ word About. Still a personal Gmail |
+| UX Quality | 70 | **72** | Tests pass, pages load. Redirects not working live (L1) |
+| Monetization Readiness | 40 | **55** | Fewer risk factors. The cause of the rejection is not fully removed |
+| **Overall** | 57 | **68** | 0.35×64 + 0.20×80 + 0.15×72 + 0.15×72 + 0.15×55 = 68.3 |
 
-**The rejection reason is credible and mostly self-inflicted.** The strongest signals reviewers see are:
+**What improved (CONFIRMED live):**
+- 103 → **83 posts**. The 15 news and 5 concept posts are gone from /blogs and the sitemap (83 URLs match 83 cards). Their URLs return 404.
+- About is now ~550–600 words of real prose by a named operator. Contact names the operator.
+- Posts carry a byline: "By Shivaji Kumar, creator of Game8Arena and writer of its game guides" (checked on minesweeper-chording), linked to /about.
+- All posts are now game-related: 72 "Guides" + 11 "Game Guides".
+- The loader and `ads.txt` were gated behind a CMP flag in code.
 
-1. **103 posts were published in 10 days** (17–26 Nov 2026) on a site with 23 games. That pattern reads as scaled/auto-generated content, however good each post is.
-2. **15 news posts (15%)** cover GTA 6, Marvel Rivals, PUBG Mobile, Roblox, CS2 and others that are unrelated to the site's puzzle games. Each is built from **one** secondary source.
-3. **5 "game concept" posts** describe games that do not exist on the site.
-4. The **About page is ~85% a repeated game list**, and the home page repeats the same descriptions.
-5. **No named author or owner** anywhere.
-
-What is *not* the problem: post length (avg 926 words, min 351, max 1,546), duplicate text (no paragraph openings repeat across posts), ads.txt (valid), robots.txt, sitemap, Privacy/Terms/Contact pages, or prohibited content.
+**What still causes "Low-value content" risk:**
+1. **Publishing burst is unchanged.** All 83 posts are dated 17–26 Nov: 4, 3, 5, **40**, **20**, 5, 6 per day. 60 posts landed on two days.
+2. **Micro-topic duplication is unchanged.** 72 guides share one template (about 6–8 H2s, 4 FAQs, 2 stock photos). Examples: 5 Merge Rush, 5 Box Escape, 5 Memory Sequence, 4 Arrow Escape, 4 Find God, 4 Word Guess, 10 "how-to-play/solve" posts.
+3. **No original evidence** (own screenshots, tested numbers) in the posts.
+4. **Consent for ads is not resolved**, and the config state is unclear (see C3).
 
 ---
 
 ## Critical Issues
 
-**C1. Scaled-content pattern — 103 posts in 10 days** · *CONFIRMED (publish dates in data)* · Spam Policies — Scaled content abuse; AdSense — Valuable inventory: Low value content
-All posts are dated 2026-11-17 to 2026-11-26: 7 on the 17th–19th, 2 on the 18th, 16 on the 20th, 29 on the 23rd, 5 on the 24th, 11 on the 26th (approx.). Every guide follows one template: 6–8 H2s, exactly 4 FAQs, two stock images, "check the in-game X" hedges. Most guides are micro-variants of one game ("Memory Sequence Level 12", "Memory Sequence Level 20", "Memory Sequence Without Sound", "Memory Sequence Keyboard Controls", "Memory Sequence Strategy"). A reviewer sees 72 how-to posts across ~14 games and concludes the blog exists to be a keyword farm.
+**C1. Scaled-content pattern remains: 83 posts in 10 days, templated, micro-topic** · *CONFIRMED* · Spam Policies — Scaled content abuse; AdSense — Valuable inventory: Low value content
+This is now the main reason Google would reject again. Nothing in the 30-Day list has been done. Many posts answer a narrow question the game's landing page or one pillar guide could cover (e.g. "Memory Sequence Level 12" and "Level 20", "Minesweeper Chording" and "Safe First Click"). *Needs:* consolidation to ~35–45 posts with original, tested material.
 
-**C2. 15 off-topic, single-source news rewrites** · *CONFIRMED (15 posts tagged News / Gaming News; each has `sources` length 1 or 2)* · Spam Policies — Scaled content abuse; Publisher Content Policies — Copyrighted/derivative content
-Posts: gaming-news-november-2026, gta-6-release-date-platforms, gta-6-first-day-sales, marvel-rivals-season-11-18v18, pubg-mobile-bentley-collaboration, bilibili-gaming-worlds-2026-win, steam-machine-price-availability, zenless-zone-zero-version-3-4, ubisoft-motherbrain-ai-games, xbox-game-pass-november-additions, roblox-avatar-moments, cs2-blast-rivals-fall-2026, brawl-stars-world-finals-navi, splatoon-3-update-12-0-0, pubg-mobile-flash-launch.
-The Marvel Rivals sample is a ~800-word expansion of one MonsterVine article. About a third is generic padding ("Players should check the official patch notes", "keep your focus narrow"). It carries no original reporting, testing or analysis. Its "internal link" is a forced `/play/code` link. This is the classic derivative news-rewrite pattern.
-*Correction to the subagent's report:* it estimated ~24 news posts; the data shows 15.
-
-**C3. No Google-certified consent management for ads** · *CONFIRMED (code)* · Google EU User Consent Policy / Publisher Policies
-The only consent UI is `ConsentBanner.jsx`, which asks about **analytics** only. The AdSense script loads unconditionally in `<head>` (`pagead2.googlesyndication.com/.../adsbygoogle.js`, confirmed in the built `dist/*.html`). Since 2024, publishers serving ads to EEA, UK and Switzerland users need a Google-certified CMP. This will not by itself cause "low-value content", but it can limit or block serving after approval. Fix it before going live.
+**C3. Ads / consent state is unclear and possibly unsafe** · *CONFIRMED (code and live)* · Google EU User Consent Policy
+- `vite.config.js` loads the AdSense script and writes `ads.txt` only when `VITE_ADSENSE_CMP_CONFIGURED=true`.
+- The local `.env.production` has `VITE_ADSENSE_CMP_CONFIGURED=true`, but the action plan says no CMP is configured.
+- Live `/ads.txt` still returns the AdSense line. The local `dist/` build has no `ads.txt` and no `adsbygoogle` script, so the deployed build and the local one differ. I could not confirm whether the live HTML loads `adsbygoogle`.
+- *Risk:* if the flag is true on the host while no certified CMP message is published, EEA/UK/CH visitors get ads without valid consent.
+- *Needs:* confirm in AdSense → Privacy & messaging that a European regulations message is published, or set the flag to false until it is.
 
 ## High Priority Issues
 
-**H1. About page is mostly a duplicated game list** · *CONFIRMED* · AdSense — Low value content; Trust
-About has ~60–80 words of real prose; the rest repeats the 23 one-line game descriptions that also appear on the home page, in the footer and on blog cards. No team, mission, history, how games are made or how content is produced.
+**H5. Decorative stock images, heavily reused** · *CONFIRMED (unchanged)* · Low value content
+~32 Pexels photos ("arrow painted on asphalt", "wooden cubes spelling 2026") are reused across posts of the same game; none shows the actual game.
 
-**H2. No identifiable author or owner** · *CONFIRMED* · Search Quality Guidelines — E-E-A-T; Trust
-Article schema uses `author: Organization "Game8Arena team"`. Posts carry no byline or bio. Contact is a personal Gmail address on a page with no operator name. Advertisers and reviewers want a real, accountable publisher.
+**H4. Game landing pages and home page still teaser-heavy** · *POTENTIAL RISK (not re-measured this pass)* · Low value content
+Last measured: 10 game pages at 403–480 words. Home page is ~800–900 visible words, mostly game cards (down from ~1,100–1,300).
 
-**H3. Five "Game Concept" posts promote games that don't exist** · *CONFIRMED* · Low value content; Deceptive content (potential risk)
-cosmic-arena-brawler, city-defense-browser, robot-arena-duel, skyline-rescue-strategy, team-shield-survival. Each is a ~1,000-word design sketch with no playable result. A visitor searching for the game finds nothing. These add volume and no user value. (They are honestly labelled "a design sketch, not an announcement", which helps, but they still fail the usefulness test.)
-
-**H4. Home page and game landing pages are teaser-heavy** · *POTENTIAL RISK* · Low value content
-Home: ~1,100–1,300 words, mostly repeated card text. Game landing pages carry 403–941 words each (intro, tips, FAQ); the 10 weakest (memory 403, connect 413, pipe 417, sudoku 427, god 431, box 438, merge 446, traffic 447, tictactoe 457, code 480) are close to boilerplate. Reviewers often judge game sites on whether pages give text value beyond the game widget.
-
-**H5. Image set is decorative stock, reused heavily** · *CONFIRMED (blogImages.js)* · Low value content; Copyright (properly licensed)
-Roughly 32 Pexels photos serve all posts ("a white arrow painted on asphalt", "wooden cubes spelling 2026"). Each game's two photos repeat across ~6 posts about the same game. They are not screenshots of the actual games. Licensing looks fine (Pexels, source links shown), but the images add no information. News posts have no images at all.
+**H6. Byline credibility gap** · *POTENTIAL RISK* · E-E-A-T; Deceptive content
+Every post claims one named writer. With 40 posts dated a single day and a uniform structure, a reviewer may doubt the claim. Be transparent about how posts are produced (including any AI assistance), and show tested evidence.
 
 ## Medium Priority Issues
 
-**M1. Keyword cannibalization across micro-topics** · *POTENTIAL RISK* · Spam Policies — Scaled content abuse
-e.g. 8 Minesweeper posts, 7 Memory Sequence posts, ~6 per game for 14 games. They compete with each other and each covers a narrow slice that the game landing page already answers.
+**M1. Four thin roundup posts (<600 words)** · *CONFIRMED* · Low value content
+best-brain-games-for-adults (597), best-free-online-puzzle-games (581), best-free-casual-games-browser (501), get-better-at-puzzle-games (491). Expand to 1,200+ with original comparisons or merge.
 
-**M2. Unverified factual claims in news posts** · *POTENTIAL RISK — NOT VERIFIED IN THIS AUDIT* · Publisher Content Policies — Deceptive/misleading content
-Claims such as "GTA 6 first-day sales $3.79 billion", "Bilibili Gaming wins Worlds 2026", "Steam Machine price" each rest on one outside source. If any single source is wrong or later corrected, the site republishes the error. Re-check each against 2+ sources before keeping any.
+**M2. Redirects not working live** · *CONFIRMED (live 404); cause unverified* · UX
+`vercel.json` defines 301s for `/blog` and the 20 retired slugs, but live `/blog` and both retired URLs tested return **404**, not 301. `public/_headers` is a Netlify/Cloudflare file, so the host may not read `vercel.json`. A 404 on retired pages is acceptable to Google; the missing `/blog` redirect is minor. Verify the host and either move the rules (`public/_redirects`) or accept 404s.
 
-**M3. "Updated" dates and freshness signals** · *POTENTIAL RISK* · Trust
-Posts carry `date` and `updated`; with everything dated within 10 days, there's no history of editorial activity. Do not backdate. Instead, publish slowly and genuinely update.
+**M3. Personal Gmail as the only contact** · *CONFIRMED (disclosed as temporary)* · Trust
+Contact says "A Game8Arena domain mailbox is not active yet." Get a domain mailbox before resubmitting.
 
-**M4. Site maturity unknown** · *INFORMATION MISSING*
-Domain registration date, Search Console indexing counts, and organic traffic were not available. A brand-new domain with 103 same-week posts and little traffic is a strong low-value signal. Please provide the Search Console "Pages" report and domain age.
+**M4. Site maturity and traffic unknown** · *INFORMATION MISSING*
+Need Search Console Pages/Performance, domain age and traffic sources.
 
-**M5. No ad placement visible / layout not ad-ready** · *UNVERIFIED*
-The fetch tool strips scripts so ad slots can't be confirmed. Approval does not need visible ads, but make sure no placeholder or empty ad container appears on any page during review.
+**M5. Keyword cannibalization** · *POTENTIAL RISK* · Scaled content abuse (same cause as C1).
 
 ## Low Priority Issues
 
-- **L1.** `/blog` returns 404 (the index is `/blogs`). Add a redirect; people and crawlers guess `/blog`. *(UX)*
-- **L2.** Disclaimer page exists and is footer-linked; confirm it has distinct content, not a copy of Terms. *(Trust)*
-- **L3.** About page claims games "work offline once installed". Confirm the service worker actually delivers that, or remove it. *(Deceptive content, potential)*
-- **L4.** Sitemap lists no `lastmod` on the 23 game pages. *(SEO hygiene)*
-- **L5.** Contact says "reply within a few days"; add a contact form or role-based address on the domain. *(Trust)*
+- **L1.** About claim "works offline once installed": confirm the service worker delivers it. *(Deceptive content, potential)*
+- **L2.** Disclaimer text was edited (commit message): confirm it is distinct from Terms.
+- **L3.** Sitemap game pages lack `lastmod`.
+- **L4.** The retired-URL list in `vercel.json` is only useful if the host honours it.
 
 ---
 
 ## Content Quality Assessment
 
-**Strengths (CONFIRMED).** Guide posts are specific to real game mechanics (the Minesweeper chording post explains the flag-count rule, wrong-flag risk and mobile behaviour, then links to the relevant guides and the game). No duplicated paragraph openings across 103 posts. Every post has meta title/description, FAQ and internal links. Word counts are healthy: 351–1,546, mean 926.
-
-**Weaknesses.**
-
-| Group | Count | Words (range) | Assessment |
-|---|---|---|---|
-| Game guides ("Guides") | 72 | 491–1,546 | Useful but templated; many near-duplicates by topic |
-| Game-site guides ("Game Guides", incl. 5 concepts) | 16 | 959–1,186 | Concepts add no user value |
-| News / Gaming News | 15 | 351–877 | Single-source rewrites, off-topic; the shortest post on the site is a news roundup (351 words) |
-
-Shortest posts to fix or remove first: gaming-news-november-2026 (351), get-better-at-puzzle-games (491), best-free-casual-games-browser (501), gta-6-release-date-platforms (549).
-
-AI-generated content: the uniform voice and structure (hedged "players should check…", identical FAQ count, same section rhythm) strongly suggests AI-assisted drafting at scale. AI use is not itself a violation; publishing it unreviewed at volume without added value is. I could not detect hands-on testing, screenshots, original data or first-person experience in the sampled posts.
+83 posts: min 491, median 925, max 1,546, avg 942 words. No paragraph openings duplicated across posts. Content is specific to real game mechanics. Weaknesses are volume, uniformity and lack of original evidence (C1, H5, M1). News and concept content (the weakest group) is removed.
 
 ## Publisher Policy Assessment
 
-No adult/sexual content, hate, violence, weapons instruction, drugs, gambling-for-money, malware or illegal content found in the titles and sampled posts. **Bingo Royale / Tambola**: these are free social games with no stakes; confirm no real-money or prize language anywhere (Gambling policy, **potential risk, not found**). News posts about third-party games (PUBG, CS2, Marvel Rivals) are non-graphic. **Result: no confirmed content-policy violations.**
+No adult, hate, violence, dangerous, illegal or malware content found. Bingo/Tambola: free, social, no stakes seen; confirm no real-money or prize wording (potential risk, not found). Copyright: derivative news rewrites are removed; images are properly licensed Pexels with credit. **No confirmed violations.**
 
 ## Publisher Restriction Assessment
 
-Fighting/combat games (Stickman Fight, Multiverse Fighter) and shooter news are cartoonish/mild. No alcohol, dating, politics, religion or health claims found. Possible advertiser-sensitivity: none significant. **Result: low risk.**
+Cartoon fighting games only. No alcohol, dating, politics, religion or health claims. **Low risk.**
 
 ## Invalid Traffic Assessment
 
-No incentivised-click language, no ad-click prompts, no traffic exchange or paid-click references found in code or content. Ads are not yet displayed. **Result: no indicators found. Insufficient evidence on traffic sources** — need Analytics/Search Console to confirm traffic is organic. Do not self-click or ask others to click ads once live.
+No incentivised-click language or traffic-exchange references. Ads currently may not be serving. Traffic source unknown. **No indicators; evidence incomplete.**
 
 ## Spam Policy Assessment
 
-- **Scaled content abuse — HIGH RISK (C1, C2, M1).**
-- Expired-domain abuse — no evidence; domain history unknown.
-- Site reputation abuse — not applicable.
-- Hidden text, cloaking, doorway pages — none found. Prerendered HTML matches user content.
-- Doorway-like risk: many micro-topic posts all funnel to one `/play/*` link. Keep them only where they add distinct information.
+Scaled content abuse: **still the main risk (C1, M5)**, reduced by removing news. No cloaking, hidden text or doorway pages found; prerendered HTML matches user content.
 
 ## Trust & Transparency Assessment
 
 | Element | Status |
 |---|---|
-| About | Exists, thin (H1) |
-| Contact | Exists; personal Gmail, no operator name (H2, L5) |
-| Privacy Policy | Exists; names AdSense, cookies, local storage, analytics, opt-out. **Good** |
-| Terms | Exists, dated 18 Nov 2026. **Good** |
-| Disclaimer | Exists |
-| Author bylines / bios | **Missing** |
-| Business/owner identity | **Missing** |
-| ads.txt | **Valid**: `google.com, pub-1364577906957674, DIRECT, f08c47fec0942fa0` |
-| Consent (ads) | **Missing** (C3) |
-| Sources / citations | Present only on news posts; guides cite no external sources, which is fine for game-mechanics guides |
+| About | **Fixed**: ~550–600 words, operator named, build/test and blog process, corrections |
+| Contact | Operator named; personal Gmail (M3) |
+| Privacy / Terms | Good; AdSense disclosed |
+| Author bylines | **Fixed** (linked to /about) |
+| ads.txt | Valid line, live |
+| Ads consent (CMP) | **Unresolved** (C3) |
 
 ## User Experience Assessment
 
-Positive (from code and fetched HTML): static prerendering, clean navigation (Games / Blog / About), full footer, manifest and service worker, reading time and category tags on cards. **Unverified:** Core Web Vitals, mobile rendering, intrusive overlays (the consent banner should not block content), ad-layout shift. Run Lighthouse and test on a phone.
+Prerendered, clean navigation, sitemap/robots correct, sitemap matches the post list. Not verified: Core Web Vitals, mobile rendering, ad layout. Test with Lighthouse and a phone.
 
 ## Monetization Assessment
 
-Google's verdict is explicit: **Low-value content**. Domain is connected, `ads.txt` authorised, payment info still outstanding (yellow banner in your screenshot, which is separate and not a rejection reason). Advertiser friendliness is fine for puzzle games; the problem is the volume-to-value ratio. Readiness: **not ready**.
+Content volume is adequate; value density is not yet. Advertiser friendliness is fine for puzzle games. Not ready until C1 and C3 are resolved.
 
 ---
 
 ## Revenue Optimization Opportunities
 
-*(Only after approval. Do not optimize before you pass review.)*
-
-1. The **games themselves** are the product. Pages where people play (23) should earn the majority of ad revenue, since time-on-page is high. Spend effort making those pages deeper, not adding more blog posts.
-2. Blog posts that match intent and bring traffic to games ("how to solve Sudoku", "best brain games") should be consolidated into stronger evergreen pillars rather than 6 per game.
-3. Add a daily-challenge email or return-visit hook; returning users are worth more than search drive-bys.
-4. Once approved, start with Auto ads on a subset of pages and measure RPM and bounce, then move to manual units.
+*(After approval only.)*
+1. The 24 games are the revenue pages; deepen them rather than adding posts.
+2. Fewer, stronger blog pillars that rank for real queries.
+3. Daily-challenge return visits (email/share) raise RPM.
+4. Start with Auto ads on a subset, measure, then go manual.
 
 ## Ad Placement Recommendations
 
-*(For after approval; follow AdSense placement policies and Better Ads standards.)*
-
-- Do **not** place ads in the game canvas, on-screen controls, or within ~one control-height of buttons (accidental-click risk, Invalid traffic policy).
-- Blog posts: one unit after the intro, one mid-article between H2 sections, one after the FAQ. Keep ≥ one paragraph between units.
-- Game pages: one unit below the game area and one in the tips/FAQ block; none above the fold on mobile.
-- No interstitial or popup over gameplay; keep the consent banner small and dismissible.
-- Never label ads ambiguously; reserve space (fixed heights) to avoid layout shift.
+- Never over or near the game canvas or controls (accidental clicks).
+- Blogs: one unit after the intro, one mid-article, one after the FAQ.
+- Game pages: one unit below the game and one in the tips/FAQ; none above the fold on mobile.
+- Reserve fixed heights to avoid layout shift; no interstitials over gameplay.
 
 ---
 
 ## Approval Readiness Verdict
 
-# FAIL (as it stands)
+# FAIL (improving; do not resubmit yet)
 
-Resubmit only after the Immediate and 30-Day items are done. Moving to **CONDITIONAL PASS** requires: news posts removed or rebuilt, concept posts removed, About and author trust pages rewritten, and consolidation of near-duplicate guides.
+Moves to **CONDITIONAL PASS** when: C1 is addressed (consolidate to ~35–45 original posts), C3 is verified, and H5/H4 are improved. **Evidence needed:** Search Console export, domain age, traffic sources, the full AdSense policy-centre message, and a browser screenshot of a game page and a blog post.
 
-**Additional evidence needed to firm up the estimate:** Search Console Pages/Performance export, domain registration date, Analytics traffic-source breakdown, a browser screenshot of a game page and blog post with ads enabled, and the full text of the AdSense policy-centre notice (the "Needs attention" row should show an expanded message).
-
-*Note: Google's "Low value content" decisions are not appealable item by item; you fix the site and request a new review. This is not legal advice.*
+*Not legal advice.*

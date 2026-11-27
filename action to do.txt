@@ -1,0 +1,18 @@
+game: undercover
+
+1. saying order must be randomized
+2. sometimes words are synonyms instead of related
+3. discussion time must be configurable 
+4. room creator become undercover 3 times all 3 games
+5. add eye icon ahead of show and hide button
+
+
+
+mafia hunt:
+
+1. shrink mafia vision to 120 degree in front and no being able to see through obstacle 
+2. every 30 second give a direction to mafia where one of villager is present, 
+    at the same time add alarm to villager that mafia got direction.
+3. remove green and red dot hint from minimap
+4. make number of mafia configurable but villager to mafia ratio must be more than 3:1 (villager count must be more than 3x of mafia)
+

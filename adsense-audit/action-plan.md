@@ -19,14 +19,16 @@ Order matters: do the Immediate Fixes first, then wait until the 30-Day fixes ar
 - [ ] **Replace the current personal email with a domain mailbox.** No working Game8Arena domain address is available yet; Contact currently identifies the existing address as temporary.
 - [ ] **Configure a Google-certified CMP for ads (C3 — EU User Consent Policy).** This requires AdSense account setup and the CMP integration snippet. The AdSense loader and `ads.txt` are now disabled unless `VITE_ADSENSE_CMP_CONFIGURED=true` is set after configuration. The existing analytics consent banner remains; the unrelated GTM loader was removed.
 - [x] **Add a `/blog` → `/blogs` redirect (L1 — UX).** Added a 301 for `/blog` and a matching subpath redirect.
-- [ ] **Do not resubmit yet.** No resubmission was made. Wait until the changes are live and recrawled (check Search Console → Pages).
+- [ ] **Verify the CMP state (C3, re-audit).** `.env.production` has `VITE_ADSENSE_CMP_CONFIGURED=true` while this plan says no CMP exists. Confirm a European regulations message is published in AdSense → Privacy & messaging. If not, set the flag to `false` (or remove it) in `.env.production` and in the host's environment, then redeploy. Live `/ads.txt` is currently served.
+- [ ] **Make the `/blog` redirect work live (M2, re-audit).** Live `/blog` and retired posts return 404, not 301. `public/_headers` suggests a Netlify/Cloudflare host that ignores `vercel.json`; add `public/_redirects` or confirm the host.
+- [ ] **Do not resubmit yet.** No resubmission was made. Wait until the 30-Day consolidation is live and recrawled (check Search Console → Pages).
 
 ## 30-Day Fixes
 *(High priority. Target: complete before requesting a new review.)*
 
 - [ ] **Consolidate micro-topic guides into one strong pillar per game (C1, M1 — Scaled content abuse).** Target ≤ 2–3 posts per game. For example, merge the 8 Minesweeper posts (rules, number patterns, chording, safe first click, classic vs campaign) into one 1,800–2,500 word guide plus 1 advanced post, and 301-redirect the retired URLs to the survivor. Repeat for Memory Sequence (7), Merge Rush, Arrow Escape, Box Escape, Word Guess, Color Connect, Pipe Connect, Code Breaker, Klondike, Find God, Traffic Escape. Target total: roughly 35–45 posts, down from 103.
 - [ ] **Add real, original value to each surviving post (Low value content):** actual screenshots of the game (not stock photos), worked examples from real levels, move counts or par scores you tested, and what you personally tried. This is the single biggest differentiator from templated content.
-- [ ] **Replace stock Pexels images with game screenshots/diagrams (H5).** Keep stock only where decorative and never reuse the same pair across more than 1–2 posts. Add meaningful alt text.
+- [x] **Replace stock Pexels images with game screenshots (H5).** Done 2026-11-27: all 83 posts now use the 25 files in `public/Game8ArenaGamesImages`, matched to each post's game; the 32 stock files in `public/blog` were deleted. Still open: add your own diagrams or annotated screenshots of specific levels and boards inside posts, since one screenshot per game is reused across that game's posts.
 - [ ] **Deepen the 10 thinnest game landing pages (H4):** memory, connect, pipe, sudoku, god, box, merge, traffic, tictactoe, code. Aim for 700–900 words each: how to play, scoring and levels, strategy tips, FAQ, what makes it different. Do not copy text from the blog.
 - [ ] **De-duplicate the home page (H4):** replace repeated card text with ~300 words of genuine intro and remove the prose list that duplicates the cards.
 - [ ] **Slow the publishing cadence (C1).** From now on, publish 1–2 reviewed posts per week. Never add batches. Do not backdate.

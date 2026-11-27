@@ -12,13 +12,26 @@
 //   - `keyword` (the main search query) appears in the title, the H1 and the first paragraph
 //   - every post has an FAQ answering the follow-up questions people search for
 // Any game linked from a post\'s body gets a "From the blog" link back on that game\'s page.
-import { blogImages } from './blogImages'
+import { blogImages, screenshotsForPost } from './blogImages'
 import { seoBlogPosts } from './seoBlogPosts'
 import { seoBlogPostsMore } from './seoBlogPostsMore'
 import { seoBlogPostsThird } from './seoBlogPostsThird'
 import { seoBlogPostsNewGames } from './seoBlogPostsNewGames.js'
 import { seoBlogPostsFreshGames } from './seoBlogPostsFreshGames.js'
 import { seoBlogPostsTambolaOptions } from './seoBlogPostsTambolaOptions.js'
+
+// Gives every post its own game's screenshots. Image blocks in the body are replaced in order, and a screenshot is
+// never repeated within one post (a game with a single screenshot shows it once, as the cover).
+function withScreenshots(post) {
+  const images = (screenshotsForPost(post) || post.images || []).filter((img, i, all) => all.findIndex(o => o.url === img.url) === i);
+  let next = 0;
+  const body = post.body.flatMap((block) => {
+    if (block?.type !== "image") return block == null ? [] : [block];
+    const image = images[next++];
+    return image ? [image] : [];
+  });
+  return { ...post, images, body };
+}
 
 export const blogPosts = [
   {
@@ -966,7 +979,7 @@ export const blogPosts = [
   ...seoBlogPostsNewGames,
   ...seoBlogPostsFreshGames,
   ...seoBlogPostsTambolaOptions,
-];
+].map(withScreenshots);
 
 export const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
 export const blogPath = (slug) => `/blogs/${slug}`;
